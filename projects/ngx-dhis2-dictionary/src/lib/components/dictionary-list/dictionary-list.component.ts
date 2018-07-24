@@ -21,7 +21,6 @@ import { InitializeDictionaryMetadataAction } from '../../store/actions/dictiona
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DictionaryListComponent implements OnInit {
-  @Input() visualizationLayers: any[];
   @Input() metadataIdentifiers: Array<string>;
   dictionaryList$: Observable<MetadataDictionary[]>;
   activeItem: number;
@@ -32,12 +31,6 @@ export class DictionaryListComponent implements OnInit {
 
   ngOnInit() {
     if (this.metadataIdentifiers.length > 0) {
-      const metadataIdentifiers = _.uniq(
-        _.flatten(
-          _.map(this.visualizationLayers, layer => layer.metadataIdentifiers)
-        )
-      );
-
       this.store.dispatch(
         new InitializeDictionaryMetadataAction(this.metadataIdentifiers)
       );
