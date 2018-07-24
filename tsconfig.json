@@ -15,6 +15,14 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ngx-dhis2-dictionary": [
+        "dist/ngx-dhis2-dictionary"
+      ],
+      "ngx-dhis2-dictionary/*": [
+        "dist/ngx-dhis2-dictionary/*"
+      ]
+    }
   }
 }

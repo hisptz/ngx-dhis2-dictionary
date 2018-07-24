@@ -1,0 +1,5 @@
+.dictionary-block {
+  border: solid thin #eeeeee;
+  height: 450px;
+  overflow: auto;
+}
