@@ -20,3 +20,7 @@
 .dictionary-description {
   text-align: justify;
 }
+
+.table th, .table td {
+  padding: 0.45rem !important;
+}

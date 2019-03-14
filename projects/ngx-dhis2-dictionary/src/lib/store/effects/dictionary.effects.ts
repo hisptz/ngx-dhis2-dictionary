@@ -67,48 +67,60 @@ export class DictionaryEffects {
        */
       from(identifiers)
         .pipe(
-          mergeMap(identifier =>
+          mergeMap(identifier => 
             this.httpClient.get(`identifiableObjects/${identifier}.json`, true)
           )
         )
         .subscribe((metadata: any) => {
-          this.store.dispatch(
-            new UpdateDictionaryMetadataAction(metadata.id, {
-              name: metadata.name,
-              progress: {
-                loading: true,
-                loadingSucceeded: true,
-                loadingFailed: false
-              }
-            })
-          );
-
-          if (metadata.href && metadata.href.indexOf('indicator') !== -1) {
-            const indicatorUrl =
-              'indicators/' +
-              metadata.id +
-              '.json?fields=:all,displayName,lastUpdatedBy[id,name],id,name,numeratorDescription,' +
-              'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
-              'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
-              'legends~size],dataSets[name]';
-            this.getIndicatorInfo(indicatorUrl, metadata.id);
-          } else if (
-            metadata.href &&
-            metadata.href.indexOf('dataElement') !== -1
-          ) {
-            const dataElementUrl =
-              'dataElements/' +
-              metadata.id +
-              '.json?fields=:all,id,name,aggregationType,displayName,' +
-              'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSets[:all,!compulsoryDataElementOperands]';
-            this.getDataElementInfo(dataElementUrl, metadata.id);
-          } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
-            const dataSetUrl =
-              'dataSets/' +
-              metadata.id +
-              '.json?fields=:all,user[:all],id,name,periodType,shortName,' +
-              'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
-            this.getDataSetInfo(dataSetUrl, metadata.id);
+          if(metadata) {
+            this.store.dispatch(
+              new UpdateDictionaryMetadataAction(metadata.id, {
+                name: metadata.name,
+                progress: {
+                  loading: true,
+                  loadingSucceeded: true,
+                  loadingFailed: false
+                }
+              })
+            );
+            if (metadata.href && metadata.href.indexOf('indicator') !== -1) {
+              const indicatorUrl =
+                'indicators/' +
+                metadata.id +
+                '.json?fields=:all,user[name,email,phoneNumber],displayName,lastUpdatedBy[id,name],id,name,numeratorDescription,' +
+                'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
+                'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
+                'legends~size],dataSets[name]';
+              this.getIndicatorInfo(indicatorUrl, metadata.id);
+            } else if (
+              metadata.href &&
+              metadata.href.indexOf('dataElement') !== -1
+            ) {
+              const dataElementUrl =
+                'dataElements/' +
+                metadata.id +
+                '.json?fields=:all,id,name,aggregationType,displayName,' +
+                'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSets[:all,!compulsoryDataElementOperands]';
+              this.getDataElementInfo(dataElementUrl, metadata.id);
+            } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
+              const dataSetUrl =
+                'dataSets/' +
+                metadata.id +
+                '.json?fields=:all,user[:all],id,name,periodType,shortName,' +
+                'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
+              this.getDataSetInfo(dataSetUrl, metadata.id);
+            }
+          } else {
+            this.store.dispatch(
+              new UpdateDictionaryMetadataAction(metadata.id, {
+                name: 'not found',
+                progress: {
+                  loading: true,
+                  loadingSucceeded: true,
+                  loadingFailed: false
+                }
+              })
+            );
           }
         });
     })
@@ -355,23 +367,51 @@ export class DictionaryEffects {
 
       if (indicator.numeratorDescription) {
         indicatorDescription +=
-          '<span> with the numerator described as <strong>' +
+          '<span>, measured by <strong>' +
           indicator.numeratorDescription +
           '</strong></span>';
       }
 
       if (indicator.denominatorDescription) {
         indicatorDescription +=
-          '<span> and denominator described as <strong>' +
+          '<span> to <strong>' +
           indicator.denominatorDescription +
-          '</strong></span>';
+          '</strong></span></p>';
       }
 
-      indicatorDescription += '</p>';
+      if (indicator.description) {
+        indicatorDescription +=
+        indicatorDescription += `<p>It's described as ` + indicator.description + `</p>`;
+      }
+
+          /**
+           * Indicator group
+           */
+
+          if (
+            indicator.indicatorGroups &&
+            indicator.indicatorGroups.length > 0
+          ) {
+
+          indicatorDescription += 
+          '<div><h6><strong>Facts about the indicator</strong></h6>' +
+          '<h6>The indicator belongs to :-</h6><ul>';
+
+            indicator.indicatorGroups.forEach((indicatorGroup, index) => {
+              indicatorDescription +=
+                '<li><span><strong style="color: #2C6695">' +
+                indicatorGroup.name +
+                '</strong> with <strong>' +
+                indicatorGroup.indicators +
+                '</strong> other related indicators</span></li>';
+            });
+
+            indicatorDescription += '</ul></div>';
+          }
 
       if (indicator.annualized) {
         indicatorDescription +=
-          '<p><span>It’s figure is annualized to support analysis in less than year period ' +
+          '<br><p><span>It’s figure is annualized to support analysis in less than year period ' +
           '(monthly,quarterly,semi-annually)</span></p>';
       }
 
@@ -405,16 +445,27 @@ export class DictionaryEffects {
       ).subscribe((numeratorResults: any[]) => {
         if (numeratorResults[0]) {
           indicatorDescription +=
-            '<p>Numerator is calculated from <strong>' +
-            numeratorResults[0].description +
-            '</strong>';
+          '<h6><strong>Calculation details</strong></h6>'+
+          '<div style="max-height: 400px; width: 100%; overflow: auto;">'+
+              '<table class="table table-bordered">'+
+                '<thead>'+
+                  '<tr>'+
+                    '<th></th>'+
+                    '<th>Formula </th>'+
+                    '<th>Sources</th>'+
+                  '</tr>'+
+                '</thead>'+
+                '<tbody>'+
+                '<tr>'+
+                '<td>Numerator</td>' +
+                '<td>' +numeratorResults[0].description + '</td>';
         }
 
         if (numeratorResults[1] && numeratorResults[1].dataSets) {
           const dataSets: any[] = numeratorResults[1].dataSets;
 
           if (dataSets.length > 0) {
-            indicatorDescription += ' originating from ';
+            indicatorDescription +='<td>';
           }
 
           dataSets.forEach((dataset: any, index: number) => {
@@ -433,11 +484,9 @@ export class DictionaryEffects {
               dataset.periodType +
               '</strong> with deadline for submission after <strong>' +
               dataset.timelyDays +
-              ' days </strong></span>';
+              ' days </strong></span></td></tr>';
           });
         }
-
-        indicatorDescription += `</p>`;
 
         this.store.dispatch(
           new UpdateDictionaryMetadataAction(indicatorId, {
@@ -469,16 +518,18 @@ export class DictionaryEffects {
         ).subscribe((denominatorResults: any[]) => {
           if (denominatorResults[0]) {
             indicatorDescription +=
-              '<p>Denominator is calculated from <strong>' +
+              '<tr><td>' + 
+              'Denominator' +
+              '</td><td>'+
               denominatorResults[0].description +
-              '</strong>';
+              '</td>';
           }
 
           if (denominatorResults[1] && denominatorResults[1].dataSets) {
             const dataSets: any[] = denominatorResults[1].dataSets;
 
             if (dataSets.length > 0) {
-              indicatorDescription += ' originating from ';
+              indicatorDescription += '<td>';
             }
 
             dataSets.forEach((dataset: any, index: number) => {
@@ -497,46 +548,8 @@ export class DictionaryEffects {
                 dataset.periodType +
                 '</strong> with deadline for submission after <strong>' +
                 dataset.timelyDays +
-                ' days </strong></span>';
+                ' days </strong></span></td></tr></tbody></table></div>';
             });
-          }
-
-          indicatorDescription += `</p>`;
-
-          /**
-           * Indicator group
-           */
-
-          if (
-            indicator.indicatorGroups &&
-            indicator.indicatorGroups.length > 0
-          ) {
-            indicatorDescription += '<div><p>It belongs to ';
-
-            indicator.indicatorGroups.forEach((indicatorGroup, index) => {
-              if (
-                index !== 0 &&
-                index !== indicator.indicatorGroups.length - 1
-              ) {
-                indicatorDescription += ', ';
-              }
-
-              if (
-                index === indicator.indicatorGroups.length - 1 &&
-                indicator.indicatorGroups.length > 1
-              ) {
-                indicatorDescription += ' and ';
-              }
-
-              indicatorDescription +=
-                '<span><strong>' +
-                indicatorGroup.name +
-                '</strong> with <strong>' +
-                indicatorGroup.indicators +
-                '</strong> other related indicators</span>';
-            });
-
-            indicatorDescription += '</p></div>';
           }
 
           /**
@@ -579,26 +592,26 @@ export class DictionaryEffects {
               let legendSetTable = '';
               let legendRows = '';
               legendSetTable +=
-              '<h5><strong>Legend for analysis</strong></h5>'+
-              '<h6>Uses ' + legendSetsInformation[0].legendSets[0].name +' for analysis, spread accross ' +legendSetsInformation[0].legendSets[0].legends.length +' classes for analysis.</h6>' +
+              '<h6><strong>Legend for analysis</strong></h6>'+
+              '<h6>Uses <strong>' + legendSetsInformation[0].legendSets[0].name +'</strong> for analysis, spread accross <strong>' +legendSetsInformation[0].legendSets[0].legends.length +'</strong> classes for analysis.</h6>' +
               '<div style="height: 200px; width: 60%; overflow: auto;">' +
                   '<table class="table table-bordered">' +
                     '<thead>'+
                       '<tr>'+
-                        '<th>Class</th>'+
-                        '<th>Upper</th>'+
-                        '<th>Lower</th>'+
-                        '<th>Color</th>'+
+                        '<th style="padding: 0.45em;">Class</th>'+
+                        '<th style="padding: 0.45em;">Upper</th>'+
+                        '<th style="padding: 0.45em;">Lower</th>'+
+                        '<th style="padding: 0.45em;">Color</th>'+
                       '</tr>'+
                     '</thead>'+
                     '<tbody class="legends-list">';
                     legendSetsInformation[0].legendSets[0].legends.forEach((legend) => {
                       legendRows +=
                       '<tr>'+
-                        '<td>'+ legend.name + '</td>'+
-                        '<td>'+ legend.endValue + '</legend.colortd>'+
-                        '<td>' + legend.startValue + '</td>' +
-                        '<td style="background-color: '+ legend.color +'"></td>'+
+                        '<td style="padding: 0.45em;">'+ legend.name + '</td>'+
+                        '<td style="padding: 0.45em;">'+ legend.endValue + '</legend.colortd>'+
+                        '<td style="padding: 0.45em;">' + legend.startValue + '</td>' +
+                        '<td style="padding: 0.45em;background-color: '+ legend.color +'"></td>'+
                       '</tr>'
                     });
                     
@@ -616,7 +629,7 @@ export class DictionaryEffects {
              */
             if (indicator.user) {
               indicatorDescription +=
-                '<br><br><div><p>Created in the system on <strong>' +
+                '<br><div><p>Created in the system on <strong>' +
                 this.datePipe.transform(indicator.created) +
                 '</strong> by <strong>' +
                 indicator.user.name +
