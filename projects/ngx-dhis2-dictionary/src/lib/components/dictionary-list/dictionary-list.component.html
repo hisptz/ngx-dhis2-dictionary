@@ -16,7 +16,7 @@
       class="dictionary-body"
       *ngIf="activeItem === i"
     >
-      <div class="dictionary-description" [innerHtml]="dictionaryItem.description"></div>
+      <div class="dictionary-description" [innerHtml]="getSafeHtml(dictionaryItem.description)"></div>
       <div *ngIf="dictionaryItem.progress.loading">
         <app-dictionary-progress></app-dictionary-progress>
       </div>

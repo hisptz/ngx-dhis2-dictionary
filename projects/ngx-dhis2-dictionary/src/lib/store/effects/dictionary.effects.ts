@@ -87,7 +87,7 @@ export class DictionaryEffects {
             const indicatorUrl =
               'indicators/' +
               metadata.id +
-              '.json?fields=:all,displayName,id,name,numeratorDescription,' +
+              '.json?fields=:all,displayName,lastUpdatedBy[id,name],id,name,numeratorDescription,' +
               'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
               'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
               'legends~size],dataSets[name]';
@@ -564,40 +564,86 @@ export class DictionaryEffects {
           /**
            * Legend set
            */
-          if (indicator.legendSet) {
-            indicatorDescription +=
-              '<div><p> It makes use of: <strong>' +
-              indicator.legendSet.name +
-              '</strong> legend' +
-              ' set for analysis with <strong>' +
-              indicator.legendSet.legends +
-              ' Classes </strong>using <strong>' +
-              indicator.legendSet.symbolizer +
-              ' for analysis</strong></p></div>';
-          }
+          let legendSetsIds = [];
+          indicator.legendSets.forEach((legendSet) => {
+            legendSetsIds.push(legendSet.id);
+          })
+          console.log(legendSetsIds)
+          forkJoin(
+            this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(';') +']')
+          ).subscribe((legendSetsInformation) => {
+            if (legendSetsInformation){
+              console.log(legendSetsInformation)
+            }
+            if (legendSetsInformation) {
+              let legendSetTable = '';
+              let legendRows = '';
+              legendSetTable +=
+              '<h5><strong>Legend for analysis</strong></h5>'+
+              '<h6>Uses ' + legendSetsInformation[0].legendSets[0].name +' for analysis, spread accross ' +legendSetsInformation[0].legendSets[0].legends.length +' classes for analysis.</h6>' +
+              '<div style="height: 200px; width: 60%; overflow: auto;">' +
+                  '<table class="table table-bordered">' +
+                    '<thead>'+
+                      '<tr>'+
+                        '<th>Class</th>'+
+                        '<th>Upper</th>'+
+                        '<th>Lower</th>'+
+                        '<th>Color</th>'+
+                      '</tr>'+
+                    '</thead>'+
+                    '<tbody class="legends-list">';
+                    legendSetsInformation[0].legendSets[0].legends.forEach((legend) => {
+                      legendRows +=
+                      '<tr>'+
+                        '<td>'+ legend.name + '</td>'+
+                        '<td>'+ legend.endValue + '</legend.colortd>'+
+                        '<td>' + legend.startValue + '</td>' +
+                        '<td style="background-color: '+ legend.color +'"></td>'+
+                      '</tr>'
+                    });
+                    
+                    legendSetTable += legendRows;
+                    legendSetTable +=
+                    '</tbody>'+
+                  '</table>'+
+                '</div>';
 
-          /**
-           * User info
-           */
-          if (indicator.user) {
-            indicatorDescription +=
-              '<div><p>This indicator was <strong> first created </strong> in the system on <strong>' +
-              this.datePipe.transform(indicator.created) +
-              '</strong> by <strong>' +
-              indicator.user.name +
-              '</strong></p></div>';
-          }
+                indicatorDescription += legendSetTable;
+            }
+  
+            /**
+             * User info
+             */
+            if (indicator.user) {
+              indicatorDescription +=
+                '<br><br><div><p>Created in the system on <strong>' +
+                this.datePipe.transform(indicator.created) +
+                '</strong> by <strong>' +
+                indicator.user.name +
+                '</strong>';
+                if (indicator.lastUpdatedBy) {
+                  indicatorDescription +=
+                  ' and last updated on <strong>' +
+                  indicator.lastUpdated
+                  + '</strong> by ' + 
+                  indicator.lastUpdatedBy.name
+                }
 
-          this.store.dispatch(
-            new UpdateDictionaryMetadataAction(indicatorId, {
-              description: indicatorDescription,
-              progress: {
-                loading: false,
-                loadingSucceeded: true,
-                loadingFailed: false
-              }
-            })
-          );
+                indicatorDescription +=
+                '</p></div>';
+            }
+  
+            this.store.dispatch(
+              new UpdateDictionaryMetadataAction(indicatorId, {
+                description: indicatorDescription,
+                progress: {
+                  loading: false,
+                  loadingSucceeded: true,
+                  loadingFailed: false
+                }
+              })
+            );
+          });
         });
       });
     });

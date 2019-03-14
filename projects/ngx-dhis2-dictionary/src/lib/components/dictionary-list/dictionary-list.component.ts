@@ -12,6 +12,7 @@ import { MetadataDictionary } from '../../models/dictionary';
 import { DictionaryState } from '../../store/reducers/dictionary.reducer';
 import { getDictionaryList } from '../../store/selectors/dictionary.selectors';
 import { InitializeDictionaryMetadataAction } from '../../store/actions/dictionary.actions';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -25,7 +26,7 @@ export class DictionaryListComponent implements OnInit {
   dictionaryList$: Observable<MetadataDictionary[]>;
   activeItem: number;
 
-  constructor(private store: Store<DictionaryState>) {
+  constructor(private store: Store<DictionaryState>, private sanitizer: DomSanitizer) {
     this.activeItem = 0;
   }
 
@@ -48,5 +49,9 @@ export class DictionaryListComponent implements OnInit {
     } else {
       this.activeItem = index;
     }
+  }
+
+  getSafeHtml(html) {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 }
