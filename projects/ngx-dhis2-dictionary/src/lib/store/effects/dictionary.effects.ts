@@ -87,7 +87,7 @@ export class DictionaryEffects {
               const indicatorUrl =
                 'indicators/' +
                 metadata.id +
-                '.json?fields=:all,user[name,email,phoneNumber],displayName,lastUpdatedBy[id,name],id,name,numeratorDescription,' +
+                '.json?fields=:all,user[name,email,phoneNumber],displayName,lastUpdatedBy[id,name,phoneNumber,email],id,name,numeratorDescription,' +
                 'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
                 'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
                 'legends~size],dataSets[name]';
@@ -110,17 +110,6 @@ export class DictionaryEffects {
                 'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
               this.getDataSetInfo(dataSetUrl, metadata.id);
             }
-          } else {
-            this.store.dispatch(
-              new UpdateDictionaryMetadataAction(metadata.id, {
-                name: 'not found',
-                progress: {
-                  loading: true,
-                  loadingSucceeded: true,
-                  loadingFailed: false
-                }
-              })
-            );
           }
         });
     })
@@ -581,13 +570,9 @@ export class DictionaryEffects {
           indicator.legendSets.forEach((legendSet) => {
             legendSetsIds.push(legendSet.id);
           })
-          console.log(legendSetsIds)
           forkJoin(
             this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(';') +']')
           ).subscribe((legendSetsInformation) => {
-            if (legendSetsInformation){
-              console.log(legendSetsInformation)
-            }
             if (legendSetsInformation) {
               let legendSetTable = '';
               let legendRows = '';
@@ -599,18 +584,18 @@ export class DictionaryEffects {
                     '<thead>'+
                       '<tr>'+
                         '<th style="padding: 0.45em;">Class</th>'+
-                        '<th style="padding: 0.45em;">Upper</th>'+
                         '<th style="padding: 0.45em;">Lower</th>'+
+                        '<th style="padding: 0.45em;">Upper</th>'+
                         '<th style="padding: 0.45em;">Color</th>'+
                       '</tr>'+
                     '</thead>'+
                     '<tbody class="legends-list">';
-                    legendSetsInformation[0].legendSets[0].legends.forEach((legend) => {
+                    _.reverse(_.sortBy(legendSetsInformation[0].legendSets[0].legends, ['startValue'])).forEach((legend) => {
                       legendRows +=
                       '<tr>'+
                         '<td style="padding: 0.45em;">'+ legend.name + '</td>'+
-                        '<td style="padding: 0.45em;">'+ legend.endValue + '</legend.colortd>'+
                         '<td style="padding: 0.45em;">' + legend.startValue + '</td>' +
+                        '<td style="padding: 0.45em;">'+ legend.endValue + '</legend.colortd>'+
                         '<td style="padding: 0.45em;background-color: '+ legend.color +'"></td>'+
                       '</tr>'
                     });
@@ -631,19 +616,28 @@ export class DictionaryEffects {
               indicatorDescription +=
                 '<br><div><p>Created in the system on <strong>' +
                 this.datePipe.transform(indicator.created) +
-                '</strong> by <strong>' +
-                indicator.user.name +
-                '</strong>';
+                '</strong> by <strong>';
+                if (indicator.user.phoneNumber) {
+                  indicatorDescription += '<span  title="Phone: ' + indicator.user.phoneNumber + ', Email: ' + indicator.user.email +'">';
+                }
+                
+                indicatorDescription +=
+                 indicator.user.name +
+                '</span></strong>';
                 if (indicator.lastUpdatedBy) {
                   indicatorDescription +=
                   ' and last updated on <strong>' +
                   indicator.lastUpdated
-                  + '</strong> by ' + 
-                  indicator.lastUpdatedBy.name
-                }
+                  + '</strong> by ';
+                  if (indicator.lastUpdatedBy.phoneNumber) {
+                    indicatorDescription += '<span  title="Phone: ' + indicator.lastUpdatedBy.phoneNumber + ', Email: ' + indicator.lastUpdatedBy.email +'">';
+                  }
 
                 indicatorDescription +=
-                '</p></div>';
+                  indicator.lastUpdatedBy.name
+                }
+                indicatorDescription +=
+                '</span></p></div>';
             }
   
             this.store.dispatch(
@@ -694,5 +688,9 @@ export class DictionaryEffects {
     }
 
     return uid;
+  }
+
+  showOtherUserParticulars() {
+    console.log('particulars')
   }
 }
