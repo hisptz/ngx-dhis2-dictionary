@@ -563,6 +563,17 @@ export class DictionaryEffects {
             indicatorDescription += '</p></div>';
           }
 
+          this.store.dispatch(
+            new UpdateDictionaryMetadataAction(indicatorId, {
+              description: indicatorDescription,
+              progress: {
+                loading: true,
+                loadingSucceeded: true,
+                loadingFailed: false
+              }
+            })
+          );
+
           /**
            * Legend set
            */
@@ -579,7 +590,7 @@ export class DictionaryEffects {
               legendSetTable +=
               '<h6><strong>Legend for analysis</strong></h6>'+
               '<h6>Uses <strong>' + legendSetsInformation[0].legendSets[0].name +'</strong> for analysis, spread accross <strong>' +legendSetsInformation[0].legendSets[0].legends.length +'</strong> classes for analysis.</h6>' +
-              '<div style="height: 200px; width: 60%; overflow: auto;">' +
+              '<div style="height: 200px; width: 50%; overflow: auto;">' +
                   '<table class="table table-bordered">' +
                     '<thead>'+
                       '<tr>'+
@@ -608,48 +619,111 @@ export class DictionaryEffects {
 
                 indicatorDescription += legendSetTable;
             }
-  
-            /**
-             * User info
-             */
-            if (indicator.user) {
-              indicatorDescription +=
-                '<br><div><p>Created in the system on <strong>' +
-                this.datePipe.transform(indicator.created) +
-                '</strong> by <strong>';
-                if (indicator.user.phoneNumber) {
-                  indicatorDescription += '<span  title="Phone: ' + indicator.user.phoneNumber + ', Email: ' + indicator.user.email +'">';
-                }
-                
-                indicatorDescription +=
-                 indicator.user.name +
-                '</span></strong>';
-                if (indicator.lastUpdatedBy) {
-                  indicatorDescription +=
-                  ' and last updated on <strong>' +
-                  indicator.lastUpdated
-                  + '</strong> by ';
-                  if (indicator.lastUpdatedBy.phoneNumber) {
-                    indicatorDescription += '<span  title="Phone: ' + indicator.lastUpdatedBy.phoneNumber + ', Email: ' + indicator.lastUpdatedBy.email +'">';
-                  }
 
-                indicatorDescription +=
-                  indicator.lastUpdatedBy.name
-                }
-                indicatorDescription +=
-                '</span></p></div>';
-            }
-  
             this.store.dispatch(
               new UpdateDictionaryMetadataAction(indicatorId, {
                 description: indicatorDescription,
                 progress: {
-                  loading: false,
+                  loading: true,
                   loadingSucceeded: true,
                   loadingFailed: false
                 }
               })
             );
+
+            /**
+             * Data elements in the indicators
+             */
+
+             forkJoin(
+               this.httpClient.get('dataElements.json?filter=id:in:[' + this.getAvailableDataElements(indicator.numerator + ' + ' + indicator.denominator) +']&paging=false&fields=id,name,zeroIsSignificant,aggregationType,domainType,valueType,categoryCombo[id,name,categoryOptionCombos[id,name,categoryOptions[id,name,categories[id,name]]]],dataSetElements[dataSet[id,name,periodType]],dataElementGroups[id,name,dataElements~size]',true)
+             ).subscribe((dataElements) => {
+               let dataElementsTable = ''; let dataElementsListBody = '';
+               dataElementsTable +=
+               '<br><h6><strong>Data elements in indicator</strong></h6>'+
+              '<h6>The following is the summary of the data elements used in the calculations</h6>' +
+              '<div style="height: 300px; width: 100%; overflow: auto;">' +
+                  '<table class="table table-bordered">' +
+                    '<thead>'+
+                      '<tr>'+
+                        '<th style="padding: 0.45em;">Data element</th>'+
+                        '<th style="padding: 0.45em;">Aggregation</th>'+
+                        '<th style="padding: 0.45em;">Value Type</th>'+
+                        '<th style="padding: 0.45em;">Zero Signifcance</th>'+
+                        '<th style="padding: 0.45em;">Categories</th>'+
+                        '<th style="padding: 0.45em;">Data Sets/ Programs</th>'+
+                        '<th style="padding: 0.45em;">Groups</th>'+
+                      '</tr>'+
+                    '</thead>'+
+                    '<tbody class="dataelements-list">';
+              dataElements[0]['dataElements'].forEach((element) => {
+                dataElementsListBody += 
+                '<tr><td>' + element.name + '</td>'+
+                '<td>' + element.aggregationType + '</td>'+
+                '<td>' + element.valueType +'</td>'+
+                '<td>' + element.zeroIsSignificant + '</td>'+
+                '<td>' + this.getCategories(element.categoryCombo.categoryOptionCombos)+ '</td>'+
+                '<td>' + this.getDataSetFromDataElement(element.dataSetElements) + '</td>'+
+                '<td>' + this.getDataElementsGroups(element.dataElementGroups)+'</td></tr>';
+              })
+              dataElementsTable += dataElementsListBody;
+              dataElementsTable += '</tbody></table></div>';
+
+              indicatorDescription += dataElementsTable;
+              
+              this.store.dispatch(
+                new UpdateDictionaryMetadataAction(indicatorId, {
+                  description: indicatorDescription,
+                  progress: {
+                    loading: true,
+                    loadingSucceeded: true,
+                    loadingFailed: false
+                  }
+                })
+              );
+
+              /**
+               * User info
+               */
+              if (indicator.user) {
+                indicatorDescription +=
+                  '<br><div><p>Created in the system on <strong>' +
+                  this.datePipe.transform(indicator.created) +
+                  '</strong> by <strong>';
+                  if (indicator.user.phoneNumber) {
+                    indicatorDescription += '<span  title="Phone: ' + indicator.user.phoneNumber + ', Email: ' + indicator.user.email +'">';
+                  }
+                  
+                  indicatorDescription +=
+                  indicator.user.name +
+                  '</span></strong>';
+                  if (indicator.lastUpdatedBy) {
+                    indicatorDescription +=
+                    ' and last updated on <strong>' +
+                    indicator.lastUpdated
+                    + '</strong> by ';
+                    if (indicator.lastUpdatedBy.phoneNumber) {
+                      indicatorDescription += '<span  title="Phone: ' + indicator.lastUpdatedBy.phoneNumber + ', Email: ' + indicator.lastUpdatedBy.email +'">';
+                    }
+
+                  indicatorDescription +=
+                    indicator.lastUpdatedBy.name
+                  }
+                  indicatorDescription +=
+                  '</span></p></div>';
+              }
+    
+              this.store.dispatch(
+                new UpdateDictionaryMetadataAction(indicatorId, {
+                  description: indicatorDescription,
+                  progress: {
+                    loading: false,
+                    loadingSucceeded: true,
+                    loadingFailed: false
+                  }
+                })
+              );
+             })
           });
         });
       });
@@ -659,13 +733,15 @@ export class DictionaryEffects {
   getAvailableDataElements(data) {
     let dataElementUids = [];
     const separators = [' ', '\\+', '-', '\\(', '\\)', '\\*', '/', ':', '\\?'];
-    const numeratorDataElements = data.split(
+    const metadataElements = data.split(
       new RegExp(separators.join('|'), 'g')
     );
-    numeratorDataElements.forEach(dataElement => {
-      dataElementUids = this.dataElementWithCategoryOptionCheck(dataElement);
+    metadataElements.forEach(dataElement => {
+      if (dataElement != "") {
+        dataElementUids.push(this.dataElementWithCategoryOptionCheck(dataElement)[0]);
+      }
     });
-    return dataElementUids.join();
+    return _.uniq(dataElementUids).join(',');
   }
 
   dataElementWithCategoryOptionCheck(dataElement: any) {
@@ -688,6 +764,38 @@ export class DictionaryEffects {
     }
 
     return uid;
+  }
+
+  getDataSetFromDataElement(dataSets){
+    let listOfElements = '';
+    dataSets.forEach((dataSet) => {
+      listOfElements += '<li>' + dataSet['dataSet'].name + '</li>'
+    })
+    return listOfElements;
+  }
+
+  getCategories(categoryCombos){
+    let categories = []; let categoriesHtml = '';
+    categoryCombos.forEach((categoryCombo) => {
+      categoryCombo['categoryOptions'].forEach((option) => {
+        _.map(option['categories'], (category: any) => {
+          categories.push(category);
+        })
+      })
+    })
+    _.uniqBy(categories, 'id').forEach((category) => {
+      categoriesHtml += '<li>' + category.name + '</li>';
+    })
+
+    return categoriesHtml;
+  }
+
+  getDataElementsGroups(groups) {
+    let groupsHtml = '';
+    _.map(groups, (group) => {
+      groupsHtml = '<li>' + group.name + ' (with other <strong  style="color: #2C6695">' + group.dataElements + '</strong>) data elements </li>';
+    })
+    return groupsHtml;
   }
 
   showOtherUserParticulars() {
