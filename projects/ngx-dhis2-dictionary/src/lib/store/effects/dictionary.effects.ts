@@ -20,6 +20,7 @@ import { getDictionaryList } from '../selectors/dictionary.selectors';
 
 @Injectable()
 export class DictionaryEffects {
+    identifierIds = [];
   constructor(
     private actions$: Actions,
     private store: Store<DictionaryState>,
@@ -42,7 +43,7 @@ export class DictionaryEffects {
           )
         )
     ),
-    tap(identifiers => {
+    tap((identifiers: any) => {
       /**
        * Add incoming items to the dictionary list
        */
@@ -72,7 +73,7 @@ export class DictionaryEffects {
           )
         )
         .subscribe((metadata: any) => {
-            console.log(metadata);
+            this.identifierIds.push(metadata.id);
           if(metadata) {
             this.store.dispatch(
               new UpdateDictionaryMetadataAction(metadata.id, {
@@ -349,7 +350,7 @@ export class DictionaryEffects {
   getIndicatorInfo(indicatorUrl: string, indicatorId: string) {
     this.httpClient.get(`${indicatorUrl}`, true).subscribe((indicator: any) => {
       let indicatorDescription =
-        '<p><strong>' +
+        '<p class="indicator"><strong>' +
         indicator.name +
         '</strong> is a <strong>' +
         indicator.indicatorType.name +
@@ -367,10 +368,9 @@ export class DictionaryEffects {
           '<span> to <strong>' +
           indicator.denominatorDescription +
           '</strong></span></p>';
-      }
+      } 
 
       if (indicator.description) {
-        indicatorDescription +=
         indicatorDescription += `<p>It's described as ` + indicator.description + `</p>`;
       }
 
