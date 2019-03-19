@@ -52,6 +52,8 @@ export class DictionaryListComponent implements OnInit {
   }
 
   getSafeHtml(html) {
-    return this.sanitizer.bypassSecurityTrustHtml(html);
+    let safeHtml;
+    safeHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+    return safeHtml;
   }
 }

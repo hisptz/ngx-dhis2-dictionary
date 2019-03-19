@@ -5,7 +5,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 
 import * as _ from 'lodash';
 import { mergeMap, map, tap } from 'rxjs/operators';
-import { Observable, from, forkJoin } from 'rxjs';
+import { Observable, from, forkJoin, of } from 'rxjs';
 
 import { NgxDhis2HttpClientService } from '@hisptz/ngx-dhis2-http-client';
 import { DictionaryState } from '../reducers/dictionary.reducer';
@@ -67,11 +67,12 @@ export class DictionaryEffects {
        */
       from(identifiers)
         .pipe(
-          mergeMap(identifier => 
-            this.httpClient.get(`identifiableObjects/${identifier}.json`, true)
+          mergeMap((identifier: any) =>
+           this.httpClient.get(`identifiableObjects/${identifier}.json`, true)
           )
         )
         .subscribe((metadata: any) => {
+            console.log(metadata);
           if(metadata) {
             this.store.dispatch(
               new UpdateDictionaryMetadataAction(metadata.id, {
