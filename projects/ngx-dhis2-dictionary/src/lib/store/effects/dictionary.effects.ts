@@ -453,28 +453,11 @@ export class DictionaryEffects {
         if (numeratorResults[1] && numeratorResults[1].dataSets) {
           const dataSets: any[] = numeratorResults[1].dataSets;
 
+          indicatorDescription +='<td>';
           if (dataSets.length > 0) {
-            indicatorDescription +='<td>';
+            indicatorDescription += this.listAllDataSets(dataSets)
           }
-
-          dataSets.forEach((dataset: any, index: number) => {
-            if (index !== 0 && index !== dataSets.length - 1) {
-              indicatorDescription += ', ';
-            }
-
-            if (index === dataSets.length - 1 && dataSets.length > 1) {
-              indicatorDescription += ' and ';
-            }
-
-            indicatorDescription +=
-              '<span><strong>' +
-              dataset.name +
-              ',</strong> that is collected <strong>' +
-              dataset.periodType +
-              '</strong> with deadline for submission after <strong>' +
-              dataset.timelyDays +
-              ' days </strong></span></td></tr>';
-          });
+          indicatorDescription += '</td></tr>';
         }
 
         this.store.dispatch(
@@ -517,29 +500,12 @@ export class DictionaryEffects {
           if (denominatorResults[1] && denominatorResults[1].dataSets) {
             const dataSets: any[] = denominatorResults[1].dataSets;
 
+            indicatorDescription +='<td>';
             if (dataSets.length > 0) {
-              indicatorDescription += '<td>';
+                indicatorDescription += this.listAllDataSets(dataSets)
             }
-
-            dataSets.forEach((dataset: any, index: number) => {
-              if (index !== 0 && index !== dataSets.length - 1) {
-                indicatorDescription += ', ';
-              }
-
-              if (index === dataSets.length - 1 && dataSets.length > 1) {
-                indicatorDescription += ' and ';
-              }
-
-              indicatorDescription +=
-                '<span><strong>' +
-                dataset.name +
-                ',</strong> that is collected <strong>' +
-                dataset.periodType +
-                '</strong> with deadline for submission after <strong>' +
-                dataset.timelyDays +
-                ' days </strong></span></td></tr></tbody></table></div>';
-            });
-          }
+            indicatorDescription += '</td></tr></tbody></table></div>';
+            }
 
           /**
            * Attribute values
@@ -584,13 +550,15 @@ export class DictionaryEffects {
           forkJoin(
             this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(';') +']')
           ).subscribe((legendSetsInformation) => {
-            if (legendSetsInformation) {
+            if (legendSetsInformation && legendSetsInformation[0].legendSets[0]) {
               let legendSetTable = '';
               let legendRows = '';
               legendSetTable +=
-              '<h6><strong>Legend for analysis</strong></h6>'+
-              '<h6>Uses <strong>' + legendSetsInformation[0].legendSets[0].name +'</strong> for analysis, spread accross <strong>' +legendSetsInformation[0].legendSets[0].legends.length +'</strong> classes for analysis.</h6>' +
-              '<div style="height: 200px; width: 50%; overflow: auto;">' +
+              '<h6><strong>Legend for analysis</strong></h6>'
+              if (legendSetsInformation[0].legendSets[0]) {
+                legendSetTable += '<h6>Uses <strong>' + legendSetsInformation[0].legendSets[0].name +'</strong> for analysis, spread accross <strong>' +legendSetsInformation[0].legendSets[0].legends.length +'</strong> classes for analysis.</h6>'
+              }
+              legendSetTable += '<div style="height: 200px; width: 50%; overflow: auto;">' +
                   '<table class="table table-bordered">' +
                     '<thead>'+
                       '<tr>'+
@@ -700,14 +668,14 @@ export class DictionaryEffects {
                   if (indicator.lastUpdatedBy) {
                     indicatorDescription +=
                     ' and last updated on <strong>' +
-                    indicator.lastUpdated
+                    this.datePipe.transform(indicator.lastUpdated)
                     + '</strong> by ';
                     if (indicator.lastUpdatedBy.phoneNumber) {
                       indicatorDescription += '<span  title="Phone: ' + indicator.lastUpdatedBy.phoneNumber + ', Email: ' + indicator.lastUpdatedBy.email +'">';
                     }
 
                   indicatorDescription +=
-                    indicator.lastUpdatedBy.name
+                    '<strong>' +indicator.lastUpdatedBy.name + '</strong>'
                   }
                   indicatorDescription +=
                   '</span></p></div>';
@@ -796,6 +764,20 @@ export class DictionaryEffects {
       groupsHtml = '<li>' + group.name + ' (with other <strong  style="color: #2C6695">' + group.dataElements + '</strong>) data elements </li>';
     })
     return groupsHtml;
+  }
+
+  listAllDataSets(dataSets) {
+      let listOfDataSets = '';
+      dataSets.forEach((dataset) => {
+        listOfDataSets += '<li><span><strong>' +
+        dataset.name +
+        ',</strong> that is collected <strong>' +
+        dataset.periodType +
+        '</strong> with deadline for submission after <strong>' +
+        dataset.timelyDays +
+        ' days </strong></span></li>'
+      });
+      return listOfDataSets;
   }
 
   showOtherUserParticulars() {

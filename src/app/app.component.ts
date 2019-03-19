@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  metadataIdentifiers: any[] = ['dwEq7wi6nXV', 'fbfJHSPpUD'];
+  metadataIdentifiers: any[] = ['TRoamv0YPt3', 'fbfJHSPpUD'];
 }
