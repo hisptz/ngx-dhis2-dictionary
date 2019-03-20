@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 
 import * as _ from 'lodash';
-import { mergeMap, map, tap } from 'rxjs/operators';
+import { mergeMap, map, tap, catchError } from 'rxjs/operators';
 import { Observable, from, forkJoin, of } from 'rxjs';
 
 import { NgxDhis2HttpClientService } from '@hisptz/ngx-dhis2-http-client';
@@ -68,54 +68,97 @@ export class DictionaryEffects {
        */
       from(identifiers)
         .pipe(
-          mergeMap((identifier: any) =>
-           this.httpClient.get(`identifiableObjects/${identifier}.json`, true)
+          mergeMap((identifier: any) => {
+                return this.httpClient.get(`identifiableObjects/${identifier}.json`, true).pipe(catchError((err) => of(identifier)))
+            }
           )
         )
         .subscribe((metadata: any) => {
-            this.identifierIds.push(metadata.id);
-          if(metadata) {
-            this.store.dispatch(
-              new UpdateDictionaryMetadataAction(metadata.id, {
-                name: metadata.name,
-                progress: {
-                  loading: true,
-                  loadingSucceeded: true,
-                  loadingFailed: false
+            if(metadata.href) {
+                this.store.dispatch(
+                new UpdateDictionaryMetadataAction(metadata.id, {
+                    name: metadata.name,
+                    progress: {
+                    loading: true,
+                    loadingSucceeded: true,
+                    loadingFailed: false
+                    }
+                })
+                );
+                if (metadata.href && metadata.href.indexOf('indicator') !== -1) {
+                const indicatorUrl =
+                    'indicators/' +
+                    metadata.id +
+                    '.json?fields=:all,user[name,email,phoneNumber],displayName,lastUpdatedBy[id,name,phoneNumber,email],id,name,numeratorDescription,' +
+                    'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
+                    'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
+                    'legends~size],dataSets[name]';
+                this.getIndicatorInfo(indicatorUrl, metadata.id);
+                } else if (
+                metadata.href &&
+                metadata.href.indexOf('dataElement') !== -1
+                ) {
+                const dataElementUrl =
+                    'dataElements/' +
+                    metadata.id +
+                    '.json?fields=:all,id,name,aggregationType,displayName,' +
+                    'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSets[:all,!compulsoryDataElementOperands]';
+                this.getDataElementInfo(dataElementUrl, metadata.id);
+                } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
+                const dataSetUrl =
+                    'dataSets/' +
+                    metadata.id +
+                    '.json?fields=:all,user[:all],id,name,periodType,shortName,' +
+                    'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
+                this.getDataSetInfo(dataSetUrl, metadata.id);
                 }
-              })
-            );
-            if (metadata.href && metadata.href.indexOf('indicator') !== -1) {
-              const indicatorUrl =
-                'indicators/' +
-                metadata.id +
-                '.json?fields=:all,user[name,email,phoneNumber],displayName,lastUpdatedBy[id,name,phoneNumber,email],id,name,numeratorDescription,' +
-                'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
-                'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
-                'legends~size],dataSets[name]';
-              this.getIndicatorInfo(indicatorUrl, metadata.id);
-            } else if (
-              metadata.href &&
-              metadata.href.indexOf('dataElement') !== -1
-            ) {
-              const dataElementUrl =
-                'dataElements/' +
-                metadata.id +
-                '.json?fields=:all,id,name,aggregationType,displayName,' +
-                'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSets[:all,!compulsoryDataElementOperands]';
-              this.getDataElementInfo(dataElementUrl, metadata.id);
-            } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
-              const dataSetUrl =
-                'dataSets/' +
-                metadata.id +
-                '.json?fields=:all,user[:all],id,name,periodType,shortName,' +
-                'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
-              this.getDataSetInfo(dataSetUrl, metadata.id);
+            } else {
+                // get from functions
+                this.httpClient.get('dataStore/functions/' + metadata + '.json?').pipe(catchError((err) => of(metadata))).subscribe((functionInfo) => {
+                    if (functionInfo.id) {
+                        this.store.dispatch(
+                            new UpdateDictionaryMetadataAction(functionInfo.id, {
+                                name: functionInfo.name,
+                                progress: {
+                                loading: true,
+                                loadingSucceeded: true,
+                                loadingFailed: false
+                                }
+                            })
+                        );
+                        this.displayFunctionsInfo(functionInfo);
+                    } else {
+                        this.store.dispatch(
+                            new UpdateDictionaryMetadataAction(functionInfo, {
+                                name: 'Metadata with id ' + functionInfo + ' not found in the system',
+                                progress: {
+                                loading: true,
+                                loadingSucceeded: true,
+                                loadingFailed: false
+                                }
+                            })
+                        );
+                    }
+                })
             }
-          }
-        });
+        },
+        (err)=>{
+            if (err.status == 404) {
+                console.log(err)
+            }
+        })
     })
   );
+
+//   http.get(`api/path/here`)
+//     .map(res => res.json())
+//     .catch(
+//         err => {
+//           // handle errors
+//         })
+//     .subscribe(
+//         data => console.log(data)
+//     );
 
   getDataSetInfo(dataSetUrl: string, dataSetId: string) {
     this.httpClient.get(`${dataSetUrl}`, true).subscribe((dataSet: any) => {
@@ -779,6 +822,50 @@ export class DictionaryEffects {
         ' days </strong></span></li>'
       });
       return listOfDataSets;
+  }
+
+  displayFunctionsInfo(functionInfo) {
+    let indicatorDescription = '<p><strong>' + functionInfo.name + '</strong> is a function for calculating ';
+    indicatorDescription += '<strong>' + functionInfo.description + '</strong>';
+    indicatorDescription += '</p>';
+    indicatorDescription += '<h6>Function`s rules</h6>' +
+    '<div style="height: 200px; width: 60%; overflow: auto;">' +
+    '<table class="table table-bordered">' +
+      '<thead>'+
+        '<tr>'+
+          '<th style="padding: 0.45em;">Name</th>'+
+          '<th style="padding: 0.45em;">Description</th>'+
+        '</tr>' +
+       '</thead><tbody>';
+
+       if (functionInfo.rules) {
+           let rulesHtml = '';
+           functionInfo.rules.forEach((rule) => {
+               rulesHtml += '<tr><td>' + rule.name + '</td><td>' + rule.description + '</td></tr>';
+           });
+           indicatorDescription += rulesHtml;
+       }
+
+       indicatorDescription += '</tbody></table></div>';
+       if (functionInfo.created) {
+           indicatorDescription += '<br><div><p> Created on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
+       }
+
+       if (functionInfo.lastUpdated) {
+           indicatorDescription += ' and last upated on <strong>' + this.datePipe.transform(functionInfo.lastUpdated) + '</strong>';
+       }
+       indicatorDescription += '</p></div>';
+
+    this.store.dispatch(
+        new UpdateDictionaryMetadataAction(functionInfo.id, {
+          description: indicatorDescription,
+          progress: {
+            loading: false,
+            loadingSucceeded: true,
+            loadingFailed: false
+          }
+        })
+      );
   }
 
   showOtherUserParticulars() {
