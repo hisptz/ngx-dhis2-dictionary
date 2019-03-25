@@ -432,7 +432,7 @@ export class DictionaryEffects {
 
             indicator.indicatorGroups.forEach((indicatorGroup, index) => {
               indicatorDescription +=
-                '<li><span><strong style="color: #2C6695">' +
+                '<li><span><strong>' +
                 indicatorGroup.name +
                 '</strong> with <strong>' +
                 indicatorGroup.indicators +
@@ -807,7 +807,7 @@ export class DictionaryEffects {
   getDataElementsGroups(groups) {
     let groupsHtml = '';
     _.map(groups, (group) => {
-      groupsHtml = '<li>' + group.name + ' (with other <strong  style="color: #2C6695">' + group.dataElements + '</strong>) data elements </li>';
+      groupsHtml = '<li>' + group.name + ' (with other <strong>' + group.dataElements + '</strong>) data elements </li>';
     })
     return groupsHtml;
   }

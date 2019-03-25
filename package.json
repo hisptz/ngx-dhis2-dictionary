@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4200",
+    "start": "ng serve --port 4202",
     "build": "ng build",
     "build-lib": "ng build --prod ngx-dhis2-dictionary",
     "publish": "npm run build-lib && cd dist/ngx-dhis2-dictionary && npm publish --access public && cd ../../",
