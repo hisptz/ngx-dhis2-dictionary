@@ -798,7 +798,11 @@ export class DictionaryEffects {
       })
     })
     _.uniqBy(categories, 'id').forEach((category) => {
-      categoriesHtml += '<li>' + category.name + '</li>';
+      if (category.name.toLowerCase() == 'default') {
+        categoriesHtml += '<li> None </li>';
+      } else {
+        categoriesHtml += '<li>' + category.name + '</li>';
+      }
     })
 
     return categoriesHtml;
