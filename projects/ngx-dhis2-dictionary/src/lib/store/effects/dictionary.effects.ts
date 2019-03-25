@@ -479,7 +479,7 @@ export class DictionaryEffects {
         if (numeratorResults[0]) {
           indicatorDescription +=
           '<h6><strong>Calculation details</strong></h6>'+
-          '<div style="max-height: 400px; width: 100%; overflow: auto;">'+
+          '<div style="width: 100%; overflow: auto;">'+
               '<table class="table table-bordered">'+
                 '<thead>'+
                   '<tr>'+
@@ -602,7 +602,8 @@ export class DictionaryEffects {
               if (legendSetsInformation[0].legendSets[0]) {
                 legendSetTable += '<h6>Uses <strong>' + legendSetsInformation[0].legendSets[0].name +'</strong> for analysis, spread accross <strong>' +legendSetsInformation[0].legendSets[0].legends.length +'</strong> classes for analysis.</h6>'
               }
-              legendSetTable += '<div style="height: 200px; width: 50%; overflow: auto;">' +
+              if (legendSetsInformation[0].legendSets[0].legends.length > 0) {
+                legendSetTable += '<div style="width: 50%; overflow: auto;">' +
                   '<table class="table table-bordered">' +
                     '<thead>'+
                       '<tr>'+
@@ -628,6 +629,7 @@ export class DictionaryEffects {
                     '</tbody>'+
                   '</table>'+
                 '</div>';
+              }
 
                 indicatorDescription += legendSetTable;
             }
@@ -654,7 +656,7 @@ export class DictionaryEffects {
                dataElementsTable +=
                '<br><h6><strong>Data elements in indicator</strong></h6>'+
               '<h6>The following is the summary of the data elements used in the calculations</h6>' +
-              '<div style="height: 300px; width: 100%; overflow: auto;">' +
+              '<div style="width: 100%; overflow: auto;">' +
                   '<table class="table table-bordered">' +
                     '<thead>'+
                       '<tr>'+
@@ -671,8 +673,8 @@ export class DictionaryEffects {
               dataElements[0]['dataElements'].forEach((element) => {
                 dataElementsListBody += 
                 '<tr><td>' + element.name + '</td>'+
-                '<td>' + element.aggregationType + '</td>'+
-                '<td>' + element.valueType +'</td>'+
+                '<td>' + this.formatTextToSentenceFormat(element.aggregationType) + '</td>'+
+                '<td>' + this.formatTextToSentenceFormat(element.valueType) +'</td>'+
                 '<td>' + element.zeroIsSignificant + '</td>'+
                 '<td>' + this.getCategories(element.categoryCombo.categoryOptionCombos)+ '</td>'+
                 '<td>' + this.getDataSetFromDataElement(element.dataSetElements) + '</td>'+
@@ -829,7 +831,7 @@ export class DictionaryEffects {
     indicatorDescription += '<strong>' + functionInfo.description + '</strong>';
     indicatorDescription += '</p>';
     indicatorDescription += '<h6>Function`s rules</h6>' +
-    '<div style="height: 200px; width: 60%; overflow: auto;">' +
+    '<div style="width: 60%; overflow: auto;">' +
     '<table class="table table-bordered">' +
       '<thead>'+
         '<tr>'+
@@ -866,6 +868,13 @@ export class DictionaryEffects {
           }
         })
       );
+  }
+
+  formatTextToSentenceFormat(text) {
+    text.split('_').map(function(stringSection) {
+      return stringSection.slice(0,1).toUpperCase() + stringSection.slice(1).toLowerCase();
+    }).join(' ')
+    return text.split('_').join(' ').slice(0,1).toUpperCase() + text.split('_').join(' ').slice(1).toLowerCase();
   }
 
   showOtherUserParticulars() {
