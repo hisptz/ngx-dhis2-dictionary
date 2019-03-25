@@ -849,14 +849,6 @@ export class DictionaryEffects {
        }
 
        indicatorDescription += '</tbody></table></div>';
-       if (functionInfo.created) {
-           indicatorDescription += '<br><div><p> Created on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
-       }
-
-       if (functionInfo.lastUpdated) {
-           indicatorDescription += ' and last upated on <strong>' + this.datePipe.transform(functionInfo.lastUpdated) + '</strong>';
-       }
-       indicatorDescription += '</p></div>';
 
     this.store.dispatch(
         new UpdateDictionaryMetadataAction(functionInfo.id, {
@@ -868,6 +860,38 @@ export class DictionaryEffects {
           }
         })
       );
+      /**
+       * get user info
+      **/
+     forkJoin(
+       this.httpClient.get('users/' + functionInfo.user.id + '.json?fields=id,name,phoneNumber,email',true)
+     ).subscribe((userInfo) => {
+       if (functionInfo.created) {
+          indicatorDescription += '<br><div><p> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
+        }
+
+        if (functionInfo.lastUpdated) {
+            indicatorDescription += ' and last upated on <strong>' + this.datePipe.transform(functionInfo.lastUpdated) + '</strong>';
+        }
+
+      indicatorDescription += '</p></div>';
+      this.store.dispatch(
+        new UpdateDictionaryMetadataAction(functionInfo.id, {
+          description: indicatorDescription,
+          progress: {
+            loading: false,
+            loadingSucceeded: true,
+            loadingFailed: false
+          }
+        })
+      );
+     });
+  }
+
+  displayUserInfo(userInfo) {
+    let user = '';
+    user += '<strong><span  title="Phone: ' + userInfo.phoneNumber + ', Email: ' + userInfo.email +'">' + userInfo.name + '</span></strong>';
+    return user;
   }
 
   formatTextToSentenceFormat(text) {
@@ -875,9 +899,5 @@ export class DictionaryEffects {
       return stringSection.slice(0,1).toUpperCase() + stringSection.slice(1).toLowerCase();
     }).join(' ')
     return text.split('_').join(' ').slice(0,1).toUpperCase() + text.split('_').join(' ').slice(1).toLowerCase();
-  }
-
-  showOtherUserParticulars() {
-    console.log('particulars')
   }
 }

@@ -1,15 +1,15 @@
 {
     "/api": {
-      "target": "https://dhis.hisptz.org/dev/",
+      "target": "https://play.dhis2.org/2.30",
       "secure": "false",
-      "auth":"josephatjulius:Jovan2013",
+      "auth":"admin:district",
       "changeOrigin": "true"
 
     },
     "/": {
-      "target": "https://dhis.hisptz.org/dev/",
+      "target": "https://play.dhis2.org/2.30",
       "secure": "false",
-      "auth":"josephatjulius:Jovan2013",
+      "auth":"admin:admin",
       "changeOrigin": "true"
     }
   }
