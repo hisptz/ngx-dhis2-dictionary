@@ -128,16 +128,16 @@ export class DictionaryEffects {
                         );
                         this.displayFunctionsInfo(functionInfo);
                     } else {
-                        this.store.dispatch(
-                            new UpdateDictionaryMetadataAction(functionInfo, {
-                                name: 'Metadata with id ' + functionInfo + ' not found in the system',
-                                progress: {
-                                loading: true,
-                                loadingSucceeded: true,
-                                loadingFailed: false
-                                }
-                            })
-                        );
+                        // this.store.dispatch(
+                        //     new UpdateDictionaryMetadataAction(functionInfo, {
+                        //         name: 'Metadata with id ' + functionInfo + ' not found in the system',
+                        //         progress: {
+                        //         loading: true,
+                        //         loadingSucceeded: true,
+                        //         loadingFailed: false
+                        //         }
+                        //     })
+                        // );
                     }
                 })
             }
@@ -393,28 +393,36 @@ export class DictionaryEffects {
   getIndicatorInfo(indicatorUrl: string, indicatorId: string) {
     this.httpClient.get(`${indicatorUrl}`, true).subscribe((indicator: any) => {
       let indicatorDescription =
-        '<p class="indicator"><strong>' +
+        '<h4 style="color: #464646;">Introduction</h4>'+
+        '<p class="indicator"><span style="color: #325E80;">' +
         indicator.name +
-        '</strong> is a <strong>' +
+        '</span> is a <span style="color: #325E80;">' +
         indicator.indicatorType.name +
-        ' </strong> indicator';
+        ' </span> indicator';
 
       if (indicator.numeratorDescription) {
         indicatorDescription +=
-          '<span>, measured by <strong>' +
+          '<span>, measured by <span style="color: #325E80;">' +
           indicator.numeratorDescription +
-          '</strong></span>';
+          '</span></span>';
       }
 
       if (indicator.denominatorDescription) {
         indicatorDescription +=
-          '<span> to <strong>' +
+          '<span> to <span style="color: #325E80;">' +
           indicator.denominatorDescription +
-          '</strong></span></p>';
+          '</span></span></p>';
       } 
 
       if (indicator.description) {
         indicatorDescription += `<p>It's described as ` + indicator.description + `</p>`;
+      }
+
+
+      if (indicator.annualized) {
+        indicatorDescription +=
+          '<p><span>It’s figure is annualized to support analysis in less than year period ' +
+          '(monthly,quarterly,semi-annually)</span></p>';
       }
 
           /**
@@ -427,26 +435,20 @@ export class DictionaryEffects {
           ) {
 
           indicatorDescription += 
-          '<div><h6><strong>Facts about the indicator</strong></h6>' +
+          '<h4 style="color: #464646;">Indicator facts</h4>' +
           '<h6>The indicator belongs to :-</h6><ul>';
 
             indicator.indicatorGroups.forEach((indicatorGroup, index) => {
               indicatorDescription +=
-                '<li><span><strong>' +
+                '<li><span><span style="color: #325E80;">' +
                 indicatorGroup.name +
-                '</strong> with <strong>' +
-                indicatorGroup.indicators +
+                '</span> with <strong>' +
+                (indicatorGroup.indicators -1) +
                 '</strong> other related indicators</span></li>';
             });
 
-            indicatorDescription += '</ul></div>';
+            indicatorDescription += '</ul>';
           }
-
-      if (indicator.annualized) {
-        indicatorDescription +=
-          '<br><p><span>It’s figure is annualized to support analysis in less than year period ' +
-          '(monthly,quarterly,semi-annually)</span></p>';
-      }
 
       this.store.dispatch(
         new UpdateDictionaryMetadataAction(indicatorId, {
@@ -478,14 +480,14 @@ export class DictionaryEffects {
       ).subscribe((numeratorResults: any[]) => {
         if (numeratorResults[0]) {
           indicatorDescription +=
-          '<h6><strong>Calculation details</strong></h6>'+
+          '<h4 style="color: #464646;">Calculation details</h4>'+
           '<div style="width: 100%; overflow: auto;">'+
               '<table class="table table-bordered">'+
                 '<thead>'+
-                  '<tr>'+
-                    '<th></th>'+
-                    '<th>Formula </th>'+
-                    '<th>Sources</th>'+
+                  '<tr style="background-color: #f5f5f5; color: #555;">'+
+                    '<th style="padding: 0.35rem;"></th>'+
+                    '<th style="padding: 0.35rem;">Formula </th>'+
+                    '<th style="padding: 0.35rem;">Sources</th>'+
                   '</tr>'+
                 '</thead>'+
                 '<tbody>'+
@@ -497,11 +499,11 @@ export class DictionaryEffects {
         if (numeratorResults[1] && numeratorResults[1].dataSets) {
           const dataSets: any[] = numeratorResults[1].dataSets;
 
-          indicatorDescription +='<td>';
+          indicatorDescription +='<td><ul style="padding-left: 10px">';
           if (dataSets.length > 0) {
             indicatorDescription += this.listAllDataSets(dataSets)
           }
-          indicatorDescription += '</td></tr>';
+          indicatorDescription += '</ul></td></tr>';
         }
 
         this.store.dispatch(
@@ -544,11 +546,11 @@ export class DictionaryEffects {
           if (denominatorResults[1] && denominatorResults[1].dataSets) {
             const dataSets: any[] = denominatorResults[1].dataSets;
 
-            indicatorDescription +='<td>';
+            indicatorDescription +='<td><ul style="padding-left: 10px">';
             if (dataSets.length > 0) {
                 indicatorDescription += this.listAllDataSets(dataSets)
             }
-            indicatorDescription += '</td></tr></tbody></table></div>';
+            indicatorDescription += '</ul></td></tr></tbody></table></div>';
             }
 
           /**
@@ -598,15 +600,16 @@ export class DictionaryEffects {
               let legendSetTable = '';
               let legendRows = '';
               legendSetTable +=
-              '<h6><strong>Legend for analysis</strong></h6>'
+              '<h4 style="color: #464646;">Legend for analysis</h4>'
               if (legendSetsInformation[0].legendSets[0]) {
-                legendSetTable += '<h6>Uses <strong>' + legendSetsInformation[0].legendSets[0].name +'</strong> for analysis, spread accross <strong>' +legendSetsInformation[0].legendSets[0].legends.length +'</strong> classes for analysis.</h6>'
+                legendSetTable += '<h6>Uses <span style="color: #325E80;">' + legendSetsInformation[0].legendSets[0].name +'</span> for analysis, spread accross <span style="color: #325E80;">' +legendSetsInformation[0].legendSets[0].legends.length +'</span> classes for analysis.</h6>'
               }
               if (legendSetsInformation[0].legendSets[0].legends.length > 0) {
-                legendSetTable += '<div style="width: 50%; overflow: auto;">' +
+                legendSetTable += 
+                '<div style="width: 50%; overflow: auto;">' +
                   '<table class="table table-bordered">' +
                     '<thead>'+
-                      '<tr>'+
+                      '<tr style="background-color: #f5f5f5; color: #555;">'+
                         '<th style="padding: 0.45em;">Class</th>'+
                         '<th style="padding: 0.45em;">Lower</th>'+
                         '<th style="padding: 0.45em;">Upper</th>'+
@@ -654,12 +657,12 @@ export class DictionaryEffects {
              ).subscribe((dataElements) => {
                let dataElementsTable = ''; let dataElementsListBody = '';
                dataElementsTable +=
-               '<br><h6><strong>Data elements in indicator</strong></h6>'+
+               '<br><h4 style="color: #464646;">Data elements in indicator</h4>'+
               '<h6>The following is the summary of the data elements used in the calculations</h6>' +
               '<div style="width: 100%; overflow: auto;">' +
                   '<table class="table table-bordered">' +
                     '<thead>'+
-                      '<tr>'+
+                      '<tr style="background-color: #f5f5f5; color: #555;">'+
                         '<th style="padding: 0.45em;">Data element</th>'+
                         '<th style="padding: 0.45em;">Aggregation</th>'+
                         '<th style="padding: 0.45em;">Value Type</th>'+
@@ -676,9 +679,9 @@ export class DictionaryEffects {
                 '<td>' + this.formatTextToSentenceFormat(element.aggregationType) + '</td>'+
                 '<td>' + this.formatTextToSentenceFormat(element.valueType) +'</td>'+
                 '<td>' + element.zeroIsSignificant + '</td>'+
-                '<td>' + this.getCategories(element.categoryCombo.categoryOptionCombos)+ '</td>'+
-                '<td>' + this.getDataSetFromDataElement(element.dataSetElements) + '</td>'+
-                '<td>' + this.getDataElementsGroups(element.dataElementGroups)+'</td></tr>';
+                '<td><ul style="padding-left: 10px">' + this.getCategories(element.categoryCombo.categoryOptionCombos)+ '</ul></td>'+
+                '<td><ul style="padding-left: 10px">' + this.getDataSetFromDataElement(element.dataSetElements) + '</ul></td>'+
+                '<td><ul style="padding-left: 10px">' + this.getDataElementsGroups(element.dataElementGroups)+'</ul></td></tr>';
               })
               dataElementsTable += dataElementsListBody;
               dataElementsTable += '</tbody></table></div>';
@@ -701,7 +704,7 @@ export class DictionaryEffects {
                */
               if (indicator.user) {
                 indicatorDescription +=
-                  '<br><div><p>Created in the system on <strong>' +
+                  '<br><div style="float: right"><p>Created in the system on <strong>' +
                   this.datePipe.transform(indicator.created) +
                   '</strong> by <strong>';
                   if (indicator.user.phoneNumber) {
@@ -811,7 +814,7 @@ export class DictionaryEffects {
   getDataElementsGroups(groups) {
     let groupsHtml = '';
     _.map(groups, (group) => {
-      groupsHtml = '<li>' + group.name + ' (with other <strong>' + group.dataElements + '</strong>) data elements </li>';
+      groupsHtml = '<li style="margin: 3px;">' + group.name + ' (with other <strong>' + group.dataElements + '</strong>) data elements </li>';
     })
     return groupsHtml;
   }
@@ -838,7 +841,7 @@ export class DictionaryEffects {
     '<div style="width: 60%; overflow: auto;">' +
     '<table class="table table-bordered">' +
       '<thead>'+
-        '<tr>'+
+        '<tr style="background-color: #f5f5f5; color: #555;">'+
           '<th style="padding: 0.45em;">Name</th>'+
           '<th style="padding: 0.45em;">Description</th>'+
         '</tr>' +
@@ -871,7 +874,7 @@ export class DictionaryEffects {
        this.httpClient.get('users/' + functionInfo.user.id + '.json?fields=id,name,phoneNumber,email',true)
      ).subscribe((userInfo) => {
        if (functionInfo.created) {
-          indicatorDescription += '<br><div><p> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
+          indicatorDescription += '<br><div style="float: right;"><p> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
         }
 
         if (functionInfo.lastUpdated) {

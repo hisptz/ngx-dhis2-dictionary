@@ -6,17 +6,20 @@
     (click)="setActiveItem(-1, $event)"
     [ngClass]="activeItem === -1 ? 'active-item': ''"
     >All</button>
-    <button
-      class="dictionary-title indicator-btn"
-      *ngFor="let dictionaryItem of dictionaryList$ | async; let i = index"
-      (click)="setActiveItem(i, $event)"
-      [ngClass]="activeItem === i ? 'active-item': ''"
-    >
+    <ng-template ngFor let-dictionaryItem [ngForOf]="dictionaryList$ | async" let-i="index" [ngForTrackBy]="trackByFn">
+        <button
+        *ngIf="dictionaryItem.name"
+        class="dictionary-title indicator-btn"
+        (click)="setActiveItem(i, $event)"
+        [ngClass]="activeItem === i ? 'active-item': ''"
+       >
       <span>{{ dictionaryItem.name }}</span>
+      <span (click)="remove(dictionaryItem)" title="remove" style="margin-left: 10px; padding: 2px; border-radius: 4px; background-color: #FFF; color: #222;">x</span>
       <div *ngIf="!dictionaryItem.name">
-        <app-dictionary-progress></app-dictionary-progress>
+          <app-dictionary-progress></app-dictionary-progress>
       </div>
-    </button>
+      </button>
+    </ng-template>
   </div>
   <div *ngIf="isFullScreen && activeItem === -1">
     <app-indicators-list 

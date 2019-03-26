@@ -16,6 +16,7 @@
 .dictionary-body {
   border-top: solid thin #ececec;
   padding: 10px;
+  padding-bottom: 30px;
 }
 .dictionary-description {
   text-align: justify;

@@ -16,6 +16,7 @@ import * as indicators from '../../store/actions/indicators.actions'
 import { DomSanitizer } from '@angular/platform-browser';
 import { getListOfIndicators, getAllIndicators } from '../../store/selectors/indicators.selectors';
 import { AppState } from '../../store/reducers/indicators.reducers';
+import { Identifiers } from '@angular/compiler';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -103,6 +104,7 @@ export class DictionaryListComponent implements OnInit {
   }
 
   setActiveItem(index, e) {
+    console.log(index)
     e.stopPropagation();
     if (this.activeItem === index) {
       this.activeItem = -1;
@@ -115,5 +117,25 @@ export class DictionaryListComponent implements OnInit {
     let safeHtml;
     safeHtml = this.sanitizer.bypassSecurityTrustHtml(html);
     return safeHtml;
+  }
+
+  remove(item) {
+    let identifiers = [];
+    if (this.metadataIdentifiers.length === 1) {
+      this.activeItem = -1;
+    }
+    this.metadataIdentifiers.forEach((identifier) => {
+      if (item.id !== identifier) {
+        identifiers.push(identifier);
+      }
+    });
+    this.metadataIdentifiers = _.uniq(identifiers);
+    this.store.dispatch(
+      new InitializeDictionaryMetadataAction(this.metadataIdentifiers)
+    );
+
+    this.dictionaryList$ = this.store.select(
+      getDictionaryList(this.metadataIdentifiers)
+    );
   }
 }
