@@ -1,17 +1,30 @@
 <div class="dictionary-list-container">
-  <div
-    class="dictionary-item-container"
-    *ngFor="let dictionaryItem of dictionaryList$ | async; let i = index"
-  >
-    <div
-      class="dictionary-title"
+  <div class="dictionary-header">
+    <button 
+    *ngIf="isFullScreen"
+    class="indicator-btn"
+    (click)="setActiveItem(-1, $event)"
+    [ngClass]="activeItem === -1 ? 'active-item': ''"
+    >All</button>
+    <button
+      class="dictionary-title indicator-btn"
+      *ngFor="let dictionaryItem of dictionaryList$ | async; let i = index"
       (click)="setActiveItem(i, $event)"
+      [ngClass]="activeItem === i ? 'active-item': ''"
     >
       <span>{{ dictionaryItem.name }}</span>
       <div *ngIf="!dictionaryItem.name">
         <app-dictionary-progress></app-dictionary-progress>
       </div>
-    </div>
+    </button>
+  </div>
+  <div *ngIf="isFullScreen && activeItem === -1">
+    <app-indicators-list></app-indicators-list>
+  </div>
+  <div
+    class="dictionary-item-container"
+    *ngFor="let dictionaryItem of dictionaryList$ | async; let i = index"
+  >
     <div
       class="dictionary-body"
       *ngIf="activeItem === i"

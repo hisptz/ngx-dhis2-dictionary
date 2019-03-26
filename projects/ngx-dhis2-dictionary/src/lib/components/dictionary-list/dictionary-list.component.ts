@@ -23,11 +23,16 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class DictionaryListComponent implements OnInit {
   @Input() metadataIdentifiers: Array<string>;
+  @Input() isFullScreen: boolean;
   dictionaryList$: Observable<MetadataDictionary[]>;
   activeItem: number;
 
   constructor(private store: Store<DictionaryState>, private sanitizer: DomSanitizer) {
-    this.activeItem = 0;
+    if (this.isFullScreen) {
+      this.activeItem = -1;
+    } else {
+      this.activeItem = 0;
+    }
   }
 
   ngOnInit() {

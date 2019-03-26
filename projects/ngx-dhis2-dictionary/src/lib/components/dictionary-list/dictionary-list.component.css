@@ -24,3 +24,35 @@
 .table th, .table td {
   padding: 0.45rem !important;
 }
+
+.indicator-btn {
+  background-color: #eee;
+    margin-right: 5px;
+    color: #222;
+    font-size: 1em;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: none;
+    cursor: pointer;
+    padding: .1em .5em;
+    border-radius: 15px;
+    line-height: 1.5;
+    margin: 3px;
+}
+
+.active-item {
+  background-color: #2a8fd1;
+  color: #ffffff;
+  /* font-weight: 600; */
+}
+
+button:focus {
+  outline: none !important;
+}
