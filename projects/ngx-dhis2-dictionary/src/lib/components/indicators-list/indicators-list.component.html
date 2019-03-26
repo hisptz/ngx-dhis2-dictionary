@@ -1,3 +1,64 @@
-<p>
-  indicators-list works!
-</p>
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-4" style="padding-top: 5px">
+      </div>
+      <div class="col-md-4">
+       <input class="" id="searching-input" placeholder="Search indicator " [(ngModel)]="searchingText">
+
+      </div>
+      <div class="col-md-2"></div>
+      <div class="col-md-2" style="float: right">
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid" style="margin-top: 20px">
+
+      <div [@hiddenItem] = "loading?'notHidden':'hidden'" style="margin-bottom: 10px" *ngIf="completedPercent < 100">
+        <h5 class="text-center"><img src="assets/img/balls-5.svg" style="height: 70px"/>
+          Loading Indicators {{ indicators.length }}/ {{ totalAvailableIndicators || 0}}( {{ completedPercent | number: '1.0-0' }}% )
+        </h5>
+        <div class="progress" style="margin-bottom: 5px">
+          <div
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar"
+            [attr.aria-valuenow]="completedPercent"
+            [attr.aria-valuemin]="0"
+            [attr.aria-valuemax]="100"
+            [style.width]="(completedPercent)+'%'"
+          ></div>
+        </div>
+      </div>
+    
+      <p  *ngIf="(completedPercent > 10 && searchingText != '') || (completedPercent > 10)" class="text-center lead" style="margin-bottom: 5px; margin-top: 5px">
+        <b class="searched-indicators">{{ (indicators | filterBySearchInput: searchingText).length || 0 }} </b>
+        <b *ngIf="(indicators | filterBySearchInput: searchingText).length <= 1">indicator</b>
+        <b *ngIf="(indicators | filterBySearchInput: searchingText).length > 1">indicators</b>
+        <span *ngIf="searchingText"> matching <b class="searching-text">`{{searchingText}}`</b> out of <b class="total-indicators">{{(indicators).length}} </b> indicators </span>
+        <!-- <span *ngIf="indicatorGroupsForSearching.length !== 0"> in {{ groupNames() }} </span>
+        <span *ngIf="indicatorGroupsForSearching.length == 1"> indicator group</span>
+        <span *ngIf="indicatorGroupsForSearching.length > 1"> indicator groups</span> -->
+      </p>
+    
+      <p
+        *ngIf="completedPercent == 100 && (indicators | filterBySearchInput: searchingText).length == 0"
+        class="text-center lead" style="margin-bottom: 5px; margin-top: 100px">
+        <span class="lead"> No Indicators</span>
+      </p>
+
+      <div>
+          <div class="card-deck" style="margin-bottom: 20px">
+              <div
+                class="col-sm-12 col-md-3"
+                *ngFor="let indicator of indicators | filterBySearchInput: searchingText | paginate: {itemsPerPage: 4, currentPage: currentPage}"
+              >
+                <app-indicator-properties [indicator]="indicator" (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
+              </div>
+            </div>
+            <div style="margin-top: 30px;">
+              <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+            </div>
+      </div>
+
+    </div>
+  

@@ -1,0 +1,29 @@
+<div class="card-div" style="display: block;" (click)="addSelectedMetadata(indicator.id)">
+  <div class="heading"><h5 class="card-title">{{ indicator.name }}</h5></div>
+  <div class="card cursor-pointer" style="width: 90%; margin-top: 10px;margin-bottom: 5px;">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <label>Type</label> <br>
+            {{ indicator.indicatorType.name}}
+          </li>
+      <li class="list-group-item">
+        <label>Numerator</label> <br>
+        {{ indicator.numeratorDescription}}
+      </li>
+      <li class="list-group-item">
+        <label>Denominator</label> <br>
+        {{ indicator.denominatorDescription}}
+      </li>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-6">
+              <label>Created by:</label> <br>{{indicator.user.name}}
+          </div>
+          <div class="col-6">
+              <label>Created on:</label> <br>{{indicator.lastUpdated | date}}
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

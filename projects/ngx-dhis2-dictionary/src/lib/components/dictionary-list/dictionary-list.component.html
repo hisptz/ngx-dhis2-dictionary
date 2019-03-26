@@ -19,7 +19,11 @@
     </button>
   </div>
   <div *ngIf="isFullScreen && activeItem === -1">
-    <app-indicators-list></app-indicators-list>
+    <app-indicators-list 
+    [indicators]="indicators" 
+    [completedPercent]="completedPercent"
+    [totalAvailableIndicators]="totalAvailableIndicators"
+    (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"></app-indicators-list>
   </div>
   <div
     class="dictionary-item-container"
