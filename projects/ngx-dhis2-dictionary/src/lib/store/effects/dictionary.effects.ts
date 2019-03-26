@@ -128,16 +128,16 @@ export class DictionaryEffects {
                         );
                         this.displayFunctionsInfo(functionInfo);
                     } else {
-                        // this.store.dispatch(
-                        //     new UpdateDictionaryMetadataAction(functionInfo, {
-                        //         name: 'Metadata with id ' + functionInfo + ' not found in the system',
-                        //         progress: {
-                        //         loading: true,
-                        //         loadingSucceeded: true,
-                        //         loadingFailed: false
-                        //         }
-                        //     })
-                        // );
+                        this.store.dispatch(
+                            new UpdateDictionaryMetadataAction(functionInfo, {
+                                name: functionInfo + ' not found',
+                                progress: {
+                                loading: true,
+                                loadingSucceeded: true,
+                                loadingFailed: false
+                                }
+                            })
+                        );
                     }
                 })
             }

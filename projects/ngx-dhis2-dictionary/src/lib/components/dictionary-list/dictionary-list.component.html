@@ -8,7 +8,7 @@
     >All</button>
     <ng-template ngFor let-dictionaryItem [ngForOf]="dictionaryList$ | async" let-i="index" [ngForTrackBy]="trackByFn">
         <button
-        *ngIf="dictionaryItem.name"
+        *ngIf="dictionaryItem.name.indexOf('not found') < 0"
         class="dictionary-title indicator-btn"
         (click)="setActiveItem(i, $event)"
         [ngClass]="activeItem === i ? 'active-item': ''"
