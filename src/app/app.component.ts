@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   metadataIdentifiers: any[] = ['sB79w2hiLp8','TRoamv0YPt3', 'Bcy5tKA08ar', 'fbfJHSPpUD'];
+  isFullScreen: boolean = true;
 }

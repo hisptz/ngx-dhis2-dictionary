@@ -8,6 +8,7 @@ import { DictionaryListComponent } from './components/dictionary-list/dictionary
 import { DictionaryProgressComponent } from './components/dictionary-progress/dictionary-progress.component';
 import { dictionaryReducer } from './store/reducers/dictionary.reducer';
 import { DictionaryEffects } from './store/effects/dictionary.effects';
+import { IndicatorsListComponent } from './components/indicators-list/indicators-list.component';
 
 @NgModule({
   imports: [
@@ -17,7 +18,7 @@ import { DictionaryEffects } from './store/effects/dictionary.effects';
     EffectsModule.forFeature([DictionaryEffects])
   ],
 
-  declarations: [DictionaryListComponent, DictionaryProgressComponent],
+  declarations: [DictionaryListComponent, DictionaryProgressComponent, IndicatorsListComponent],
   exports: [DictionaryListComponent],
   providers: [DatePipe]
 })
