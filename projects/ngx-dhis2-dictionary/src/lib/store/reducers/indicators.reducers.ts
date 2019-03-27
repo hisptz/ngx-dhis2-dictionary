@@ -22,7 +22,10 @@ export const INITIAL_STATE_LOADED_INDICATORS: State = adapter.getInitialState({
 export function indicatorsListReducer(state: IndicatorsState = null, action: IndicatorsAction) {
     switch (action.type) {
         case IndicatorsActions.LoadIndicatorsSuccess:
-            return {...action.payload}
+            return {
+                ...state,
+                ...action.payload
+            }
         default:
             return state;
     }

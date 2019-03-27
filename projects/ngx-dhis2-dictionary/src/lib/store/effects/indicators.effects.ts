@@ -21,6 +21,16 @@ export class IndicatorsEffects {
         ))
     );
 
+    @Effect()
+    programIndicatorsList$: Observable<any> = this.actions$
+    .pipe(ofType<indicators.IndicatorsAction>(indicators.IndicatorsActions.LoadIndicators),
+        switchMap(() => this.httpClient.get('programIndicators.json').pipe(
+          map((indicatorsListObject: any) =>
+            new indicators.loadIndicatorsSuccessAction(indicatorsListObject)),
+          catchError((error) => of(new indicators.loadIndicatorsFailAction(error)))
+        ))
+    );
+
 
     @Effect({dispatch: false})
     indicatorsListSuccess$: Observable<any> = this.actions$

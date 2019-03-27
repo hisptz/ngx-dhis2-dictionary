@@ -94,6 +94,11 @@ export class DictionaryEffects {
                     'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
                     'legends~size],dataSets[name]';
                 this.getIndicatorInfo(indicatorUrl, metadata.id);
+                } else if (metadata.href && metadata.href.indexOf('programIndicator') !== -1) {
+                  // program Indicators
+                  const programIndicatorUrl = 'programIndicators/' + metadata.id + '.json?fields=id,name,lastUpdated,created,aggregationType,expression,filter,expiryDays' +
+                  ',user[id,name,phoneNumber],lastUpdatedBy[id,name,phoneNumber],program[id,name,programIndicators[id,name]]';
+                  this.getProgramIndicatorInfo(programIndicatorUrl, metadata.id);
                 } else if (
                 metadata.href &&
                 metadata.href.indexOf('dataElement') !== -1
@@ -704,7 +709,7 @@ export class DictionaryEffects {
                */
               if (indicator.user) {
                 indicatorDescription +=
-                  '<br><div style="float: right"><p>Created in the system on <strong>' +
+                  '<br><div style="float: right"><p><i>Created in the system on <strong>' +
                   this.datePipe.transform(indicator.created) +
                   '</strong> by <strong>';
                   if (indicator.user.phoneNumber) {
@@ -727,7 +732,7 @@ export class DictionaryEffects {
                     '<strong>' +indicator.lastUpdatedBy.name + '</strong>'
                   }
                   indicatorDescription +=
-                  '</span></p></div>';
+                  '</span></i></p></div>';
               }
     
               this.store.dispatch(
@@ -747,29 +752,157 @@ export class DictionaryEffects {
     });
   }
 
-  getAvailableDataElements(data) {
+  getProgramIndicatorInfo(programIndicatorUrl, programIndicatorId) {
+    this.httpClient.get(`${programIndicatorUrl}`, true).subscribe((programIndicator: any) => {
+        let indicatorDescription = ''; let filterDescription = '';
+        // get expression and filter then describe it
+        let programIndicatorDescriptionExpression = programIndicator.expression;
+        let allDataElements = []; let programStages = [];
+        if (programIndicator.filter) {
+          filterDescription = programIndicator.filter;
+          const filterDataElements = this.getAvailableDataElements(programIndicator.filter, 'programStage');
+          filterDataElements.split(',').forEach((element) => {
+            if (element.length ==11) {
+              allDataElements.push(element)
+            }
+          });
+          const programStagesList = this.getAvailableDataElements(programIndicator.filter);
+          programStagesList.split(',').forEach((programStage) => {
+            if (programStage.length == 11) {
+              programStages.push(programStage);
+            }
+          })
+        }
+        const expressionDataElements = this.getAvailableDataElements(programIndicator.expression, 'programStage');
+        expressionDataElements.split(',').forEach((element) => {
+          if (element.length ==11) {
+            allDataElements.push(element)
+          }
+        });
+        const programStagesList = this.getAvailableDataElements(programIndicator.expression);
+        programStagesList.split(',').forEach((programStage) => {
+          if (programStage.length == 11) {
+            programStages.push(programStage);
+          }
+        })
+
+        forkJoin(
+          this.httpClient.get('programStages.json?filter=id:in:[' + programStages.join(',') + ']&fields=id,name,user,created,description,formType,programStageDataElements~size', true),
+          this.httpClient.get('dataElements.json?filter=id:in:[' + allDataElements.join(',') +']&paging=false&fields=id,name,valueType,aggregationType,domainType',true)
+        ).subscribe((results: any) => {
+          console.log(results)
+          results[0]['programStages'].forEach((stage) => {
+            programIndicatorDescriptionExpression = programIndicatorDescriptionExpression.split(stage.id + '.').join(stage.name);
+            if (programIndicatorDescriptionExpression.indexOf(stage.name) < 0) {
+              programIndicatorDescriptionExpression = stage.name;
+            }
+            filterDescription = filterDescription.split(stage.id + '.').join(' ')
+        })
+
+          results[1]['dataElements'].forEach((dataElement) => {
+            programIndicatorDescriptionExpression = programIndicatorDescriptionExpression.split(dataElement.id).join(dataElement.name);
+            filterDescription = filterDescription.split(dataElement.id).join(' ' + dataElement.name)
+          });
+          indicatorDescription +=
+          '<h4 style="color: #464646;">Introduction</h4>'+
+          '<p class="indicator"><span style="color: #325E80;">' +programIndicator.name
+          if(programIndicator.description) {
+            indicatorDescription += '</span> described as <span style="color: #325E80;">' + programIndicator.description + '</span></span> and <br>';
+          }
+          indicatorDescription += '</span> whose expression is <span style="color: #325E80;">';
+          let overallExpression = ''
+          if (programIndicator.filter) {
+            overallExpression = programIndicatorDescriptionExpression + ' <b>where by</b> ' + filterDescription
+          } else {
+            overallExpression = programIndicatorDescriptionExpression;
+          }
+          
+          indicatorDescription += this.formatProgramIndicatorExpression(overallExpression);
+          indicatorDescription +=
+          ' </span>'+
+          '</span></span></p>';
+          /**
+           * Data sources
+           */
+          indicatorDescription +=
+          '<h4 style="color: #464646;">Data source(Programs) associations</h4>' +
+          '<h6>It is captured from <span style="color: #325E80;">' + programIndicator.program.name + '</span> through the following stages/steps</h6>';
+          indicatorDescription += '<ul>';
+          results[0]['programStages'].forEach((programStage) => {
+            indicatorDescription += '<li> <span style="color: #325E80;">' + programStage.name + '</span> submitting records on every event(case or individual) by <span style="color: #325E80;">' + programStage.formType.toLowerCase() +' form</span></li>';
+          })
+          indicatorDescription += '</ul>';
+          /**
+           * Facts
+           */
+          indicatorDescription += 
+          '<br><h4 style="color: #464646;">Indicator facts</h4>';
+          indicatorDescription += '<ul>';
+          if (programIndicator.program.programIndicators.length > 1) {
+            indicatorDescription += '<li> Has <span style="color: #325E80;">' + (programIndicator.program.programIndicators.length -1) + '</span> related indicators ' +
+            'such as ' + this.listRelatedIndicators(programIndicator.program.programIndicators, programIndicator.id) +' </li>';
+          }
+            indicatorDescription += '</ul>'
+            indicatorDescription += this.displayUserInformation(programIndicator);
+
+            this.store.dispatch(
+              new UpdateDictionaryMetadataAction(programIndicatorId, {
+                description: indicatorDescription,
+                progress: {
+                  loading: false,
+                  loadingSucceeded: true,
+                  loadingFailed: false
+                }
+              })
+            );
+        })
+    })
+  }
+
+  getAvailableDataElements(data, condition?) {
     let dataElementUids = [];
-    const separators = [' ', '\\+', '-', '\\(', '\\)', '\\*', '/', ':', '\\?'];
+    data = data.split('sum(d2:condition(')
+    .join('').split("'").join('').split(",").join('')
+    .split('d2:daysBetween').join('')
+    .split('d2:zing(x)').join('').split('d2:oizp(x)').join('');
+    const separators = [' ', '\\+', '-', '\\(', '\\)', '\\*', '/', ':', '\\?','\\>='];
     const metadataElements = data.split(
       new RegExp(separators.join('|'), 'g')
     );
-    metadataElements.forEach(dataElement => {
-      if (dataElement != "") {
-        dataElementUids.push(this.dataElementWithCategoryOptionCheck(dataElement)[0]);
-      }
-    });
+    console.log(metadataElements)
+    if (!condition) {
+      metadataElements.forEach(dataElement => {
+        if (dataElement != "") {
+          dataElementUids.push(this.dataElementWithCategoryOptionCheck(dataElement)[0]);
+        }
+      });
+    } else {
+      metadataElements.forEach(dataElement => {
+        if (dataElement != "") {
+          dataElementUids.push(this.dataElementWithCategoryOptionCheck(dataElement, 'comboOrStage')[0]);
+        }
+      });
+    }
     return _.uniq(dataElementUids).join(',');
   }
 
-  dataElementWithCategoryOptionCheck(dataElement: any) {
+  dataElementWithCategoryOptionCheck(dataElement: any, condition?) {
     const uid = [];
-    if (dataElement.indexOf('.') >= 1) {
+    if (dataElement.indexOf('.') >= 1 && !condition) {
       uid.push(
         dataElement
           .replace(/#/g, '')
           .replace(/{/g, '')
           .replace(/}/g, '')
           .split('.')[0]
+      );
+    } else if (dataElement.indexOf('.') >= 1 && condition) {
+      uid.push(
+        dataElement
+          .replace(/#/g, '')
+          .replace(/{/g, '')
+          .replace(/}/g, '')
+          .split('.')[1]
       );
     } else {
       uid.push(
@@ -781,6 +914,45 @@ export class DictionaryEffects {
     }
 
     return uid;
+  }
+
+  // getCategoryComboOrProgramStage(expression) {
+  //   return expression
+  //   .replace(/#/g, '')
+  //   .replace(/{/g, '')
+  //   .replace(/}/g, '')
+  //   .split('.')[0]
+  // }
+
+  displayUserInformation(programIndicator) {
+    let indicatorDescription = '';
+    if (programIndicator.user) {
+      indicatorDescription +='<br><div style="float: right"><p><i>Created in the system on <strong>' +
+        this.datePipe.transform(programIndicator.created) +
+        '</strong> by <strong>';
+        if (programIndicator.user.phoneNumber) {
+          indicatorDescription += '<span  title="Phone: ' + programIndicator.user.phoneNumber + ', Email: ' + programIndicator.user.email +'">';
+        }
+        
+        indicatorDescription +=
+        programIndicator.user.name +
+        '</span></strong>';
+        if (programIndicator.lastUpdatedBy) {
+          indicatorDescription +=
+          ' and last updated on <strong>' +
+          this.datePipe.transform(programIndicator.lastUpdated)
+          + '</strong> by ';
+          if (programIndicator.lastUpdatedBy.phoneNumber) {
+            indicatorDescription += '<span  title="Phone: ' + programIndicator.lastUpdatedBy.phoneNumber + ', Email: ' + programIndicator.lastUpdatedBy.email +'">';
+          }
+  
+        indicatorDescription +=
+          '<strong>' +programIndicator.lastUpdatedBy.name + '</strong>'
+        }
+        indicatorDescription +=
+        '</span></i></p></div>';
+    }
+    return indicatorDescription;
   }
 
   getDataSetFromDataElement(dataSets){
@@ -814,7 +986,7 @@ export class DictionaryEffects {
   getDataElementsGroups(groups) {
     let groupsHtml = '';
     _.map(groups, (group) => {
-      groupsHtml = '<li style="margin: 3px;">' + group.name + ' (with other <strong>' + group.dataElements + '</strong>) data elements </li>';
+      groupsHtml = '<li style="margin: 3px;">' + group.name + ' (with other <strong>' + (group.dataElements - 1) + '</strong>) data elements </li>';
     })
     return groupsHtml;
   }
@@ -899,6 +1071,41 @@ export class DictionaryEffects {
     let user = '';
     user += '<strong><span  title="Phone: ' + userInfo.phoneNumber + ', Email: ' + userInfo.email +'">' + userInfo.name + '</span></strong>';
     return user;
+  }
+
+  formatProgramIndicatorExpression(expression) {
+    return expression
+    .replace(/V{event_count}/g, '')
+    .replace(/#/g, '')
+    .replace(/{/g, '')
+    .replace(/}/g, '')
+    
+  }
+
+  listRelatedIndicators(programIndicators, programIndicatorId) {
+    let listOfRelatedIndicators = ''
+    programIndicators.forEach((programIndicator, index) => {
+      if (programIndicator.id != programIndicatorId && index <3) {
+        if (programIndicators.length ==1) {
+          listOfRelatedIndicators += '<span style="color: #325E80;">' +programIndicator.name + '</span>';
+        } else if (programIndicators.length ==2) {
+          if (index == 0) {
+            listOfRelatedIndicators += '<span style="color: #325E80;">' + programIndicator.name + '</span>';
+          } else {
+            listOfRelatedIndicators += ' and <span style="color: #325E80;">' + programIndicator.name + '</span>';
+          }
+        } else {
+          if (index == 0) {
+            listOfRelatedIndicators += '<span style="color: #325E80;">' + programIndicator.name + '</span>,';
+          } else if (index ==1) {
+            listOfRelatedIndicators += '<span style="color: #325E80;">'+ programIndicator.name + '</span>';
+          } else {
+            listOfRelatedIndicators += ' and <span style="color: #325E80;">' + programIndicator.name + '</span>';
+          }
+        }
+      }
+    })
+    return listOfRelatedIndicators;
   }
 
   formatTextToSentenceFormat(text) {

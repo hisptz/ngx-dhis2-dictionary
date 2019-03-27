@@ -6,6 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  metadataIdentifiers: any[] = ['sB79w2hiLp8','TRoamv0YPt3', 'Bcy5tKA08ar', 'fbfJHSPpUD'];
+  metadataIdentifiers: any[] = ['ulgL07PF8rq','sB79w2hiLp8','vDdRoZYybP2', 'Kswd1r4qWLh', 'O8Kuzjsx2Zm','fbfJHSPpUD','xsRrGKBoLCm'];
   isFullScreen: boolean = true;
 }
