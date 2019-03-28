@@ -159,20 +159,10 @@ export class DictionaryEffects {
     })
   );
 
-//   http.get(`api/path/here`)
-//     .map(res => res.json())
-//     .catch(
-//         err => {
-//           // handle errors
-//         })
-//     .subscribe(
-//         data => console.log(data)
-//     );
-
   getDataSetInfo(dataSetUrl: string, dataSetId: string) {
     this.httpClient.get(`${dataSetUrl}`, true).subscribe((dataSet: any) => {
       let dataSetDescription =
-        '<p>' +
+        '<h4 style="color: #464646;">Introduction</h4><p>' +
         dataSet.name +
         ' of the <strong>' +
         dataSet.formType +
@@ -402,7 +392,7 @@ export class DictionaryEffects {
   getIndicatorInfo(indicatorUrl: string, indicatorId: string) {
     this.httpClient.get(`${indicatorUrl}`, true).subscribe((indicator: any) => {
       let indicatorDescription =
-        '<p class="indicator"><strong>' +
+        '<h4 style="color: #464646;">Introduction</h4><p class="indicator"><strong>' +
         indicator.name +
         '</strong> is a <strong>' +
         indicator.indicatorType.name +
@@ -436,7 +426,7 @@ export class DictionaryEffects {
           ) {
 
           indicatorDescription += 
-          '<div><h6><strong>Facts about the indicator</strong></h6>' +
+          '<div><h4 style="color: #464646;"Indicator facts</h4>' +
           '<h6>The indicator belongs to :-</h6><ul>';
 
             indicator.indicatorGroups.forEach((indicatorGroup, index) => {
@@ -444,7 +434,7 @@ export class DictionaryEffects {
                 '<li><span><strong>' +
                 indicatorGroup.name +
                 '</strong> with <strong>' +
-                indicatorGroup.indicators +
+                (indicatorGroup.indicators -1) +
                 '</strong> other related indicators</span></li>';
             });
 
@@ -487,12 +477,12 @@ export class DictionaryEffects {
       ).subscribe((numeratorResults: any[]) => {
         if (numeratorResults[0]) {
           indicatorDescription +=
-          '<h6><strong>Calculation details</strong></h6>'+
+          '<h4 style="color: #464646;">Calculation details</h4>'+
           '<div style="width: 100%; overflow: auto;">'+
               '<table class="table table-bordered">'+
                 '<thead>'+
-                  '<tr>'+
-                    '<th></th>'+
+                  '<tr style="background-color: #d6d6d6; color: #464646;">'+
+                    '<th>Expression</th>'+
                     '<th>Formula </th>'+
                     '<th>Sources</th>'+
                   '</tr>'+
@@ -607,7 +597,7 @@ export class DictionaryEffects {
               let legendSetTable = '';
               let legendRows = '';
               legendSetTable +=
-              '<h6><strong>Legend for analysis</strong></h6>'
+              '<h4 style="color: #464646;">Legend for analysis</h4>'
               if (legendSetsInformation[0].legendSets[0]) {
                 legendSetTable += '<h6>Uses <strong>' + legendSetsInformation[0].legendSets[0].name +'</strong> for analysis, spread accross <strong>' +legendSetsInformation[0].legendSets[0].legends.length +'</strong> classes for analysis.</h6>'
               }
@@ -615,7 +605,7 @@ export class DictionaryEffects {
                 legendSetTable += '<div style="width: 50%; overflow: auto;">' +
                   '<table class="table table-bordered">' +
                     '<thead>'+
-                      '<tr>'+
+                      '<tr style="background-color: #d6d6d6; color: #464646;">'+
                         '<th style="padding: 0.45em;">Class</th>'+
                         '<th style="padding: 0.45em;">Lower</th>'+
                         '<th style="padding: 0.45em;">Upper</th>'+
@@ -663,12 +653,12 @@ export class DictionaryEffects {
              ).subscribe((dataElements) => {
                let dataElementsTable = ''; let dataElementsListBody = '';
                dataElementsTable +=
-               '<br><h6><strong>Data elements in indicator</strong></h6>'+
+               '<br><h4 style="color: #464646;">Data elements in indicator</h4>'+
               '<h6>The following is the summary of the data elements used in the calculations</h6>' +
               '<div style="width: 100%; overflow: auto;">' +
                   '<table class="table table-bordered">' +
                     '<thead>'+
-                      '<tr>'+
+                      '<tr style="background-color: #d6d6d6; color: #464646;">'+
                         '<th style="padding: 0.45em;">Data element</th>'+
                         '<th style="padding: 0.45em;">Aggregation</th>'+
                         '<th style="padding: 0.45em;">Value Type</th>'+
@@ -710,7 +700,7 @@ export class DictionaryEffects {
                */
               if (indicator.user) {
                 indicatorDescription +=
-                  '<br><div><p>Created in the system on <strong>' +
+                  '<br><div style="float: right;"><p><i>Created in the system on <strong>' +
                   this.datePipe.transform(indicator.created) +
                   '</strong> by <strong>';
                   if (indicator.user.phoneNumber) {
@@ -733,7 +723,7 @@ export class DictionaryEffects {
                     '<strong>' +indicator.lastUpdatedBy.name + '</strong>'
                   }
                   indicatorDescription +=
-                  '</span></p></div>';
+                  '</span></i></p></div>';
               }
     
               this.store.dispatch(
@@ -840,14 +830,18 @@ export class DictionaryEffects {
   }
 
   displayFunctionsInfo(functionInfo, ruleId, metadataId) {
-    let indicatorDescription = '<p><strong>' + functionInfo.name + '</strong> is a function for calculating ';
+    let indicatorDescription = '<h4 style="color: #464646;">Introduction</h4><p><strong>' + functionInfo.name + '</strong> is a function for calculating ';
     indicatorDescription += '<strong>' + functionInfo.description + '</strong>';
     indicatorDescription += '</p>';
-    indicatorDescription += '<h6>Function`s rules</h6>' +
+    indicatorDescription += '<h4 style="color: #464646;">Function`s rules</h6>';
+    if (ruleId !='') {
+      indicatorDescription += '<span style="background-color: #c1f2ec; height: 30px; width: 30px; margin-right: 40%; float: right;"></span><span style="font-size: 1em;float: right;">Used rule</span>';
+    }
+    indicatorDescription +=
     '<div style="width: 60%; overflow: auto;">' +
     '<table class="table table-bordered">' +
       '<thead>'+
-        '<tr>'+
+        '<tr style="background-color: #d6d6d6; color: #464646;">'+
           '<th style="padding: 0.45em;">Name</th>'+
           '<th style="padding: 0.45em;">Description</th>'+
         '</tr>' +
