@@ -64,12 +64,14 @@ export class DictionaryListComponent implements OnInit {
 
   selectedMetadataIdentifier(identifier) {
     let identifiers = [];
-    this.metadataIdentifiers.push(identifier);
-    identifiers = _.uniq(this.metadataIdentifiers)
-    const currentIdentifierIndex = identifiers.length - 1;
+    if (_.indexOf(this.metadataIdentifiers, identifier) < 0) {
+      this.metadataIdentifiers.push(identifier);
+    }
+    identifiers = _.uniq(this.metadataIdentifiers);
+    const currentIdentifierIndex = _.indexOf(this.metadataIdentifiers, identifier);
     this.setActiveItem(currentIdentifierIndex);
     this.store.dispatch(
-      new InitializeDictionaryMetadataAction(identifiers)
+      new InitializeDictionaryMetadataAction(this.metadataIdentifiers)
     );
 
     this.dictionaryList$ = this.store.select(
