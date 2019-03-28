@@ -6,13 +6,19 @@
     (click)="setActiveItem(-1, $event)"
     [ngClass]="activeItem === -1 ? 'active-item': ''"
     >All</button>
-    <ng-template ngFor let-dictionaryItem [ngForOf]="dictionaryList$ | async" let-i="index" [ngForTrackBy]="trackByFn">
+    <ng-template ngFor let-dictionaryItem [ngForOf]="dictionaryList$ | async | filterBySearchInput: searchingText" let-i="index" [ngForTrackBy]="trackByFn">
         <button
         *ngIf="dictionaryItem.name.indexOf('not found') < 0"
         class="dictionary-title indicator-btn"
         (click)="setActiveItem(i, $event)"
         [ngClass]="activeItem === i ? 'active-item': ''"
        >
+      <span *ngIf="dictionaryItem.category && dictionaryItem.category =='in'" style="border-radius: 23px; color:#FFF; margin-right: 10px; margin-left: -7px; padding: 4px; font-weight: 600; background-color: #e36e40">{{ dictionaryItem.category }}</span>
+      <span *ngIf="dictionaryItem.category && dictionaryItem.category =='pi'" style="border-radius: 23px; color:#FFF; margin-right: 10px; margin-left: -7px; padding: 4px; font-weight: 600; background-color: #5c9d18">{{ dictionaryItem.category }}</span>
+      <span *ngIf="dictionaryItem.category && dictionaryItem.category =='ds'" style="border-radius: 23px; color:#FFF; margin-right: 10px; margin-left: -7px; padding: 4px; font-weight: 600; background-color: #2d2d30">{{ dictionaryItem.category }}</span>
+      <span *ngIf="dictionaryItem.category && dictionaryItem.category =='de'" style="border-radius: 23px; color:#FFF; margin-right: 10px; margin-left: -7px; padding: 4px; font-weight: 600; background-color: #27cec8">{{ dictionaryItem.category }}</span>
+      <span *ngIf="dictionaryItem.category && dictionaryItem.category =='fn'" style="border-radius: 23px; color:#FFF; margin-right: 10px; margin-left: -7px; padding: 4px; font-weight: 600; background-color: #a763d8">{{ dictionaryItem.category }}</span>
+      
       <span>{{ dictionaryItem.name }}</span>
       <span (click)="remove(dictionaryItem)" title="remove" style="margin-left: 10px; padding: 2px; border-radius: 4px; color: #FFF; font-weight: 900;">x</span>
       <div *ngIf="!dictionaryItem.name">
@@ -30,7 +36,7 @@
   </div>
   <div
     class="dictionary-item-container"
-    *ngFor="let dictionaryItem of dictionaryList$ | async; let i = index"
+    *ngFor="let dictionaryItem of dictionaryList$ | async | filterBySearchInput: searchingText; let i = index"
   >
     <div
       class="dictionary-body"

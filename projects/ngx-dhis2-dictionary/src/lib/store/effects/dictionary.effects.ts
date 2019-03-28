@@ -75,27 +75,39 @@ export class DictionaryEffects {
         )
         .subscribe((metadata: any) => {
             if(metadata.href) {
-                this.store.dispatch(
-                new UpdateDictionaryMetadataAction(metadata.id, {
-                    name: metadata.name,
-                    progress: {
-                    loading: true,
-                    loadingSucceeded: true,
-                    loadingFailed: false
-                    }
-                })
-                );
                 if (metadata.href && metadata.href.indexOf('indicator') !== -1) {
-                const indicatorUrl =
-                    'indicators/' +
-                    metadata.id +
-                    '.json?fields=:all,user[name,email,phoneNumber],displayName,lastUpdatedBy[id,name,phoneNumber,email],id,name,numeratorDescription,' +
-                    'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
-                    'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
-                    'legends~size],dataSets[name]';
-                this.getIndicatorInfo(indicatorUrl, metadata.id);
+                  this.store.dispatch(
+                    new UpdateDictionaryMetadataAction(metadata.id, {
+                        name: metadata.name,
+                        category: 'in',
+                        progress: {
+                        loading: true,
+                        loadingSucceeded: true,
+                        loadingFailed: false
+                        }
+                    })
+                    );
+                  const indicatorUrl =
+                      'indicators/' +
+                      metadata.id +
+                      '.json?fields=:all,user[name,email,phoneNumber],displayName,lastUpdatedBy[id,name,phoneNumber,email],id,name,numeratorDescription,' +
+                      'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
+                      'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
+                      'legends~size],dataSets[name]';
+                  this.getIndicatorInfo(indicatorUrl, metadata.id);
                 } else if (metadata.href && metadata.href.indexOf('programIndicator') !== -1) {
                   // program Indicators
+                  this.store.dispatch(
+                    new UpdateDictionaryMetadataAction(metadata.id, {
+                        name: metadata.name,
+                        category: 'pi',
+                        progress: {
+                        loading: true,
+                        loadingSucceeded: true,
+                        loadingFailed: false
+                        }
+                    })
+                    );
                   const programIndicatorUrl = 'programIndicators/' + metadata.id + '.json?fields=id,name,lastUpdated,created,aggregationType,expression,filter,expiryDays' +
                   ',user[id,name,phoneNumber],lastUpdatedBy[id,name,phoneNumber],program[id,name,programIndicators[id,name]]';
                   this.getProgramIndicatorInfo(programIndicatorUrl, metadata.id);
@@ -103,6 +115,17 @@ export class DictionaryEffects {
                 metadata.href &&
                 metadata.href.indexOf('dataElement') !== -1
                 ) {
+                  this.store.dispatch(
+                    new UpdateDictionaryMetadataAction(metadata.id, {
+                        name: metadata.name,
+                        category: 'de',
+                        progress: {
+                        loading: true,
+                        loadingSucceeded: true,
+                        loadingFailed: false
+                        }
+                    })
+                    );
                 const dataElementUrl =
                     'dataElements/' +
                     metadata.id +
@@ -110,6 +133,17 @@ export class DictionaryEffects {
                     'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSets[:all,!compulsoryDataElementOperands]';
                 this.getDataElementInfo(dataElementUrl, metadata.id);
                 } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
+                  this.store.dispatch(
+                    new UpdateDictionaryMetadataAction(metadata.id, {
+                        name: metadata.name,
+                        category: 'ds',
+                        progress: {
+                        loading: true,
+                        loadingSucceeded: true,
+                        loadingFailed: false
+                        }
+                    })
+                    );
                 const dataSetUrl =
                     'dataSets/' +
                     metadata.id +
@@ -124,6 +158,7 @@ export class DictionaryEffects {
                         this.store.dispatch(
                             new UpdateDictionaryMetadataAction(functionInfo.id, {
                                 name: functionInfo.name,
+                                category: 'fn',
                                 progress: {
                                 loading: true,
                                 loadingSucceeded: true,
@@ -136,6 +171,7 @@ export class DictionaryEffects {
                         this.store.dispatch(
                             new UpdateDictionaryMetadataAction(functionInfo, {
                                 name: functionInfo + ' not found',
+                                category: 'error',
                                 progress: {
                                 loading: true,
                                 loadingSucceeded: true,
