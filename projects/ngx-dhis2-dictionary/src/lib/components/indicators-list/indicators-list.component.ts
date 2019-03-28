@@ -1,8 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable, pipe } from 'rxjs';
-import { getListOfIndicators, getAllIndicators } from '../../store/selectors/indicators.selectors';
-import { AppState } from '../../store/reducers/indicators.reducers';
 
 @Component({
   selector: 'app-indicators-list',
@@ -14,6 +10,7 @@ export class IndicatorsListComponent implements OnInit {
   @Input() indicators: any;
   @Input() completedPercent: number;
   @Input() totalAvailableIndicators: number;
+  @Input() metadataIdentifiers: any;
   @Output() selectedMetadataIdentifier = new EventEmitter<string>()
   error: boolean = false;
   loading: boolean = true;
@@ -21,9 +18,11 @@ export class IndicatorsListComponent implements OnInit {
   selectedIndicator: any = null;
   searchingText: string;
   searchingTextForIndicatorGroup: string;
+  listingIsSet: boolean;
   constructor() {
     this.searchingText = '';
     this.searchingTextForIndicatorGroup = '';
+    this.listingIsSet = false;
     if (this.completedPercent >= 100) {
       this.loading = false;
       this.error = false;
@@ -31,6 +30,10 @@ export class IndicatorsListComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  toggleListingOfItems() {
+    this.listingIsSet = !this.listingIsSet;
   }
 
   selectedMetadata(e){

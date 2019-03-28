@@ -8,6 +8,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class IndicatorPropertiesComponent implements OnInit {
 
   @Input() indicator: any;
+  @Input() listingIsSet: boolean;
+  @Input() metadataIdentifiers: any;
   @Output() selectedMetadata = new EventEmitter<string>();
   constructor() { }
 

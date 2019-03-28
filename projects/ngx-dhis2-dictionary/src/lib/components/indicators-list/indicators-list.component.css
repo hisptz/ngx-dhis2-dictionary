@@ -45,6 +45,15 @@
     outline: none !important;
 }
 
+.listing-btn {
+  outline: none !important;
+}
+
+.listing-btn:focus {
+  outline: none !important;
+}
+
+
 .searched-indicators, .searching-text {
     color: #2C6695; font-weight: 600;
 }

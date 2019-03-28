@@ -1,4 +1,4 @@
-<div class="card-div" style="display: block;" (click)="addSelectedMetadata(indicator.id)">
+<div class="card-div" style="display: block;" *ngIf="!listingIsSet" (click)="addSelectedMetadata(indicator.id)">
   <div class="heading"><h5 class="card-title">{{ indicator.name }}</h5></div>
   <div class="card cursor-pointer" style="width: 90%; margin-top: 10px;margin-bottom: 5px;">
     <ul class="list-group list-group-flush">
@@ -26,4 +26,10 @@
       </li>
     </ul>
   </div>
+</div>
+<div class="listing" *ngIf="listingIsSet"  (click)="addSelectedMetadata(indicator.id)">
+  <div style="width: 30%; display: inline-block;">{{indicator.name}}</div>
+  <div style="width: 50%; display: inline-block;" *ngIf="indicator.description">{{indicator.description}}</div>
+  <div style="width: 50%; display: inline-block;" *ngIf="!indicator.description">measured by {{indicator.numeratorDescription}} to {{indicator.denominatorDescription}}</div>
+  <div style="width: 20%; display: inline-block;"><label>Created on: {{indicator.lastUpdated | date}}</label></div>
 </div>
