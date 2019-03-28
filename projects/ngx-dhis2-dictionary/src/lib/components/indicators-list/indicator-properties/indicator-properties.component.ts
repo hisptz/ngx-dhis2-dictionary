@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-indicator-properties',
@@ -26,5 +27,13 @@ export class IndicatorPropertiesComponent implements OnInit {
 
   addSelectedMetadata(e) {
     this.selectedMetadata.emit(e);
+  }
+
+  checkIfTheIndicatorIsAmongSelected(indicatorId, metadataIdentifiers){
+   if (_.indexOf(metadataIdentifiers, indicatorId) > -1){
+     return true;
+   } else {
+    return false;
+   }
   }
 }
