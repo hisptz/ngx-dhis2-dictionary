@@ -153,12 +153,20 @@ export class DictionaryEffects {
                 }
             } else {
                 // get from functions
-                this.httpClient.get('dataStore/functions/' + metadata + '.json?').pipe(catchError((err) => of(metadata))).subscribe((functionInfo) => {
+                let ruleId = '';
+                let functionIdentifier = '';
+                if (metadata.indexOf('.') > 0) {
+                  functionIdentifier = metadata.split('.')[0];
+                  ruleId = metadata.split('.')[1];
+                } else {
+                  functionIdentifier = metadata;
+                }
+                
+                this.httpClient.get('dataStore/functions/' + functionIdentifier + '.json?').pipe(catchError((err) => of(functionIdentifier))).subscribe((functionInfo) => {
                     if (functionInfo.id) {
                         this.store.dispatch(
-                            new UpdateDictionaryMetadataAction(functionInfo.id, {
+                            new UpdateDictionaryMetadataAction(metadata, {
                                 name: functionInfo.name,
-                                category: 'fn',
                                 progress: {
                                 loading: true,
                                 loadingSucceeded: true,
@@ -166,7 +174,7 @@ export class DictionaryEffects {
                                 }
                             })
                         );
-                        this.displayFunctionsInfo(functionInfo);
+                        this.displayFunctionsInfo(functionInfo, ruleId, metadata);
                     } else {
                         this.store.dispatch(
                             new UpdateDictionaryMetadataAction(functionInfo, {
@@ -1043,16 +1051,20 @@ export class DictionaryEffects {
       return listOfDataSets;
   }
 
-  displayFunctionsInfo(functionInfo) {
+  displayFunctionsInfo(functionInfo, ruleId, metadataId) {
     let indicatorDescription = '<h3 style="color: #355E7F; margin-bottom: 1.5rem">' + functionInfo.name + '</h3>';
-    indicatorDescription += '<p><strong>' + functionInfo.name + '</strong> is a function for calculating ';
+    indicatorDescription += '<h4 style="color: #464646;">Introduction</h4><p><strong>' + functionInfo.name + '</strong> is a function for calculating ';
     indicatorDescription += '<strong>' + functionInfo.description + '</strong>';
     indicatorDescription += '</p>';
-    indicatorDescription += '<h6>Function`s rules</h6>' +
+    indicatorDescription += '<h4 style="color: #464646;">Function`s rules</h6>';
+    if (ruleId !='') {
+      indicatorDescription += '<span style="background-color: #c1f2ec; height: 30px; width: 30px; margin-right: 40%; float: right;"></span><span style="font-size: 1em;float: right;">Used rule</span>';
+    }
+    indicatorDescription +=
     '<div style="width: 60%; overflow: auto;">' +
     '<table class="table table-bordered">' +
       '<thead>'+
-        '<tr style="background-color: #f5f5f5; color: #555;">'+
+        '<tr style="background-color: #d6d6d6; color: #464646;">'+
           '<th style="padding: 0.45em;">Name</th>'+
           '<th style="padding: 0.45em;">Description</th>'+
         '</tr>' +
@@ -1061,23 +1073,26 @@ export class DictionaryEffects {
        if (functionInfo.rules) {
            let rulesHtml = '';
            functionInfo.rules.forEach((rule) => {
-               rulesHtml += '<tr><td>' + rule.name + '</td><td>' + rule.description + '</td></tr>';
+             if (rule.id == ruleId) {
+               rulesHtml += '<tr><td style="background-color: #c1f2ec;">' + rule.name + '</td><td style="background-color: #c1f2ec;">' + rule.description + '</td></tr>';
+             } else {
+              rulesHtml += '<tr><td>' + rule.name + '</td><td>' + rule.description + '</td></tr>';
+             }
            });
            indicatorDescription += rulesHtml;
        }
 
-       indicatorDescription += '</tbody></table></div>';
-
-    this.store.dispatch(
-        new UpdateDictionaryMetadataAction(functionInfo.id, {
-          description: indicatorDescription,
-          progress: {
-            loading: false,
-            loadingSucceeded: true,
-            loadingFailed: false
-          }
-        })
-      );
+        indicatorDescription += '</tbody></table></div>';
+        this.store.dispatch(
+            new UpdateDictionaryMetadataAction(metadataId, {
+              description: indicatorDescription,
+              progress: {
+                loading: false,
+                loadingSucceeded: true,
+                loadingFailed: false
+              }
+            })
+          );
       /**
        * get user info
       **/
@@ -1085,16 +1100,16 @@ export class DictionaryEffects {
        this.httpClient.get('users/' + functionInfo.user.id + '.json?fields=id,name,phoneNumber,email',true)
      ).subscribe((userInfo) => {
        if (functionInfo.created) {
-          indicatorDescription += '<br><div style="float: right;"><p> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
+          indicatorDescription += '<br><div style="float: right;"><p><i> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
         }
 
         if (functionInfo.lastUpdated) {
             indicatorDescription += ' and last upated on <strong>' + this.datePipe.transform(functionInfo.lastUpdated) + '</strong>';
         }
 
-      indicatorDescription += '</p></div>';
+      indicatorDescription += '</i></p></div>';
       this.store.dispatch(
-        new UpdateDictionaryMetadataAction(functionInfo.id, {
+        new UpdateDictionaryMetadataAction(metadataId, {
           description: indicatorDescription,
           progress: {
             loading: false,
