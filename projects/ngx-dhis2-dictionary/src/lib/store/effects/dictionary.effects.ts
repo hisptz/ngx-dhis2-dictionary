@@ -114,10 +114,19 @@ export class DictionaryEffects {
                 }
             } else {
                 // get from functions
-                this.httpClient.get('dataStore/functions/' + metadata + '.json?').pipe(catchError((err) => of(metadata))).subscribe((functionInfo) => {
+                let ruleId = '';
+                let functionIdentifier = '';
+                if (metadata.indexOf('.') > 0) {
+                  functionIdentifier = metadata.split('.')[0];
+                  ruleId = metadata.split('.')[1];
+                } else {
+                  functionIdentifier = metadata;
+                }
+                
+                this.httpClient.get('dataStore/functions/' + functionIdentifier + '.json?').pipe(catchError((err) => of(functionIdentifier))).subscribe((functionInfo) => {
                     if (functionInfo.id) {
                         this.store.dispatch(
-                            new UpdateDictionaryMetadataAction(functionInfo.id, {
+                            new UpdateDictionaryMetadataAction(metadata, {
                                 name: functionInfo.name,
                                 progress: {
                                 loading: true,
@@ -126,13 +135,13 @@ export class DictionaryEffects {
                                 }
                             })
                         );
-                        this.displayFunctionsInfo(functionInfo);
+                        this.displayFunctionsInfo(functionInfo, ruleId, metadata);
                     } else {
                         this.store.dispatch(
                             new UpdateDictionaryMetadataAction(functionInfo, {
                                 name: 'Metadata with id ' + functionInfo + ' not found in the system',
                                 progress: {
-                                loading: true,
+                                loading: false,
                                 loadingSucceeded: true,
                                 loadingFailed: false
                                 }
@@ -830,7 +839,7 @@ export class DictionaryEffects {
       return listOfDataSets;
   }
 
-  displayFunctionsInfo(functionInfo) {
+  displayFunctionsInfo(functionInfo, ruleId, metadataId) {
     let indicatorDescription = '<p><strong>' + functionInfo.name + '</strong> is a function for calculating ';
     indicatorDescription += '<strong>' + functionInfo.description + '</strong>';
     indicatorDescription += '</p>';
@@ -847,23 +856,26 @@ export class DictionaryEffects {
        if (functionInfo.rules) {
            let rulesHtml = '';
            functionInfo.rules.forEach((rule) => {
-               rulesHtml += '<tr><td>' + rule.name + '</td><td>' + rule.description + '</td></tr>';
+             if (rule.id == ruleId) {
+               rulesHtml += '<tr><td style="background-color: #c1f2ec;">' + rule.name + '</td><td style="background-color: #c1f2ec;">' + rule.description + '</td></tr>';
+             } else {
+              rulesHtml += '<tr><td>' + rule.name + '</td><td>' + rule.description + '</td></tr>';
+             }
            });
            indicatorDescription += rulesHtml;
        }
 
-       indicatorDescription += '</tbody></table></div>';
-
-    this.store.dispatch(
-        new UpdateDictionaryMetadataAction(functionInfo.id, {
-          description: indicatorDescription,
-          progress: {
-            loading: false,
-            loadingSucceeded: true,
-            loadingFailed: false
-          }
-        })
-      );
+        indicatorDescription += '</tbody></table></div>';
+        this.store.dispatch(
+            new UpdateDictionaryMetadataAction(metadataId, {
+              description: indicatorDescription,
+              progress: {
+                loading: false,
+                loadingSucceeded: true,
+                loadingFailed: false
+              }
+            })
+          );
       /**
        * get user info
       **/
@@ -871,16 +883,16 @@ export class DictionaryEffects {
        this.httpClient.get('users/' + functionInfo.user.id + '.json?fields=id,name,phoneNumber,email',true)
      ).subscribe((userInfo) => {
        if (functionInfo.created) {
-          indicatorDescription += '<br><div><p> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
+          indicatorDescription += '<br><div style="float: right;"><p><i> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
         }
 
         if (functionInfo.lastUpdated) {
             indicatorDescription += ' and last upated on <strong>' + this.datePipe.transform(functionInfo.lastUpdated) + '</strong>';
         }
 
-      indicatorDescription += '</p></div>';
+      indicatorDescription += '</i></p></div>';
       this.store.dispatch(
-        new UpdateDictionaryMetadataAction(functionInfo.id, {
+        new UpdateDictionaryMetadataAction(metadataId, {
           description: indicatorDescription,
           progress: {
             loading: false,
