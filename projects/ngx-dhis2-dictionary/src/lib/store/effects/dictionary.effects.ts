@@ -199,16 +199,6 @@ export class DictionaryEffects {
     })
   );
 
-//   http.get(`api/path/here`)
-//     .map(res => res.json())
-//     .catch(
-//         err => {
-//           // handle errors
-//         })
-//     .subscribe(
-//         data => console.log(data)
-//     );
-
   getDataSetInfo(dataSetUrl: string, dataSetId: string) {
     this.httpClient.get(`${dataSetUrl}`, true).subscribe((dataSet: any) => {
       let dataSetDescription =
@@ -835,7 +825,6 @@ export class DictionaryEffects {
           this.httpClient.get('programStages.json?filter=id:in:[' + programStages.join(',') + ']&fields=id,name,user,created,description,formType,programStageDataElements~size', true),
           this.httpClient.get('dataElements.json?filter=id:in:[' + allDataElements.join(',') +']&paging=false&fields=id,name,valueType,aggregationType,domainType',true)
         ).subscribe((results: any) => {
-          console.log(results)
           results[0]['programStages'].forEach((stage) => {
             programIndicatorDescriptionExpression = programIndicatorDescriptionExpression.split(stage.id + '.').join(stage.name);
             if (programIndicatorDescriptionExpression.indexOf(stage.name) < 0) {
@@ -915,7 +904,6 @@ export class DictionaryEffects {
     const metadataElements = data.split(
       new RegExp(separators.join('|'), 'g')
     );
-    console.log(metadataElements)
     if (!condition) {
       metadataElements.forEach(dataElement => {
         if (dataElement != "") {
@@ -961,14 +949,6 @@ export class DictionaryEffects {
 
     return uid;
   }
-
-  // getCategoryComboOrProgramStage(expression) {
-  //   return expression
-  //   .replace(/#/g, '')
-  //   .replace(/{/g, '')
-  //   .replace(/}/g, '')
-  //   .split('.')[0]
-  // }
 
   displayUserInformation(programIndicator) {
     let indicatorDescription = '';

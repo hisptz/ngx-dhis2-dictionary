@@ -1,8 +1,7 @@
 <div class="dictionary-list-container">
   <div class="dictionary-header">
     <input class="" id="searching-input" placeholder="Search " [(ngModel)]="searchingText">
-    <button 
-    *ngIf="isFullScreen"
+    <button
     class="indicator-btn"
     (click)="setActiveItem(-1, $event)"
     [ngClass]="activeItem === -1 ? 'active-item': ''"
@@ -28,7 +27,7 @@
       </button>
     </ng-template>
   </div>
-  <div *ngIf="isFullScreen && activeItem === -1">
+  <div *ngIf="activeItem === -1">
     <app-indicators-list 
     [indicators]="indicators" 
     [completedPercent]="completedPercent"

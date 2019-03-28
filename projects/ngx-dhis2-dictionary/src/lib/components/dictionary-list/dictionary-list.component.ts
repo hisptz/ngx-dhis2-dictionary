@@ -60,15 +60,36 @@ export class DictionaryListComponent implements OnInit {
         getDictionaryList(this.metadataIdentifiers)
       );
     }
-    if (this.isFullScreen) {
-      this.store.dispatch(new indicators.loadIndicatorsAction());
+  }
 
+  selectedMetadataIdentifier(identifier) {
+    let identifiers = [];
+    this.metadataIdentifiers.push(identifier);
+    identifiers = _.uniq(this.metadataIdentifiers)
+    const currentIdentifierIndex = identifiers.length - 1;
+    this.setActiveItem(currentIdentifierIndex);
+    this.store.dispatch(
+      new InitializeDictionaryMetadataAction(identifiers)
+    );
+
+    this.dictionaryList$ = this.store.select(
+      getDictionaryList(identifiers)
+    );
+  }
+
+  setActiveItem(index, e?) {
+    if (e) {
+      e.stopPropagation();
+    }
+    this.activeItem = index;
+    if (index == -1) {
+      // check if the store has the items
       this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
-      this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
       if (this.indicatorsList$) {
         this.indicatorsList$.subscribe((indicatorList) => {
           if (indicatorList) {
-            this.totalAvailableIndicators = indicatorList['pager']['total']
+            this.totalAvailableIndicators = indicatorList['pager']['total'];
+            this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
             if (this.allIndicators$) {
               this.allIndicators$.subscribe((indicatorsLoaded) => {
                 if (indicatorsLoaded) {
@@ -84,32 +105,35 @@ export class DictionaryListComponent implements OnInit {
                 }
               })
             }
+          } else {
+            this.store.dispatch(new indicators.loadIndicatorsAction());
+            this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
+            this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
+            if (this.indicatorsList$) {
+              this.indicatorsList$.subscribe((indicatorList) => {
+                if (indicatorList) {
+                  this.totalAvailableIndicators = indicatorList['pager']['total']
+                  if (this.allIndicators$) {
+                    this.allIndicators$.subscribe((indicatorsLoaded) => {
+                      if (indicatorsLoaded) {
+                        this.indicators = [];
+                        _.map(indicatorsLoaded, (indicatorsByPage) => {
+                          this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
+                          this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
+                          if (this.completedPercent === 100 ) {
+                            this.loading = false;
+                            this.error = false;
+                          }
+                        })
+                      }
+                    })
+                  }
+                }
+              })
+            }
           }
         })
       }
-    }
-  }
-
-  selectedMetadataIdentifier(identifier) {
-    let identifiers = [];
-    this.metadataIdentifiers.push(identifier);
-    identifiers = _.uniq(this.metadataIdentifiers)
-    this.store.dispatch(
-      new InitializeDictionaryMetadataAction(identifiers)
-    );
-
-    this.dictionaryList$ = this.store.select(
-      getDictionaryList(identifiers)
-    );
-  }
-
-  setActiveItem(index, e) {
-    console.log(index)
-    e.stopPropagation();
-    if (this.activeItem === index) {
-      this.activeItem = -1;
-    } else {
-      this.activeItem = index;
     }
   }
 
