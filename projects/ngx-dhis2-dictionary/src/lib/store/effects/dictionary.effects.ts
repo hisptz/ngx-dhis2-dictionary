@@ -397,7 +397,8 @@ export class DictionaryEffects {
 
   getIndicatorInfo(indicatorUrl: string, indicatorId: string) {
     this.httpClient.get(`${indicatorUrl}`, true).subscribe((indicator: any) => {
-      let indicatorDescription =
+      let indicatorDescription = '<h3 style="color: #355E7F; margin-bottom: 1.5rem">' + indicator.name + '</h3>';
+      indicatorDescription +=
         '<h4 style="color: #464646;">Introduction</h4>'+
         '<p class="indicator"><span style="color: #325E80;">' +
         indicator.name +
@@ -803,6 +804,7 @@ export class DictionaryEffects {
             programIndicatorDescriptionExpression = programIndicatorDescriptionExpression.split(dataElement.id).join(dataElement.name);
             filterDescription = filterDescription.split(dataElement.id).join(' ' + dataElement.name)
           });
+          indicatorDescription += '<h3 style="color: #355E7F; margin-bottom: 1.5rem">' + programIndicator.name + '</h3>';
           indicatorDescription +=
           '<h4 style="color: #464646;">Introduction</h4>'+
           '<p class="indicator"><span style="color: #325E80;">' +programIndicator.name
@@ -1006,7 +1008,8 @@ export class DictionaryEffects {
   }
 
   displayFunctionsInfo(functionInfo) {
-    let indicatorDescription = '<p><strong>' + functionInfo.name + '</strong> is a function for calculating ';
+    let indicatorDescription = '<h3 style="color: #355E7F; margin-bottom: 1.5rem">' + functionInfo.name + '</h3>';
+    indicatorDescription += '<p><strong>' + functionInfo.name + '</strong> is a function for calculating ';
     indicatorDescription += '<strong>' + functionInfo.description + '</strong>';
     indicatorDescription += '</p>';
     indicatorDescription += '<h6>Function`s rules</h6>' +

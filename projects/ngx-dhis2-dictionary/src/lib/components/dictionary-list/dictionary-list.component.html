@@ -14,7 +14,7 @@
         [ngClass]="activeItem === i ? 'active-item': ''"
        >
       <span>{{ dictionaryItem.name }}</span>
-      <span (click)="remove(dictionaryItem)" title="remove" style="margin-left: 10px; padding: 2px; border-radius: 4px; background-color: #FFF; color: #222;">x</span>
+      <span (click)="remove(dictionaryItem)" title="remove" style="margin-left: 10px; padding: 2px; border-radius: 4px; color: #FFF; font-weight: 900;">x</span>
       <div *ngIf="!dictionaryItem.name">
           <app-dictionary-progress></app-dictionary-progress>
       </div>
