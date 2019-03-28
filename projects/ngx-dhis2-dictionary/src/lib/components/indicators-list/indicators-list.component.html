@@ -14,7 +14,7 @@
   <div class="container-fluid" style="margin-top: 20px">
 
       <div style="margin-bottom: 10px" *ngIf="completedPercent < 100">
-        <h5 class="text-center"><img src="assets/img/balls-5.svg" style="height: 70px"/>
+        <h5 class="text-center">
           Loading Indicators {{ indicators.length }}/ {{ totalAvailableIndicators || 0}}( {{ completedPercent | number: '1.0-0' }}% )
         </h5>
         <div class="progress" style="margin-bottom: 5px">
