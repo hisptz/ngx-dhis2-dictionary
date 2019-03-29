@@ -31,6 +31,8 @@ export class DictionaryListComponent implements OnInit {
   dictionaryList$: Observable<MetadataDictionary[]>;
   activeItem: number;
   indicators: any[] = [];
+  searchingText: string;
+  currentPage: number = 1;
   indicatorsList$: Observable<any>;
   allIndicators$: Observable<any>;
   completedPercent = 0;
@@ -45,6 +47,7 @@ export class DictionaryListComponent implements OnInit {
     } else {
       this.activeItem = 0;
     }
+    this.searchingText = '';
     this.indicators = [];
     this.loading = true;
     this.error =false;

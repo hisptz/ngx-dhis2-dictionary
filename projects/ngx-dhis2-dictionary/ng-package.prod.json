@@ -3,5 +3,8 @@
   "dest": "../../dist/ngx-dhis2-dictionary",
   "lib": {
     "entryFile": "src/public_api.ts"
-  }
+  },
+  "whitelistedNonPeerDependencies": [
+    "ngx-pagination"
+  ]
 }

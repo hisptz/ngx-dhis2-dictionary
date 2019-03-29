@@ -3,13 +3,13 @@
       <div class="col-md-4" style="padding-top: 5px">
       </div>
       <div class="col-md-4">
-       <input class="" id="searching-input" placeholder="Search indicator " [(ngModel)]="searchingText">
+       <input class="" id="searching-input" placeholder="Search indicator " [(ngModel)]="searchText">
       </div>
       <div class="col-md-2"></div>
       <div class="col-md-2">
         <button (click)="toggleListingOfItems()" id="listing-btn" style="float: right; border-radius: 4px; border: none; background-color: #FFF; padding: 2px;">
-          <span *ngIf="listingIsSet" title="list view"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACXSURBVGhD7dexDYJQFIXhV1g4ALGwsKCixhVcgQ2orampqRmCFViBFVzBFeRYv5tgDPG9a/4v+Wc4OQHAx14OG1Xk6bBBAQD8OqgyYYXaxUVZi/urzGX/xlk9EtYrAEAerg57D3LEWs7cM5d9cVinAAB+HdUtYZXaxd989pOaE3ZXAIA8NA6rVcRaztwzl31yWKsAbAphBQ5/i9OD8QfcAAAAAElFTkSuQmCC"></span>
-          <span *ngIf="!listingIsSet" title="Thumbnails"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAALxSURBVGhD7dhLqE1RHMfxg+t180hukldigsiAbopIFFFSYmDIhIlMlLxmMlLEwICEEEoUt25KJElImMhbBkTJ+/36/vbtX6vdf6+1Z7qn9avP4Kx+65yzzmM/ViMnJyenKdILQxKq0hte3wxGVfrCm2MGonZW4SP+JrzGfITZgh/w+qFnmIow+/ALXj90D2MQTQ+8xx+8jXgHPel1WIZC8/RmvDnmAzT3FCxalMb0IXhzzCeotxPR6GtXUW80Fn0i6j0vHnVlCjR2t3hUnVlQ70rxqCuLobFzxaPqrIR6R4tHkeSFkLwQkhdSFR2nVdSRZVyEvZlwIZOhsfvw5pgVUC9cyCJo7CK8OWY91EsuRHkBlevohEUfwld4Pc9+WMbjN7yeZxuSmYOreJygRUxAmGW4Ba9vHuE0RiDMWtyBN8c8wCEMQk63TBu8P1uo6usdDq8faoWXUfD6oT6olY2o88fTH1tHoDB74XXLdHifDUtPnIHXLXuJiYhGl+9foAu/mxE6V+hJb8Oib0Jjmu/NMTo8q3cWlnZoTAv05pgnUG8PoslndpIXQvJCqtI0CxkAFXXPPi3CXvgpLJOgsYfw5pjVUO8yLAuhMS3Om2M2Q70jSEZvROU6wkNof+ib9Hqe8BA6GnU2LcwGJKOfiDYGLiQchM7EYXSS0+K8fkgnTm3vhFmK8/D6oR3oh5xuGf28tPkWowu4crQvNh1e38zDSJSjHcoZ8OaYudAFba3sgvcHK9OF5RqE0Q2T1y37jiWwaBHX4HXLdETVtVk0LfiGn/D+aEaHST2pti8tdm7RC3lzzA2o1wHLTGjsDbw5Rq+nnrZXo8lndpIXQvJCqtI0C9GmgIqfsTxCe1Dq6dbTovtojWlx3hyzFepdgmUBNKY9MW+O2Q31DiMZ3YerXMcxWLS78Qpez6NrJssw6MPzeh59kMmMhU6KJxO2o3zhp5+XjvFe35zAJuhqOYx+cgfgzTHHsQ7aJMnJycnJ+d9pNP4ByMdcx3NXHsAAAAAASUVORK5CYII="></span>
+          <span *ngIf="!listingIsSet" title="list view"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACXSURBVGhD7dexDYJQFIXhV1g4ALGwsKCixhVcgQ2orampqRmCFViBFVzBFeRYv5tgDPG9a/4v+Wc4OQHAx14OG1Xk6bBBAQD8OqgyYYXaxUVZi/urzGX/xlk9EtYrAEAerg57D3LEWs7cM5d9cVinAAB+HdUtYZXaxd989pOaE3ZXAIA8NA6rVcRaztwzl31yWKsAbAphBQ5/i9OD8QfcAAAAAElFTkSuQmCC"></span>
+          <span *ngIf="listingIsSet" title="Thumbnails"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAALxSURBVGhD7dhLqE1RHMfxg+t180hukldigsiAbopIFFFSYmDIhIlMlLxmMlLEwICEEEoUt25KJElImMhbBkTJ+/36/vbtX6vdf6+1Z7qn9avP4Kx+65yzzmM/ViMnJyenKdILQxKq0hte3wxGVfrCm2MGonZW4SP+JrzGfITZgh/w+qFnmIow+/ALXj90D2MQTQ+8xx+8jXgHPel1WIZC8/RmvDnmAzT3FCxalMb0IXhzzCeotxPR6GtXUW80Fn0i6j0vHnVlCjR2t3hUnVlQ70rxqCuLobFzxaPqrIR6R4tHkeSFkLwQkhdSFR2nVdSRZVyEvZlwIZOhsfvw5pgVUC9cyCJo7CK8OWY91EsuRHkBlevohEUfwld4Pc9+WMbjN7yeZxuSmYOreJygRUxAmGW4Ba9vHuE0RiDMWtyBN8c8wCEMQk63TBu8P1uo6usdDq8faoWXUfD6oT6olY2o88fTH1tHoDB74XXLdHifDUtPnIHXLXuJiYhGl+9foAu/mxE6V+hJb8Oib0Jjmu/NMTo8q3cWlnZoTAv05pgnUG8PoslndpIXQvJCqtI0CxkAFXXPPi3CXvgpLJOgsYfw5pjVUO8yLAuhMS3Om2M2Q70jSEZvROU6wkNof+ib9Hqe8BA6GnU2LcwGJKOfiDYGLiQchM7EYXSS0+K8fkgnTm3vhFmK8/D6oR3oh5xuGf28tPkWowu4crQvNh1e38zDSJSjHcoZ8OaYudAFba3sgvcHK9OF5RqE0Q2T1y37jiWwaBHX4HXLdETVtVk0LfiGn/D+aEaHST2pti8tdm7RC3lzzA2o1wHLTGjsDbw5Rq+nnrZXo8lndpIXQvJCqtI0C9GmgIqfsTxCe1Dq6dbTovtojWlx3hyzFepdgmUBNKY9MW+O2Q31DiMZ3YerXMcxWLS78Qpez6NrJssw6MPzeh59kMmMhU6KJxO2o3zhp5+XjvFe35zAJuhqOYx+cgfgzTHHsQ7aJMnJycnJ+d9pNP4ByMdcx3NXHsAAAAAASUVORK5CYII="></span>
         </button>
       </div>
     </div>
@@ -33,18 +33,18 @@
         </div>
       </div>
     
-      <p  *ngIf="(completedPercent > 10 && searchingText != '') || (completedPercent > 10)" class="text-center lead" style="margin-bottom: 5px; margin-top: 5px">
-        <b class="searched-indicators">{{ (indicators | filterBySearchInput: searchingText).length || 0 }} </b>
-        <b *ngIf="(indicators | filterBySearchInput: searchingText).length <= 1">indicator</b>
-        <b *ngIf="(indicators | filterBySearchInput: searchingText).length > 1">indicators</b>
-        <span *ngIf="searchingText"> matching <b class="searching-text">`{{searchingText}}`</b> out of <b class="total-indicators">{{(indicators).length}} </b> indicators </span>
+      <p  *ngIf="(completedPercent > 10 && searchText != '') || (completedPercent > 10)" class="text-center lead" style="margin-bottom: 5px; margin-top: 5px">
+        <b class="searched-indicators">{{ (indicators | filterBySearchInput: searchText).length || 0 }} </b>
+        <b *ngIf="(indicators | filterBySearchInput: searchText).length <= 1">indicator</b>
+        <b *ngIf="(indicators | filterBySearchInput: searchText).length > 1">indicators</b>
+        <span *ngIf="searchText"> matching <b class="searching-text">`{{searchText}}`</b> out of <b class="total-indicators">{{(indicators).length}} </b> indicators </span>
         <!-- <span *ngIf="indicatorGroupsForSearching.length !== 0"> in {{ groupNames() }} </span>
         <span *ngIf="indicatorGroupsForSearching.length == 1"> indicator group</span>
         <span *ngIf="indicatorGroupsForSearching.length > 1"> indicator groups</span> -->
       </p>
     
       <p
-        *ngIf="completedPercent == 100 && (indicators | filterBySearchInput: searchingText).length == 0"
+        *ngIf="completedPercent == 100 && (indicators | filterBySearchInput: searchText).length == 0"
         class="text-center lead" style="margin-bottom: 5px; margin-top: 100px">
         <span class="lead"> No Indicators</span>
       </p>
@@ -53,13 +53,13 @@
           <div class="card-deck" style="margin-bottom: 20px" *ngIf="!listingIsSet">
             <div
               class="col-sm-12 col-md-3"
-              *ngFor="let indicator of indicators | filterBySearchInput: searchingText | paginate: {itemsPerPage: 4, currentPage: currentPage}"
+              *ngFor="let indicator of indicators | filterBySearchInput: searchText | paginate: {itemsPerPage: 4, currentPage: currentPage}"
             >
               <app-indicator-properties [metadataIdentifiers]="metadataIdentifiers" [indicator]="indicator" [listingIsSet]="listingIsSet" (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
             </div>
           </div>
           <div *ngIf="listingIsSet">
-            <div *ngFor="let indicator of indicators | filterBySearchInput: searchingText | paginate: {itemsPerPage: 7, currentPage: currentPage}">
+            <div *ngFor="let indicator of indicators | filterBySearchInput: searchText | paginate: {itemsPerPage: 7, currentPage: currentPage}">
                 <app-indicator-properties [metadataIdentifiers]="metadataIdentifiers" [indicator]="indicator" [listingIsSet]="listingIsSet" (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
             </div>
           </div>

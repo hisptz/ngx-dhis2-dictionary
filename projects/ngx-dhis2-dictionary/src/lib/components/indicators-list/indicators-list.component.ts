@@ -16,12 +16,13 @@ export class IndicatorsListComponent implements OnInit {
   loading: boolean = true;
   hoverState = 'notHovered';
   selectedIndicator: any = null;
-  searchingText: string;
-  searchingTextForIndicatorGroup: string;
+  searchText: string;
+  currentPage: number = 1;
+  searchTextForIndicatorGroup: string;
   listingIsSet: boolean;
   constructor() {
-    this.searchingText = '';
-    this.searchingTextForIndicatorGroup = '';
+    this.searchText = '';
+    this.searchTextForIndicatorGroup = '';
     this.listingIsSet = false;
     if (this.completedPercent >= 100) {
       this.loading = false;
