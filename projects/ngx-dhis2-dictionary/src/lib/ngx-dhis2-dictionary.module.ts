@@ -20,6 +20,7 @@ import { FilterIndicatorsByGroupIdPipe } from './pipes/filter-indicators-by-grou
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ShortenNamePipe } from './pipes/shorten-name.pipe';
 
 @NgModule({
   imports: [
@@ -36,7 +37,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     EffectsModule.forFeature([IndicatorsEffects])
   ],
 
-  declarations: [DictionaryListComponent, DictionaryProgressComponent, IndicatorsListComponent, IndicatorPropertiesComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe],
+  declarations: [DictionaryListComponent, DictionaryProgressComponent, IndicatorsListComponent, IndicatorPropertiesComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe],
   exports: [DictionaryListComponent],
   providers: [DatePipe, IndicatorsService]
 })

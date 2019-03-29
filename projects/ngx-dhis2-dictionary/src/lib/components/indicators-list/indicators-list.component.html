@@ -1,30 +1,35 @@
-<div class="container-fluid">
+<div class="container-fluid" style="margin-top: 15px;">
     <div class="row">
       <div class="col-md-4" style="padding-top: 5px">
       </div>
       <div class="col-md-4">
        <input class="" id="searching-input" placeholder="Search indicator " [(ngModel)]="searchText">
       </div>
-      <div class="col-md-3">
-        <div class="pull-right cursor-pointer"  (click)="showGroups()">
-          <label>
-            <span>
-              <i class="list">
-                  <img height="20" style="margin-top: -6px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAH1SURBVGhD7dixSxxBGMbhEyGoBCSFIkFSBLEIpNEi/4BoZcBC7CV1bE1jZ6cQEIRUAZuInWCXJo1iIQRsxaDYBRSLCAZD4u9V9hjl2x2m2OyMzgsP3g578L2sd7tzLbKNf4HWEV2sQX2OEV2sQX2SLXKCNec4ySLneA3lM7QWdZG/+IBDZ+0Cb6CojEpVFenEswb0oD30ig5IP3bwB2+1QF5C/17FuWVFVLY4539aRfvgFya1QLowcfuy1YcDuG8sK/IKZw1Ywp0BdRXeo4gu2S7ccySZD7v+zZ5g01lzJVNENKy1LkkVqZKL1Jkv0L0jxDJych5LnkKPICF0548uP2B9M1X5huhiDeqT7yN1xhr0vn0sQHsWHSdZRI/wg1D03K+1qIv8xgy0qSrWfmIIyjh0TlWRbow24AXaQ3/UAdFXqx5b3G2u/uq4OLesSBQ7RG2q5rRAOjB8+/LmiujKuG8sK6Jz9xowjzsDijZV+hFBsba5ksyHfQsDsLa5kkwRuTTWCkkVqRJlkeImF+II0WURXwO5Pxnl5Dz0aMc3Fug5ossprG+mKt8RXaxBffINsc5Yg/rkInXGGtSnrEgvphswAnNQn7IiUewQQ5QV0d55owHvYA7qkz/sdcYa1CcXqTNXsIatol/wo8ssPgWaQkRpta4B6MTCByp6X10AAAAASUVORK5CYII=">
-              </i> Indicator Groups Filter
-                <a
-                class="removeGroups"
-                style="float: right"
-                title="Clear all"
-                *ngIf="indicatorGroupsForSearching.length != 0"
-                (click)="indicatorGroupsForSearching = []"
-              >
-              <i>
-                  <img height="30" width="30" style="margin-top: -5px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOLSURBVGhD7ZrHqlRBEIYvqAvFhHFpfAn3RgwYUXRvduMTmBEfwQuKKEZcGbaKWRFdqrg1Lcwujf8Ht6Fs6szpPmHmDswPHwxnuqq77jmnurrmDg000EBd1QyxURwRV8Rt8XQEPl8WfLdBMHZUaYrYKx6IP+JvIozFZrfAR880VRwV34S30By+isMCn13VNvFBeIuqwzuxRbSuieKc8BYR4K97TRwXu8TWEfjMNb4ru4unxQTRimYKXlpv4p/ivFgsxogyMWaJuCCw9Xw+EY0nBIJ4KbwJL4p5oqrmC7KZ5/uFYO5GxOP0WMSTfBSrRFNaLfAZz/NINPKYnRWx81dirmha3Fl8x/OdErVEdoqdvhazRFvCN3PE824WlUROj1Mst36OaFsLxSdh5yY1TxbZOiasI1gpPC0S7O65wgZbT2tEPP8hkSXuBvuBdUJ28sRCwtj9XEgUY7HBtiiYOJt9EVnlzB5hHZDrvRRrgwikBBOCCBQFs0DE+8xOkSxSnjVms/O0T9hxgU7BxEEE8OWJTdOOuyeSxG4aV7Hs2EUqWpgXTM7YoGXCjv0tpotScZ6whjyXZWVHygKrBIHGiu/C2qwXpeLgY42uixR1WmjVIIJuCmuXlL3iTEHFmqqiBXukBoFOCGtblEH/0x1hjTjB5SglmJwgUJxFOTaX6rmwRpwlctUpmNwgUFwqPROlYpA16ttARuOjRSlj7ZMerUvCGvXty94P6fegKBXNM2tEo6CXG+I4EW+I60SpKFEoA6zhUlGknAVWCWa5sGNZ2zSRpIfCGlO4eepG0Ri/s3dFsshU1phSmm5HrLbLeE6KcRm/QySLgxXFonVA6eLJBpMSRFAIpigIdFXYNbCm7OMufV3rBDh+emIhTR9114p4/gMiW0T+XlhHNAS43W2LOT4LO/cbMUlUEi0Y6wzabgfNFl47aJOopTMidkoTrU6btEic0b0ghkVt0a6Mz/BAj4s2Z1Pi1BcnGGisZYpoJNNQjicBshl/yarCNs5OgUab2EEc+L07A+R6Nk0aBZyxy8SYFYLi75fwfLIpJzUZqohbzI8w3sQB6qIbgoqVjZWzBPCZaxSAP4RnGzgpxovWRTajF+stog5vBV2crop9hh8wvRc0F/YMSnN+i+mZCIg25n0RV82dYCw220WlLnub4uXkrMCdomq9JcI/DPCZa/SkGJNcig800EB1NTT0D1aOmPFs1wNIAAAAAElFTkSuQmCC">
-              </i>
-            </a>
+      <div class="col-md-4">
+        <div style="float: right;">
+          <button (click)="toggleListingOfItems()" id="listing-btn" style="border-radius: 4px; border: none; background-color: #FFF; padding: 2px;">
+            <span *ngIf="!listingIsSet" title="To list view">
+              <img height="30" width="30" 
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACXSURBVGhD7dexDYJQFIXhV1g4ALGwsKCixhVcgQ2orampqRmCFViBFVzBFeRYv5tgDPG9a/4v+Wc4OQHAx14OG1Xk6bBBAQD8OqgyYYXaxUVZi/urzGX/xlk9EtYrAEAerg57D3LEWs7cM5d9cVinAAB+HdUtYZXaxd989pOaE3ZXAIA8NA6rVcRaztwzl31yWKsAbAphBQ5/i9OD8QfcAAAAAElFTkSuQmCC">
             </span>
-          </label>
+            <span *ngIf="listingIsSet" title="To Grid view"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJjSURBVGhD7dhJqM1hHMbxY3bJXLoyEzaSKfNGlGKlWNkpllZsbJQNG2yUpJSpkLJAZjtFlGGjyMpGMqUUJXyfOq9+Xs/7v5270un91mf3nMV777n/4bZqtVqtVqv92xCMKxiEvKFwWxmAvOFw27Fw9cDtx6Cxl/hVcA+xkXgLt5VziE3GF7itHEZsPr7BbWUPirkPJJ8Rmwa3S54jtgZul1xFbBPcLsl/UH/lPpDUg7T7bw7yEbFOD7Iabpd0epCzKHYBrwuOIDYYN+G2shex0bgPt32FHYhNxWO4vS5KW9D9jcKsAl3T83T9d1vRPSlvAtx2Jtx9aiLcfgbcfepPb+C+j/IAMR36E9xWLiM2HU33hWOILcIPuK3sQzH3gaReftvVgxT0+yAfENPl0e2SZ4itgtslnR7kDIodh67dzn7EdJXRfcdtZRdiesi8Brd9hG2I9eIO3P4hNqL703V7SYF7Z9CjuduKfgN5ugS77WIMQ94cuP1C6Mmi2Du476M8RUwvN1/htnIdsdloui+cRGwZfsJt5QCKuQ8k9fLbrh6koN8HeY9YX/eR/G9qJdwu6fQgp1HsIG4X7EZsIHTfcVvZjtgI6KfotrewGTE9KV+C29/AWnR/ei9YXzAJeXPhtjIeeQvgtuug14K8pXB7/Tb0P7JiTe8XLxDTDfI73FbuIjYPTfeF/Nmpr3f8QyjmPpDUy2+7epCCxoM0fYfz+8gUuF3yBLEVcLvkCmJ6THe75BSK6X9RFwt2Iqb/Yui+47ayFTE93R6F2+q9ZgNieig9Abc/j+Wo1Wq1Wq3WhbVavwE61eDXWXWDaAAAAABJRU5ErkJggg=="></span>
+          </button>
+        </div>
+        <div class="cursor-pointer" style="float: right; margin-right: 10px;" (click)="showGroups()">
+            <a
+            class="removeGroups"
+            style="float: right"
+            title="Clear all"
+            *ngIf="indicatorGroupsForSearching.length != 0"
+            (click)="indicatorGroupsForSearching = []"
+          >
+            <i>
+              <img height="20" width="20" style="margin-top: -5px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOLSURBVGhD7ZrHqlRBEIYvqAvFhHFpfAn3RgwYUXRvduMTmBEfwQuKKEZcGbaKWRFdqrg1Lcwujf8Ht6Fs6szpPmHmDswPHwxnuqq77jmnurrmDg000EBd1QyxURwRV8Rt8XQEPl8WfLdBMHZUaYrYKx6IP+JvIozFZrfAR880VRwV34S30By+isMCn13VNvFBeIuqwzuxRbSuieKc8BYR4K97TRwXu8TWEfjMNb4ru4unxQTRimYKXlpv4p/ivFgsxogyMWaJuCCw9Xw+EY0nBIJ4KbwJL4p5oqrmC7KZ5/uFYO5GxOP0WMSTfBSrRFNaLfAZz/NINPKYnRWx81dirmha3Fl8x/OdErVEdoqdvhazRFvCN3PE824WlUROj1Mst36OaFsLxSdh5yY1TxbZOiasI1gpPC0S7O65wgZbT2tEPP8hkSXuBvuBdUJ28sRCwtj9XEgUY7HBtiiYOJt9EVnlzB5hHZDrvRRrgwikBBOCCBQFs0DE+8xOkSxSnjVms/O0T9hxgU7BxEEE8OWJTdOOuyeSxG4aV7Hs2EUqWpgXTM7YoGXCjv0tpotScZ6whjyXZWVHygKrBIHGiu/C2qwXpeLgY42uixR1WmjVIIJuCmuXlL3iTEHFmqqiBXukBoFOCGtblEH/0x1hjTjB5SglmJwgUJxFOTaX6rmwRpwlctUpmNwgUFwqPROlYpA16ttARuOjRSlj7ZMerUvCGvXty94P6fegKBXNM2tEo6CXG+I4EW+I60SpKFEoA6zhUlGknAVWCWa5sGNZ2zSRpIfCGlO4eepG0Ri/s3dFsshU1phSmm5HrLbLeE6KcRm/QySLgxXFonVA6eLJBpMSRFAIpigIdFXYNbCm7OMufV3rBDh+emIhTR9114p4/gMiW0T+XlhHNAS43W2LOT4LO/cbMUlUEi0Y6wzabgfNFl47aJOopTMidkoTrU6btEic0b0ghkVt0a6Mz/BAj4s2Z1Pi1BcnGGisZYpoJNNQjicBshl/yarCNs5OgUab2EEc+L07A+R6Nk0aBZyxy8SYFYLi75fwfLIpJzUZqohbzI8w3sQB6qIbgoqVjZWzBPCZaxSAP4RnGzgpxovWRTajF+stog5vBV2crop9hh8wvRc0F/YMSnN+i+mZCIg25n0RV82dYCw220WlLnub4uXkrMCdomq9JcI/DPCZa/SkGJNcig800EB1NTT0D1aOmPFs1wNIAAAAAElFTkSuQmCC">
+            </i>
+          </a>
+          <span class="group-icon">
+            <img title="Indicator group filter" height="30" width="40" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJbSURBVGhD7drPSxRhHMfx7QcVZUbULQsSoi56iehQQaQnD11EiDoEeYggKPoHOmQR1CWhIiIINDDrIpKXQOoQFAQRnTuLRj+1ol/a+/Nse5Ed93lmnO9M9XzghfMs+4zz2d0ZZ2esxMQUkyU4iuf4hjlj7zGEHUgdlbiF2kp/4Z2hadR+t5YPIFV6oZV8hN6VtbDOVgxA2/EG6xCcF9AKjrhRcdEn4zG0LSf0QEiWQx+ln1itBwrOSajITTcKiN5CTfzgRv5ZiWXVxQWz4s9P3xyGtueOGwUkTZE1mMJ9N0pOC7TzXnUjv5gW2QDN+QIdLtfXoeechZ53F74xLaKMQfN8HIRvzIvoEH0FL/E6wSMcQkjMi+SVWOSfK/IJrSVwGpmKlE3qIjpNqXfksTaJTEXizr7IiUVikZxiXmQTNLdRtmBVddErpkU05yvG3Sg52/ADg27kF/Mi+rvzHV3YWccuXIPWrYsKvjH/aN2G5jWid2QvfGNeRBctTmEUuqg331Oo7B6ExLxIXolFakVm0FkCF5CpSNmkLqKjy8MSeIVMReLOvsiJRf77Ijqf2lxdXDC7sbG66BXTIrpArZPGZ26UnDbM4p4b+cW0SBN05qsyx9GTYBhat+5P+sb8o3UJmteIzhja4ZvURXRVXRN1QyY03bgOvfLz6Z5IH/TlKiS6j5mqiFK7Peyz8+adc9C2XHajwOgV1GR9k1uqBwqKvt+/hbalQw+EZjs+Qyt4gjOot/PmRfvFReifB7QND5A6+zEBrahII2hGpuiwegz9uGHsPPYh5i9LpfIbp7H+LIdnKu0AAAAASUVORK5CYII=">
+          </span>
         </div>
         <div *ngIf="showIndicatorGroups">
           <ul class="submenu" style="height: 300px; overflow: auto">
@@ -36,13 +41,6 @@
               </li>
             </ul>
         </div>
-      </div>
-
-      <div class="col-md-1">
-        <button (click)="toggleListingOfItems()" id="listing-btn" style="float: right; border-radius: 4px; border: none; background-color: #FFF; padding: 2px;">
-          <span *ngIf="!listingIsSet" title="To list view"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACXSURBVGhD7dexDYJQFIXhV1g4ALGwsKCixhVcgQ2orampqRmCFViBFVzBFeRYv5tgDPG9a/4v+Wc4OQHAx14OG1Xk6bBBAQD8OqgyYYXaxUVZi/urzGX/xlk9EtYrAEAerg57D3LEWs7cM5d9cVinAAB+HdUtYZXaxd989pOaE3ZXAIA8NA6rVcRaztwzl31yWKsAbAphBQ5/i9OD8QfcAAAAAElFTkSuQmCC"></span>
-          <span *ngIf="listingIsSet" title="To thumbnails view"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAALxSURBVGhD7dhLqE1RHMfxg+t180hukldigsiAbopIFFFSYmDIhIlMlLxmMlLEwICEEEoUt25KJElImMhbBkTJ+/36/vbtX6vdf6+1Z7qn9avP4Kx+65yzzmM/ViMnJyenKdILQxKq0hte3wxGVfrCm2MGonZW4SP+JrzGfITZgh/w+qFnmIow+/ALXj90D2MQTQ+8xx+8jXgHPel1WIZC8/RmvDnmAzT3FCxalMb0IXhzzCeotxPR6GtXUW80Fn0i6j0vHnVlCjR2t3hUnVlQ70rxqCuLobFzxaPqrIR6R4tHkeSFkLwQkhdSFR2nVdSRZVyEvZlwIZOhsfvw5pgVUC9cyCJo7CK8OWY91EsuRHkBlevohEUfwld4Pc9+WMbjN7yeZxuSmYOreJygRUxAmGW4Ba9vHuE0RiDMWtyBN8c8wCEMQk63TBu8P1uo6usdDq8faoWXUfD6oT6olY2o88fTH1tHoDB74XXLdHifDUtPnIHXLXuJiYhGl+9foAu/mxE6V+hJb8Oib0Jjmu/NMTo8q3cWlnZoTAv05pgnUG8PoslndpIXQvJCqtI0CxkAFXXPPi3CXvgpLJOgsYfw5pjVUO8yLAuhMS3Om2M2Q70jSEZvROU6wkNof+ib9Hqe8BA6GnU2LcwGJKOfiDYGLiQchM7EYXSS0+K8fkgnTm3vhFmK8/D6oR3oh5xuGf28tPkWowu4crQvNh1e38zDSJSjHcoZ8OaYudAFba3sgvcHK9OF5RqE0Q2T1y37jiWwaBHX4HXLdETVtVk0LfiGn/D+aEaHST2pti8tdm7RC3lzzA2o1wHLTGjsDbw5Rq+nnrZXo8lndpIXQvJCqtI0C9GmgIqfsTxCe1Dq6dbTovtojWlx3hyzFepdgmUBNKY9MW+O2Q31DiMZ3YerXMcxWLS78Qpez6NrJssw6MPzeh59kMmMhU6KJxO2o3zhp5+XjvFe35zAJuhqOYx+cgfgzTHHsQ7aJMnJycnJ+d9pNP4ByMdcx3NXHsAAAAAASUVORK5CYII="></span>
-        </button>
       </div>
     </div>
   </div>
