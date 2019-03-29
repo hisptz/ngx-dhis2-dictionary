@@ -5,11 +5,41 @@
       <div class="col-md-4">
        <input class="" id="searching-input" placeholder="Search indicator " [(ngModel)]="searchText">
       </div>
-      <div class="col-md-2"></div>
-      <div class="col-md-2">
+      <div class="col-md-4">
+        <div class="pull-right cursor-pointer"  (click)="showGroups()">
+          <label>
+            <span>
+              <i class="list">
+                  <img height="20" style="margin-top: -6px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAH1SURBVGhD7dixSxxBGMbhEyGoBCSFIkFSBLEIpNEi/4BoZcBC7CV1bE1jZ6cQEIRUAZuInWCXJo1iIQRsxaDYBRSLCAZD4u9V9hjl2x2m2OyMzgsP3g578L2sd7tzLbKNf4HWEV2sQX2OEV2sQX2SLXKCNec4ySLneA3lM7QWdZG/+IBDZ+0Cb6CojEpVFenEswb0oD30ig5IP3bwB2+1QF5C/17FuWVFVLY4539aRfvgFya1QLowcfuy1YcDuG8sK/IKZw1Ywp0BdRXeo4gu2S7ccySZD7v+zZ5g01lzJVNENKy1LkkVqZKL1Jkv0L0jxDJych5LnkKPICF0548uP2B9M1X5huhiDeqT7yN1xhr0vn0sQHsWHSdZRI/wg1D03K+1qIv8xgy0qSrWfmIIyjh0TlWRbow24AXaQ3/UAdFXqx5b3G2u/uq4OLesSBQ7RG2q5rRAOjB8+/LmiujKuG8sK6Jz9xowjzsDijZV+hFBsba5ksyHfQsDsLa5kkwRuTTWCkkVqRJlkeImF+II0WURXwO5Pxnl5Dz0aMc3Fug5ossprG+mKt8RXaxBffINsc5Yg/rkInXGGtSnrEgvphswAnNQn7IiUewQQ5QV0d55owHvYA7qkz/sdcYa1CcXqTNXsIatol/wo8ssPgWaQkRpta4B6MTCByp6X10AAAAASUVORK5CYII=">
+              </i> Indicator Groups Filter
+                <a
+                class="removeGroups"
+                style="float: right"
+                title="Clear all"
+                *ngIf="indicatorGroupsForSearching.length != 0"
+                (click)="indicatorGroupsForSearching = []"
+              >
+              <i>
+                  <img height="30" width="30" style="margin-top: -5px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOLSURBVGhD7ZrHqlRBEIYvqAvFhHFpfAn3RgwYUXRvduMTmBEfwQuKKEZcGbaKWRFdqrg1Lcwujf8Ht6Fs6szpPmHmDswPHwxnuqq77jmnurrmDg000EBd1QyxURwRV8Rt8XQEPl8WfLdBMHZUaYrYKx6IP+JvIozFZrfAR880VRwV34S30By+isMCn13VNvFBeIuqwzuxRbSuieKc8BYR4K97TRwXu8TWEfjMNb4ru4unxQTRimYKXlpv4p/ivFgsxogyMWaJuCCw9Xw+EY0nBIJ4KbwJL4p5oqrmC7KZ5/uFYO5GxOP0WMSTfBSrRFNaLfAZz/NINPKYnRWx81dirmha3Fl8x/OdErVEdoqdvhazRFvCN3PE824WlUROj1Mst36OaFsLxSdh5yY1TxbZOiasI1gpPC0S7O65wgZbT2tEPP8hkSXuBvuBdUJ28sRCwtj9XEgUY7HBtiiYOJt9EVnlzB5hHZDrvRRrgwikBBOCCBQFs0DE+8xOkSxSnjVms/O0T9hxgU7BxEEE8OWJTdOOuyeSxG4aV7Hs2EUqWpgXTM7YoGXCjv0tpotScZ6whjyXZWVHygKrBIHGiu/C2qwXpeLgY42uixR1WmjVIIJuCmuXlL3iTEHFmqqiBXukBoFOCGtblEH/0x1hjTjB5SglmJwgUJxFOTaX6rmwRpwlctUpmNwgUFwqPROlYpA16ttARuOjRSlj7ZMerUvCGvXty94P6fegKBXNM2tEo6CXG+I4EW+I60SpKFEoA6zhUlGknAVWCWa5sGNZ2zSRpIfCGlO4eepG0Ri/s3dFsshU1phSmm5HrLbLeE6KcRm/QySLgxXFonVA6eLJBpMSRFAIpigIdFXYNbCm7OMufV3rBDh+emIhTR9114p4/gMiW0T+XlhHNAS43W2LOT4LO/cbMUlUEi0Y6wzabgfNFl47aJOopTMidkoTrU6btEic0b0ghkVt0a6Mz/BAj4s2Z1Pi1BcnGGisZYpoJNNQjicBshl/yarCNs5OgUab2EEc+L07A+R6Nk0aBZyxy8SYFYLi75fwfLIpJzUZqohbzI8w3sQB6qIbgoqVjZWzBPCZaxSAP4RnGzgpxovWRTajF+stog5vBV2crop9hh8wvRc0F/YMSnN+i+mZCIg25n0RV82dYCw220WlLnub4uXkrMCdomq9JcI/DPCZa/SkGJNcig800EB1NTT0D1aOmPFs1wNIAAAAAElFTkSuQmCC">
+              </i>
+            </a>
+            </span>
+          </label>
+        </div>
+        <div *ngIf="showIndicatorGroups">
+          <ul class="submenu" style="height: 300px; overflow: auto">
+              <input  id="searching-input-group" placeholder="Search group " [(ngModel)]="searchingTextForIndicatorGroup">
+              <li id="indGroup.id" *ngFor="let indGroup of indicatorGroups | searchIndicatorGroup: searchingTextForIndicatorGroup">
+                <a><input type="checkbox" name="indicator-groups-ids" (change)="updateIndicatorGroupsForSearch(indGroup, $event.target.checked)">
+                  {{indGroup.name}}({{indGroup.indicators.length}})
+                </a>
+              </li>
+            </ul>
+        </div>
+        
         <button (click)="toggleListingOfItems()" id="listing-btn" style="float: right; border-radius: 4px; border: none; background-color: #FFF; padding: 2px;">
-          <span *ngIf="!listingIsSet" title="list view"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACXSURBVGhD7dexDYJQFIXhV1g4ALGwsKCixhVcgQ2orampqRmCFViBFVzBFeRYv5tgDPG9a/4v+Wc4OQHAx14OG1Xk6bBBAQD8OqgyYYXaxUVZi/urzGX/xlk9EtYrAEAerg57D3LEWs7cM5d9cVinAAB+HdUtYZXaxd989pOaE3ZXAIA8NA6rVcRaztwzl31yWKsAbAphBQ5/i9OD8QfcAAAAAElFTkSuQmCC"></span>
-          <span *ngIf="listingIsSet" title="Thumbnails"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAALxSURBVGhD7dhLqE1RHMfxg+t180hukldigsiAbopIFFFSYmDIhIlMlLxmMlLEwICEEEoUt25KJElImMhbBkTJ+/36/vbtX6vdf6+1Z7qn9avP4Kx+65yzzmM/ViMnJyenKdILQxKq0hte3wxGVfrCm2MGonZW4SP+JrzGfITZgh/w+qFnmIow+/ALXj90D2MQTQ+8xx+8jXgHPel1WIZC8/RmvDnmAzT3FCxalMb0IXhzzCeotxPR6GtXUW80Fn0i6j0vHnVlCjR2t3hUnVlQ70rxqCuLobFzxaPqrIR6R4tHkeSFkLwQkhdSFR2nVdSRZVyEvZlwIZOhsfvw5pgVUC9cyCJo7CK8OWY91EsuRHkBlevohEUfwld4Pc9+WMbjN7yeZxuSmYOreJygRUxAmGW4Ba9vHuE0RiDMWtyBN8c8wCEMQk63TBu8P1uo6usdDq8faoWXUfD6oT6olY2o88fTH1tHoDB74XXLdHifDUtPnIHXLXuJiYhGl+9foAu/mxE6V+hJb8Oib0Jjmu/NMTo8q3cWlnZoTAv05pgnUG8PoslndpIXQvJCqtI0CxkAFXXPPi3CXvgpLJOgsYfw5pjVUO8yLAuhMS3Om2M2Q70jSEZvROU6wkNof+ib9Hqe8BA6GnU2LcwGJKOfiDYGLiQchM7EYXSS0+K8fkgnTm3vhFmK8/D6oR3oh5xuGf28tPkWowu4crQvNh1e38zDSJSjHcoZ8OaYudAFba3sgvcHK9OF5RqE0Q2T1y37jiWwaBHX4HXLdETVtVk0LfiGn/D+aEaHST2pti8tdm7RC3lzzA2o1wHLTGjsDbw5Rq+nnrZXo8lndpIXQvJCqtI0C9GmgIqfsTxCe1Dq6dbTovtojWlx3hyzFepdgmUBNKY9MW+O2Q31DiMZ3YerXMcxWLS78Qpez6NrJssw6MPzeh59kMmMhU6KJxO2o3zhp5+XjvFe35zAJuhqOYx+cgfgzTHHsQ7aJMnJycnJ+d9pNP4ByMdcx3NXHsAAAAAASUVORK5CYII="></span>
+          <span *ngIf="!listingIsSet" title="To list view"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACXSURBVGhD7dexDYJQFIXhV1g4ALGwsKCixhVcgQ2orampqRmCFViBFVzBFeRYv5tgDPG9a/4v+Wc4OQHAx14OG1Xk6bBBAQD8OqgyYYXaxUVZi/urzGX/xlk9EtYrAEAerg57D3LEWs7cM5d9cVinAAB+HdUtYZXaxd989pOaE3ZXAIA8NA6rVcRaztwzl31yWKsAbAphBQ5/i9OD8QfcAAAAAElFTkSuQmCC"></span>
+          <span *ngIf="listingIsSet" title="To thumbnails view"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAALxSURBVGhD7dhLqE1RHMfxg+t180hukldigsiAbopIFFFSYmDIhIlMlLxmMlLEwICEEEoUt25KJElImMhbBkTJ+/36/vbtX6vdf6+1Z7qn9avP4Kx+65yzzmM/ViMnJyenKdILQxKq0hte3wxGVfrCm2MGonZW4SP+JrzGfITZgh/w+qFnmIow+/ALXj90D2MQTQ+8xx+8jXgHPel1WIZC8/RmvDnmAzT3FCxalMb0IXhzzCeotxPR6GtXUW80Fn0i6j0vHnVlCjR2t3hUnVlQ70rxqCuLobFzxaPqrIR6R4tHkeSFkLwQkhdSFR2nVdSRZVyEvZlwIZOhsfvw5pgVUC9cyCJo7CK8OWY91EsuRHkBlevohEUfwld4Pc9+WMbjN7yeZxuSmYOreJygRUxAmGW4Ba9vHuE0RiDMWtyBN8c8wCEMQk63TBu8P1uo6usdDq8faoWXUfD6oT6olY2o88fTH1tHoDB74XXLdHifDUtPnIHXLXuJiYhGl+9foAu/mxE6V+hJb8Oib0Jjmu/NMTo8q3cWlnZoTAv05pgnUG8PoslndpIXQvJCqtI0CxkAFXXPPi3CXvgpLJOgsYfw5pjVUO8yLAuhMS3Om2M2Q70jSEZvROU6wkNof+ib9Hqe8BA6GnU2LcwGJKOfiDYGLiQchM7EYXSS0+K8fkgnTm3vhFmK8/D6oR3oh5xuGf28tPkWowu4crQvNh1e38zDSJSjHcoZ8OaYudAFba3sgvcHK9OF5RqE0Q2T1y37jiWwaBHX4HXLdETVtVk0LfiGn/D+aEaHST2pti8tdm7RC3lzzA2o1wHLTGjsDbw5Rq+nnrZXo8lndpIXQvJCqtI0C9GmgIqfsTxCe1Dq6dbTovtojWlx3hyzFepdgmUBNKY9MW+O2Q31DiMZ3YerXMcxWLS78Qpez6NrJssw6MPzeh59kMmMhU6KJxO2o3zhp5+XjvFe35zAJuhqOYx+cgfgzTHHsQ7aJMnJycnJ+d9pNP4ByMdcx3NXHsAAAAAASUVORK5CYII="></span>
         </button>
       </div>
     </div>
@@ -33,18 +63,18 @@
         </div>
       </div>
     
-      <p  *ngIf="(completedPercent > 10 && searchText != '') || (completedPercent > 10)" class="text-center lead" style="margin-bottom: 5px; margin-top: 5px">
-        <b class="searched-indicators">{{ (indicators | filterBySearchInput: searchText).length || 0 }} </b>
-        <b *ngIf="(indicators | filterBySearchInput: searchText).length <= 1">indicator</b>
-        <b *ngIf="(indicators | filterBySearchInput: searchText).length > 1">indicators</b>
+      <p  *ngIf="(completedPercent > 10 && searchText != '') || (completedPercent > 10 && indicatorGroupsForSearching.length > 0)" class="text-center lead" style="margin-bottom: 5px; margin-top: 5px">
+        <b class="searched-indicators">{{ (indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length || 0 }} </b>
+        <b *ngIf="(indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length <= 1">indicator</b>
+        <b *ngIf="(indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length > 1">indicators</b>
         <span *ngIf="searchText"> matching <b class="searching-text">`{{searchText}}`</b> out of <b class="total-indicators">{{(indicators).length}} </b> indicators </span>
-        <!-- <span *ngIf="indicatorGroupsForSearching.length !== 0"> in {{ groupNames() }} </span>
+        <span *ngIf="indicatorGroupsForSearching.length !== 0"> in {{ groupNames() }} </span>
         <span *ngIf="indicatorGroupsForSearching.length == 1"> indicator group</span>
-        <span *ngIf="indicatorGroupsForSearching.length > 1"> indicator groups</span> -->
+        <span *ngIf="indicatorGroupsForSearching.length > 1"> indicator groups</span>
       </p>
     
       <p
-        *ngIf="completedPercent == 100 && (indicators | filterBySearchInput: searchText).length == 0"
+        *ngIf="completedPercent == 100 && (indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length == 0"
         class="text-center lead" style="margin-bottom: 5px; margin-top: 100px">
         <span class="lead"> No Indicators</span>
       </p>
@@ -53,13 +83,13 @@
           <div class="card-deck" style="margin-bottom: 20px" *ngIf="!listingIsSet">
             <div
               class="col-sm-12 col-md-3"
-              *ngFor="let indicator of indicators | filterBySearchInput: searchText | paginate: {itemsPerPage: 4, currentPage: currentPage}"
+              *ngFor="let indicator of indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching | paginate: {itemsPerPage: 4, currentPage: currentPage}"
             >
               <app-indicator-properties [metadataIdentifiers]="metadataIdentifiers" [indicator]="indicator" [listingIsSet]="listingIsSet" (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
             </div>
           </div>
           <div *ngIf="listingIsSet">
-            <div *ngFor="let indicator of indicators | filterBySearchInput: searchText | paginate: {itemsPerPage: 7, currentPage: currentPage}">
+            <div *ngFor="let indicator of indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching | paginate: {itemsPerPage: 7, currentPage: currentPage}">
                 <app-indicator-properties [metadataIdentifiers]="metadataIdentifiers" [indicator]="indicator" [listingIsSet]="listingIsSet" (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
             </div>
           </div>

@@ -4,7 +4,7 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import * as _ from 'lodash';
 import { Observable, pipe } from 'rxjs';
 import { MetadataDictionary } from '../../models/dictionary';
@@ -14,9 +14,10 @@ import { getDictionaryList } from '../../store/selectors/dictionary.selectors';
 import { InitializeDictionaryMetadataAction } from '../../store/actions/dictionary.actions';
 import * as indicators from '../../store/actions/indicators.actions'
 import { DomSanitizer } from '@angular/platform-browser';
-import { getListOfIndicators, getAllIndicators } from '../../store/selectors/indicators.selectors';
+import { getListOfIndicators, getAllIndicators, getIndicatorGroups } from '../../store/selectors/indicators.selectors';
 import { AppState } from '../../store/reducers/indicators.reducers';
 import { Identifiers } from '@angular/compiler';
+import { IndicatorGroupsState } from '../../store/state/indicators.state';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -29,6 +30,7 @@ export class DictionaryListComponent implements OnInit {
   @Input() metadataIdentifiers: Array<string>;
   @Input() isFullScreen: boolean;
   dictionaryList$: Observable<MetadataDictionary[]>;
+  indicatorGroups$: Observable<IndicatorGroupsState>;
   activeItem: number;
   indicators: any[] = [];
   searchingText: string;
@@ -38,6 +40,7 @@ export class DictionaryListComponent implements OnInit {
   completedPercent = 0;
   selectedIndicator: any = null;
   totalAvailableIndicators: any = null;
+  indicatorGroups: any[] = [];
   error: boolean;
   loading: boolean;
 
@@ -112,6 +115,7 @@ export class DictionaryListComponent implements OnInit {
             }
           } else {
             this.store.dispatch(new indicators.loadIndicatorsAction());
+            this.store.dispatch(new indicators.LoadIndicatorGroupsAction())
             this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
             this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
             if (this.indicatorsList$) {
@@ -133,6 +137,15 @@ export class DictionaryListComponent implements OnInit {
                       }
                     })
                   }
+                }
+              })
+            }
+
+            this.indicatorGroups$ = this.indicatorsStore.pipe(select(getIndicatorGroups));
+            if (this.indicatorGroups$) {
+              this.indicatorGroups$.subscribe((indicatorGroups) => {
+                if (indicatorGroups) {
+                  this.indicatorGroups = indicatorGroups['indicatorGroups'];
                 }
               })
             }

@@ -6,6 +6,7 @@ import { NgxDhis2HttpClientService } from "@hisptz/ngx-dhis2-http-client";
 import { switchMap, map, catchError, tap } from "rxjs/operators";
 import { Store } from "@ngrx/store";
 import { IndicatorsService } from "../../services/indicators.service";
+import { IndicatorGroupsState } from "../state/indicators.state";
 
 
 @Injectable()
@@ -30,6 +31,16 @@ export class IndicatorsEffects {
     //       catchError((error) => of(new indicators.loadIndicatorsFailAction(error)))
     //     ))
     // );
+
+    @Effect()
+    indicatorGroups$: Observable<any> = this.actions$
+    .pipe(ofType<indicators.IndicatorsAction>(indicators.IndicatorsActions.LoadIndicatorGroups),
+        switchMap(() => this.httpClient.get('indicatorGroups.json?fields=id,name,description,indicators[id]&paging=false').pipe(
+          map((indicatorGroupsObject: IndicatorGroupsState) =>
+            new indicators.LoadIndicatorGroupsSuccessAction(indicatorGroupsObject)),
+          catchError((error) => of(new indicators.LoadIndicatorGroupsFailAction(error)))
+        ))
+    );
 
 
     @Effect({dispatch: false})

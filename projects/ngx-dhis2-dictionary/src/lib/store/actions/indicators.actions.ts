@@ -1,4 +1,5 @@
 import {Action} from '@ngrx/store';
+import { IndicatorGroupsState } from '../state/indicators.state';
 
 
 export enum IndicatorsActions {
@@ -11,7 +12,10 @@ export enum IndicatorsActions {
     ProgressLoadingIndicators = '[Progress bar] progress bar for loaded indicators',
     LoadIndicatorProperties = '[Indicator properties] Load indicator properties',
     LoadIndicatorPropertiesFail = '[Indicator properties] Load indicator properties fail',
-    LoadIndicatorPropertiesSuccess = '[Indicator properties] Load indicator properties success'
+    LoadIndicatorPropertiesSuccess = '[Indicator properties] Load indicator properties success',
+    LoadIndicatorGroups = '[Indicator Groups] Load indicator Groups',
+    LoadIndicatorGroupsSuccess = '[Indicator Groups] Load indicator Groups success',
+    LoadIndicatorGroupsFail = '[Indicator Groups] Load indicator Groups fail',
 }
 
 export class loadIndicatorsAction implements Action {
@@ -49,9 +53,29 @@ export class LoadIndicatorsByPagesFailAction implements Action {
     constructor(public payload: any) {}
 }
 
+
+export class LoadIndicatorGroupsAction implements Action {
+    readonly type = IndicatorsActions.LoadIndicatorGroups;
+}
+
+export class LoadIndicatorGroupsSuccessAction implements Action {
+    readonly type = IndicatorsActions.LoadIndicatorGroupsSuccess;
+
+    constructor(public payload: IndicatorGroupsState) {}
+}
+
+export class LoadIndicatorGroupsFailAction implements Action {
+    readonly type = IndicatorsActions.LoadIndicatorsByPagesFail;
+
+    constructor(public payload: any) {}
+}
+
 export type IndicatorsAction = loadIndicatorsAction
     | loadIndicatorsFailAction
     | loadIndicatorsSuccessAction
     | LoadIndicatorsByPagesAction
     | LoadIndicatorsByPagesFailAction
-    | LoadIndicatorsByPagesSuccessAction;
+    | LoadIndicatorsByPagesSuccessAction
+    | LoadIndicatorGroupsAction
+    | LoadIndicatorGroupsSuccessAction
+    | LoadIndicatorGroupsFailAction;

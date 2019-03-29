@@ -11,7 +11,7 @@ import { dictionaryReducer } from './store/reducers/dictionary.reducer';
 import { DictionaryEffects } from './store/effects/dictionary.effects';
 import { IndicatorsListComponent } from './components/indicators-list/indicators-list.component';
 import { IndicatorsService } from './services/indicators.service';
-import { indicatorsListReducer, allIndicatorsRedcuer } from './store/reducers/indicators.reducers';
+import { indicatorsListReducer, allIndicatorsRedcuer, indicatorGroupsReducer } from './store/reducers/indicators.reducers';
 import { IndicatorsEffects } from './store/effects/indicators.effects';
 import { IndicatorPropertiesComponent } from './components/indicators-list/indicator-properties/indicator-properties.component';
 import { SearchIndicatorGroupPipe } from './pipes/search-indicator-group.pipe';
@@ -31,6 +31,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     StoreModule.forFeature('dictionary', dictionaryReducer),
     StoreModule.forFeature('indicatorsList', indicatorsListReducer),
     StoreModule.forFeature('allIndicators', allIndicatorsRedcuer),
+    StoreModule.forFeature('indicatorGroups', indicatorGroupsReducer),
     EffectsModule.forFeature([DictionaryEffects]),
     EffectsModule.forFeature([IndicatorsEffects])
   ],

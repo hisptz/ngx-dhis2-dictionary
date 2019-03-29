@@ -47,13 +47,26 @@ export function allIndicatorsRedcuer(state: AllIndicatorsState = INITIAL_STATE_L
     }
 }
 
+export function indicatorGroupsReducer(state: IndicatorGroupsState = null, action: IndicatorsAction) {
+    switch (action.type) {
+        case IndicatorsActions.LoadIndicatorGroupsSuccess:
+            return {
+                ...action.payload
+            }
+        default:
+            return state;
+    }
+}
+
 export interface AppState {
     indicatorsList: IndicatorsState;
     allIndicators: AllIndicatorsState;
+    indicatorGroups: IndicatorGroupsState;
   }
 
 export const indicatorsReducers: ActionReducerMap<AppState> = {
     indicatorsList: indicatorsListReducer,
-    allIndicators: allIndicatorsRedcuer
+    allIndicators: allIndicatorsRedcuer,
+    indicatorGroups: indicatorGroupsReducer
   };
 
