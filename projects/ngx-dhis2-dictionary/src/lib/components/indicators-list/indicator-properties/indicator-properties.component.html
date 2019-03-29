@@ -30,6 +30,6 @@
 <div class="listing card-div" *ngIf="listingIsSet" id="{{indicator.id}}" (click)="addSelectedMetadata(indicator.id)" [ngClass]="checkIfTheIndicatorIsAmongSelected(indicator.id, metadataIdentifiers) === true ? 'selected-list-item': ''">
   <div style="width: 35%; display: inline-block;">{{indicator.name}}</div>
   <div style="width: 45%; display: inline-block;" *ngIf="indicator.description">{{indicator.description}}</div>
-  <div style="width: 45%; display: inline-block;" *ngIf="!indicator.description">measured by {{indicator.numeratorDescription}} to {{indicator.denominatorDescription}}</div>
+  <div style="width: 45%; display: inline-block;" *ngIf="!indicator.description">It is measured by {{indicator.numeratorDescription}} <span *ngIf="indicator.denominatorDescription">to {{indicator.denominatorDescription}}</span></div>
   <div style="width: 18%; margin-left: 2%; display: inline-block;"><label>Created on: {{indicator.lastUpdated | date}}</label></div>
 </div>
