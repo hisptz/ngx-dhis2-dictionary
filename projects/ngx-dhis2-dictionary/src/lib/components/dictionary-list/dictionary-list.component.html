@@ -20,7 +20,7 @@
         <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='fn'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #a763d8">{{ dictionaryItem.category }}</span>
         
         <span title="{{dictionaryItem.name}}">{{ dictionaryItem.name | shortenName }}</span>
-        <span *ngIf="dictionaryItem.name !== ''" (click)="remove(dictionaryItem)" title="remove" style="margin-left: 15px; padding: 2px; border-radius: 4px; color: #FFF; font-size: 1.2em; font-weight: 900;">x</span>
+        <span *ngIf="dictionaryItem.name !== ''" (click)="remove(dictionaryItem, dictionaryList$)" title="remove" style="margin-left: 15px; padding: 2px; border-radius: 4px; color: #FFF; font-size: 1.2em; font-weight: 900;">x</span>
         <span *ngIf="dictionaryItem.name == ''" >Loading ...</span>
       </button>
     </ng-template>

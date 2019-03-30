@@ -20,14 +20,14 @@ export class IndicatorsListComponent implements OnInit {
   selectedIndicator: any = null;
   searchText: string;
   currentPage: number = 1;
-  searchTextForIndicatorGroup: string;
+  searchingTextForIndicatorGroup: string;
   indicatorGroupsForSearching = [];
   showIndicatorGroups = false;
   groupToFilter: any[] = [];
   listingIsSet: boolean;
   constructor() {
     this.searchText = '';
-    this.searchTextForIndicatorGroup = '';
+    this.searchingTextForIndicatorGroup = '';
     this.listingIsSet = false;
     if (this.completedPercent >= 100) {
       this.loading = false;

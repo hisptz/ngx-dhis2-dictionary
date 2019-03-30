@@ -90,68 +90,10 @@ export class DictionaryListComponent implements OnInit {
       e.stopPropagation();
     }
     this.activeItem = index;
+    console.log(this.activeItem)
     if (index == -1) {
       // check if the store has the items
-      this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
-      if (this.indicatorsList$) {
-        this.indicatorsList$.subscribe((indicatorList) => {
-          if (indicatorList) {
-            this.totalAvailableIndicators = indicatorList['pager']['total'];
-            this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
-            if (this.allIndicators$) {
-              this.allIndicators$.subscribe((indicatorsLoaded) => {
-                if (indicatorsLoaded) {
-                  this.indicators = [];
-                  _.map(indicatorsLoaded, (indicatorsByPage) => {
-                    this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
-                    this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
-                    if (this.completedPercent === 100 ) {
-                      this.loading = false;
-                      this.error = false;
-                    }
-                  })
-                }
-              })
-            }
-          } else {
-            this.store.dispatch(new indicators.loadIndicatorsAction());
-            this.store.dispatch(new indicators.LoadIndicatorGroupsAction())
-            this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
-            this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
-            if (this.indicatorsList$) {
-              this.indicatorsList$.subscribe((indicatorList) => {
-                if (indicatorList) {
-                  this.totalAvailableIndicators = indicatorList['pager']['total']
-                  if (this.allIndicators$) {
-                    this.allIndicators$.subscribe((indicatorsLoaded) => {
-                      if (indicatorsLoaded) {
-                        this.indicators = [];
-                        _.map(indicatorsLoaded, (indicatorsByPage) => {
-                          this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
-                          this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
-                          if (this.completedPercent === 100 ) {
-                            this.loading = false;
-                            this.error = false;
-                          }
-                        })
-                      }
-                    })
-                  }
-                }
-              })
-            }
-
-            this.indicatorGroups$ = this.indicatorsStore.pipe(select(getIndicatorGroups));
-            if (this.indicatorGroups$) {
-              this.indicatorGroups$.subscribe((indicatorGroups) => {
-                if (indicatorGroups) {
-                  this.indicatorGroups = indicatorGroups['indicatorGroups'];
-                }
-              })
-            }
-          }
-        })
-      }
+      this.loadAllIndicators();
     }
   }
 
@@ -161,17 +103,21 @@ export class DictionaryListComponent implements OnInit {
     return safeHtml;
   }
 
-  remove(item) {
+  remove(item, allIdentifiers) {
     let identifiers = [];
-    if (this.metadataIdentifiers.length === 1) {
-      this.activeItem = -1;
-    }
-    this.metadataIdentifiers.forEach((identifier) => {
-      if (item.id !== identifier) {
-        identifiers.push(identifier);
-      }
-    });
+    allIdentifiers.subscribe((identifiersInfo) => {
+      identifiersInfo.forEach((identifier) => {
+        if (item.id !== identifier.id && identifier.name.indexOf('not found') < 0) {
+          identifiers.push(identifier.id);
+        }
+      })
+    })
     this.metadataIdentifiers = _.uniq(identifiers);
+
+    this.activeItem = this.metadataIdentifiers.length -1;
+    if (this.activeItem == -1) {
+        this.loadAllIndicators();
+    }
     this.store.dispatch(
       new InitializeDictionaryMetadataAction(this.metadataIdentifiers)
     );
@@ -179,5 +125,68 @@ export class DictionaryListComponent implements OnInit {
     this.dictionaryList$ = this.store.select(
       getDictionaryList(this.metadataIdentifiers)
     );
+  }
+
+  loadAllIndicators() {
+    this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
+    if (this.indicatorsList$) {
+      this.indicatorsList$.subscribe((indicatorList) => {
+        if (indicatorList) {
+          this.totalAvailableIndicators = indicatorList['pager']['total'];
+          this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
+          if (this.allIndicators$) {
+            this.allIndicators$.subscribe((indicatorsLoaded) => {
+              if (indicatorsLoaded) {
+                this.indicators = [];
+                _.map(indicatorsLoaded, (indicatorsByPage) => {
+                  this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
+                  this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
+                  if (this.completedPercent === 100 ) {
+                    this.loading = false;
+                    this.error = false;
+                  }
+                })
+              }
+            })
+          }
+        } else {
+          this.store.dispatch(new indicators.loadIndicatorsAction());
+          this.store.dispatch(new indicators.LoadIndicatorGroupsAction())
+          this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
+          this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
+          if (this.indicatorsList$) {
+            this.indicatorsList$.subscribe((indicatorList) => {
+              if (indicatorList) {
+                this.totalAvailableIndicators = indicatorList['pager']['total']
+                if (this.allIndicators$) {
+                  this.allIndicators$.subscribe((indicatorsLoaded) => {
+                    if (indicatorsLoaded) {
+                      this.indicators = [];
+                      _.map(indicatorsLoaded, (indicatorsByPage) => {
+                        this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
+                        this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
+                        if (this.completedPercent === 100 ) {
+                          this.loading = false;
+                          this.error = false;
+                        }
+                      })
+                    }
+                  })
+                }
+              }
+            })
+          }
+
+          this.indicatorGroups$ = this.indicatorsStore.pipe(select(getIndicatorGroups));
+          if (this.indicatorGroups$) {
+            this.indicatorGroups$.subscribe((indicatorGroups) => {
+              if (indicatorGroups) {
+                this.indicatorGroups = indicatorGroups['indicatorGroups'];
+              }
+            })
+          }
+        }
+      })
+    }
   }
 }
