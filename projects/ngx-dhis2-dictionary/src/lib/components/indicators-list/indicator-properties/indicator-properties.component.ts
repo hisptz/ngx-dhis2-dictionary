@@ -11,6 +11,7 @@ export class IndicatorPropertiesComponent implements OnInit {
   @Input() indicator: any;
   @Input() listingIsSet: boolean;
   @Input() metadataIdentifiers: any;
+  @Input() routingConfiguration: any
   @Output() selectedMetadata = new EventEmitter<string>();
   constructor() { }
 

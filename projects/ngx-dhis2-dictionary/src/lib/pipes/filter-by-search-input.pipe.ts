@@ -7,7 +7,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class FilterBySearchInputPipe implements PipeTransform {
 
   transform(indicators: any[], searchingText: any): any {
-    if (searchingText !== undefined) {
+    if (searchingText !== undefined && indicators !== null) {
       if (indicators.length > 0 && searchingText != '') {
         let splittedText = searchingText;
         [',', '[', ']', '(', ')', ',', '.', '-', '_'].forEach((char) => {

@@ -50,7 +50,7 @@ export class IndicatorsEffects {
       tap((action: any) => {
         let indicatorsArr: any[] = [];
         this.indicatorService._loadAllIndicators(action.payload['pager']).subscribe((allIndicators) => {
-          indicatorsArr = [...indicatorsArr, ...allIndicators]
+          indicatorsArr = [...indicatorsArr, ...allIndicators['indicators']]
           this.store.dispatch(new indicators.LoadIndicatorsByPagesSuccessAction(indicatorsArr));
         });
       })

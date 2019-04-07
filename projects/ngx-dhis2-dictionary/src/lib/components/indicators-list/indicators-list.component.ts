@@ -1,5 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash';
+import { Observable, pipe } from 'rxjs';
+import { IndicatorGroupsState } from '../../store/state/indicators.state';
+import { Store, select } from '@ngrx/store';
+import { AppState } from '../../store/reducers/indicators.reducers';
+import { getListOfIndicators, getAllIndicators, getIndicatorGroups } from '../../store/selectors/indicators.selectors';
+import * as indicators from '../../store/actions/indicators.actions'
+import { DictionaryState } from '../../store/reducers/dictionary.reducer';
 
 @Component({
   selector: 'app-indicators-list',
@@ -8,11 +15,12 @@ import * as _ from 'lodash';
 })
 export class IndicatorsListComponent implements OnInit {
 
-  @Input() indicators: any;
-  @Input() completedPercent: number;
-  @Input() totalAvailableIndicators: number;
+  // @Input() indicators: any;
+  // @Input() completedPercent: number;
+  // @Input() totalAvailableIndicators: number;
   @Input() metadataIdentifiers: any;
-  @Input() indicatorGroups: any;
+  // @Input() indicatorGroups: any;
+  @Input() routingConfiguration: any;
   @Output() selectedMetadataIdentifier = new EventEmitter<string>()
   error: boolean = false;
   loading: boolean = true;
@@ -25,7 +33,17 @@ export class IndicatorsListComponent implements OnInit {
   showIndicatorGroups = false;
   groupToFilter: any[] = [];
   listingIsSet: boolean;
-  constructor() {
+  indicatorGroups$: Observable<IndicatorGroupsState>;
+  activeItem: number;
+  newIndicators$: Observable<any>;
+  searchingText: string;
+  indicatorsList$: Observable<any>;
+  allIndicators$: Observable<any>;
+  indicators: any[] = [];
+  completedPercent = 0;
+  totalAvailableIndicators: any = null;
+  indicatorGroups: any[] = [];
+  constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>) {
     this.searchText = '';
     this.searchingTextForIndicatorGroup = '';
     this.listingIsSet = false;
@@ -36,6 +54,7 @@ export class IndicatorsListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadAllIndicators();
   }
 
   toggleListingOfItems() {
@@ -80,6 +99,45 @@ export class IndicatorsListComponent implements OnInit {
     } else {
       let index = this.indicatorGroupsForSearching.indexOf(group);
       this.indicatorGroupsForSearching.splice(index, 1)
+    }
+  }
+
+  loadAllIndicators() {
+    this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
+    if (this.indicatorsList$) {
+      this.indicatorsList$.subscribe((indicatorList) => {
+        if (indicatorList) {
+          this.totalAvailableIndicators = indicatorList['pager']['total'];
+          this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
+        } else {
+          this.store.dispatch(new indicators.loadIndicatorsAction());
+          this.store.dispatch(new indicators.LoadIndicatorGroupsAction())
+          this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
+          this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
+          if (this.indicatorsList$) {
+            this.indicatorsList$.subscribe((indicatorList) => {
+              if (indicatorList) {
+                this.totalAvailableIndicators = indicatorList['pager']['total']
+                this.allIndicators$.subscribe((indicatorsLoaded) => {
+                  if (indicatorsLoaded) {
+                    this.indicators = [];
+                    _.map(indicatorsLoaded, (indicatorsByPage) => {
+                      this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
+                      this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
+                      if (this.completedPercent === 100 ) {
+                        this.loading = false;
+                        this.error = false;
+                      }
+                    })
+                  }
+                })
+              }
+            })
+          }
+
+          this.indicatorGroups$ = this.indicatorsStore.pipe(select(getIndicatorGroups));
+        }
+      })
     }
   }
 }

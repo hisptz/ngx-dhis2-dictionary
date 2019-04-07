@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit
+  OnInit,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'lodash';
@@ -28,11 +30,13 @@ import { IndicatorGroupsState } from '../../store/state/indicators.state';
 })
 export class DictionaryListComponent implements OnInit {
   @Input() metadataIdentifiers: Array<string>;
-  @Input() isFullScreen: boolean;
+  @Output() dictionaryItemId = new EventEmitter<string>();
+  @Input() selectedItem: string;
   dictionaryList$: Observable<MetadataDictionary[]>;
   indicatorGroups$: Observable<IndicatorGroupsState>;
   activeItem: number;
   indicators: any[] = [];
+  newIndicators$: Observable<any>;
   searchingText: string;
   currentPage: number = 1;
   indicatorsList$: Observable<any>;
@@ -45,11 +49,6 @@ export class DictionaryListComponent implements OnInit {
   loading: boolean;
 
   constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>, private sanitizer: DomSanitizer) {
-    if (this.isFullScreen) {
-      this.activeItem = -1;
-    } else {
-      this.activeItem = 0;
-    }
     this.searchingText = '';
     this.indicators = [];
     this.loading = true;
@@ -57,7 +56,13 @@ export class DictionaryListComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.metadataIdentifiers.length > 0) {
+    console.log('metadataIdentifiers', this.metadataIdentifiers)
+    if(this.selectedItem) {
+      this.selectedIndicator = this.selectedItem;
+    } else {
+      this.selectedItem = this.metadataIdentifiers[0]
+    }
+    if (this.metadataIdentifiers.length > 0 && this.metadataIdentifiers[0] !== '') {
       this.store.dispatch(
         new InitializeDictionaryMetadataAction(this.metadataIdentifiers)
       );
@@ -65,17 +70,18 @@ export class DictionaryListComponent implements OnInit {
       this.dictionaryList$ = this.store.select(
         getDictionaryList(this.metadataIdentifiers)
       );
-    }
+    } else if (this.selectedIndicator == 'all') {
+      this.loadAllIndicators();
+    } else {}
   }
 
   selectedMetadataIdentifier(identifier) {
+    this.selectedIndicator = identifier;
     let identifiers = [];
     if (_.indexOf(this.metadataIdentifiers, identifier) < 0) {
       this.metadataIdentifiers.push(identifier);
     }
     identifiers = _.uniq(this.metadataIdentifiers);
-    const currentIdentifierIndex = _.indexOf(this.metadataIdentifiers, identifier);
-    this.setActiveItem(currentIdentifierIndex);
     this.store.dispatch(
       new InitializeDictionaryMetadataAction(this.metadataIdentifiers)
     );
@@ -83,17 +89,23 @@ export class DictionaryListComponent implements OnInit {
     this.dictionaryList$ = this.store.select(
       getDictionaryList(identifiers)
     );
+    const url = this.metadataIdentifiers.join(',') + '/selected/' + identifier;
+    this.dictionaryItemId.emit(url);
   }
 
-  setActiveItem(index, e?) {
+  setActiveItem(index, e?, dictionaryItemId?) {
     if (e) {
       e.stopPropagation();
     }
+    this.selectedIndicator = dictionaryItemId;
     this.activeItem = index;
-    console.log(this.activeItem)
-    if (index == -1) {
-      // check if the store has the items
+    if (this.selectedIndicator == 'all') {
       this.loadAllIndicators();
+      const url = this.metadataIdentifiers.join(',') + '/selected/' + dictionaryItemId;
+      this.dictionaryItemId.emit(url);
+    } else {
+      const url = this.metadataIdentifiers.join(',') + '/selected/' + dictionaryItemId;
+      this.dictionaryItemId.emit(url);
     }
   }
 
@@ -134,21 +146,19 @@ export class DictionaryListComponent implements OnInit {
         if (indicatorList) {
           this.totalAvailableIndicators = indicatorList['pager']['total'];
           this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
-          if (this.allIndicators$) {
-            this.allIndicators$.subscribe((indicatorsLoaded) => {
-              if (indicatorsLoaded) {
-                this.indicators = [];
-                _.map(indicatorsLoaded, (indicatorsByPage) => {
-                  this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
-                  this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
-                  if (this.completedPercent === 100 ) {
-                    this.loading = false;
-                    this.error = false;
-                  }
-                })
-              }
-            })
-          }
+          this.allIndicators$.subscribe((indicatorsLoaded) => {
+            if (indicatorsLoaded) {
+              this.indicators = [];
+              _.map(indicatorsLoaded, (indicatorsByPage) => {
+                this.indicators = [...this.indicators, ...indicatorsByPage];
+                this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
+                if (this.completedPercent === 100 ) {
+                  this.loading = false;
+                  this.error = false;
+                }
+              })
+            }
+          })
         } else {
           this.store.dispatch(new indicators.loadIndicatorsAction());
           this.store.dispatch(new indicators.LoadIndicatorGroupsAction())
@@ -158,21 +168,19 @@ export class DictionaryListComponent implements OnInit {
             this.indicatorsList$.subscribe((indicatorList) => {
               if (indicatorList) {
                 this.totalAvailableIndicators = indicatorList['pager']['total']
-                if (this.allIndicators$) {
-                  this.allIndicators$.subscribe((indicatorsLoaded) => {
-                    if (indicatorsLoaded) {
-                      this.indicators = [];
-                      _.map(indicatorsLoaded, (indicatorsByPage) => {
-                        this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
-                        this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
-                        if (this.completedPercent === 100 ) {
-                          this.loading = false;
-                          this.error = false;
-                        }
-                      })
-                    }
-                  })
-                }
+                this.allIndicators$.subscribe((indicatorsLoaded) => {
+                  if (indicatorsLoaded) {
+                    this.indicators = [];
+                    _.map(indicatorsLoaded, (indicatorsByPage) => {
+                      this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
+                      this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
+                      if (this.completedPercent === 100 ) {
+                        this.loading = false;
+                        this.error = false;
+                      }
+                    })
+                  }
+                })
               }
             })
           }
@@ -188,5 +196,13 @@ export class DictionaryListComponent implements OnInit {
         }
       })
     }
+  }
+
+  getMetadataItemName(allItems, id) {
+    _.map(allItems, (item: any) => {
+      if (item.id == id) {
+        return item.name
+      }
+    })
   }
 }

@@ -31,10 +31,10 @@
             <img title="Indicator group filter" height="30" width="40" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJbSURBVGhD7drPSxRhHMfx7QcVZUbULQsSoi56iehQQaQnD11EiDoEeYggKPoHOmQR1CWhIiIINDDrIpKXQOoQFAQRnTuLRj+1ol/a+/Nse5Ed93lmnO9M9XzghfMs+4zz2d0ZZ2esxMQUkyU4iuf4hjlj7zGEHUgdlbiF2kp/4Z2hadR+t5YPIFV6oZV8hN6VtbDOVgxA2/EG6xCcF9AKjrhRcdEn4zG0LSf0QEiWQx+ln1itBwrOSajITTcKiN5CTfzgRv5ZiWXVxQWz4s9P3xyGtueOGwUkTZE1mMJ9N0pOC7TzXnUjv5gW2QDN+QIdLtfXoeechZ53F74xLaKMQfN8HIRvzIvoEH0FL/E6wSMcQkjMi+SVWOSfK/IJrSVwGpmKlE3qIjpNqXfksTaJTEXizr7IiUVikZxiXmQTNLdRtmBVddErpkU05yvG3Sg52/ADg27kF/Mi+rvzHV3YWccuXIPWrYsKvjH/aN2G5jWid2QvfGNeRBctTmEUuqg331Oo7B6ExLxIXolFakVm0FkCF5CpSNmkLqKjy8MSeIVMReLOvsiJRf77Ijqf2lxdXDC7sbG66BXTIrpArZPGZ26UnDbM4p4b+cW0SBN05qsyx9GTYBhat+5P+sb8o3UJmteIzhja4ZvURXRVXRN1QyY03bgOvfLz6Z5IH/TlKiS6j5mqiFK7Peyz8+adc9C2XHajwOgV1GR9k1uqBwqKvt+/hbalQw+EZjs+Qyt4gjOot/PmRfvFReifB7QND5A6+zEBrahII2hGpuiwegz9uGHsPPYh5i9LpfIbp7H+LIdnKu0AAAAASUVORK5CYII=">
           </span>
         </div>
-        <div *ngIf="showIndicatorGroups">
+        <div *ngIf="showIndicatorGroups && indicatorGroups$">
           <ul class="submenu" style="height: 300px; overflow: auto">
               <input  id="searching-input-group" placeholder="Search group " [(ngModel)]="searchingTextForIndicatorGroup">
-              <li id="indGroup.id" *ngFor="let indGroup of indicatorGroups | searchIndicatorGroup: searchingTextForIndicatorGroup">
+              <li id="indGroup.id" *ngFor="let indGroup of (indicatorGroups$ | async)['indicatorGroups'] | searchIndicatorGroup: searchingTextForIndicatorGroup">
                 <a><input type="checkbox" name="indicator-groups-ids" (change)="updateIndicatorGroupsForSearch(indGroup, $event.target.checked)">
                   {{indGroup.name}}({{indGroup.indicators.length}})
                 </a>
@@ -49,7 +49,7 @@
 
       <div style="margin-bottom: 10px" *ngIf="completedPercent < 100">
         <h5 class="text-center">
-          Loading Indicators {{ indicators.length }}/ {{ totalAvailableIndicators || 0}}( {{ completedPercent | number: '1.0-0' }}% )
+          Loading Indicators <span *ngIf="!indicators">0</span><span *ngIf="indicators">{{ indicators.length }}</span>/{{ totalAvailableIndicators || 0}}( {{ completedPercent | number: '1.0-0' }}% )
         </h5>
         <div class="progress" style="margin-bottom: 5px">
           <div
@@ -64,17 +64,17 @@
       </div>
     
       <p  *ngIf="(completedPercent > 10 && searchText != '') || (completedPercent > 10 && indicatorGroupsForSearching.length > 0)" class="text-center lead" style="margin-bottom: 5px; margin-top: 5px">
-        <b class="searched-indicators">{{ (indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length || 0 }} </b>
-        <b *ngIf="(indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length <= 1">indicator</b>
-        <b *ngIf="(indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length > 1">indicators</b>
-        <span *ngIf="searchText"> matching <b class="searching-text">`{{searchText}}`</b> out of <b class="total-indicators">{{(indicators).length}} </b> indicators </span>
+        <b class="searched-indicators">{{ (allIndicators$ | async | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length || 0 }} </b>
+        <b *ngIf="(allIndicators$ | async | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length <= 1">indicator</b>
+        <b *ngIf="(allIndicators$ | async | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length > 1">indicators</b>
+        <span *ngIf="searchText"> matching <b class="searching-text">`{{searchText}}`</b> out of <b class="total-indicators">{{(allIndicators$ | async).length}} </b> indicators </span>
         <span *ngIf="indicatorGroupsForSearching.length !== 0"> in {{ groupNames() }} </span>
         <span *ngIf="indicatorGroupsForSearching.length == 1"> indicator group</span>
         <span *ngIf="indicatorGroupsForSearching.length > 1"> indicator groups</span>
       </p>
     
       <p
-        *ngIf="completedPercent == 100 && (indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length == 0"
+        *ngIf="completedPercent == 100 && (allIndicators$ | async | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching).length == 0"
         class="text-center lead" style="margin-bottom: 5px; margin-top: 100px">
         <span class="lead"> No Indicators</span>
       </p>
@@ -83,17 +83,27 @@
           <div class="card-deck" style="margin-bottom: 20px" *ngIf="!listingIsSet">
             <div
               class="col-sm-12 col-md-3"
-              *ngFor="let indicator of indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching | paginate: {itemsPerPage: 4, currentPage: currentPage}"
+              *ngFor="let indicator of allIndicators$ | async | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching | paginate: {itemsPerPage: 4, currentPage: currentPage}"
             >
-              <app-indicator-properties [metadataIdentifiers]="metadataIdentifiers" [indicator]="indicator" [listingIsSet]="listingIsSet" (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
+              <app-indicator-properties 
+              [metadataIdentifiers]="metadataIdentifiers" 
+              [indicator]="indicator" 
+              [listingIsSet]="listingIsSet" 
+              [routingConfiguration]="routingConfiguration"
+              (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
             </div>
           </div>
           <div *ngIf="listingIsSet">
-            <div *ngFor="let indicator of indicators | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching | paginate: {itemsPerPage: 7, currentPage: currentPage}">
-                <app-indicator-properties [metadataIdentifiers]="metadataIdentifiers" [indicator]="indicator" [listingIsSet]="listingIsSet" (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
+            <div *ngFor="let indicator of allIndicators$ | async | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching | paginate: {itemsPerPage: 7, currentPage: currentPage}">
+                <app-indicator-properties 
+                [metadataIdentifiers]="metadataIdentifiers" 
+                [indicator]="indicator" 
+                [listingIsSet]="listingIsSet" 
+                [routingConfiguration]="routingConfiguration"
+                (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
             </div>
           </div>
-          <div style="margin-top: 30px;">
+          <div style="margin-top: 30px;" *ngIf="allIndicators$">
             <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
           </div>
       </div>
