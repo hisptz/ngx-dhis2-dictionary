@@ -104,11 +104,25 @@ export class IndicatorsListComponent implements OnInit {
 
   loadAllIndicators() {
     this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
+    this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
+    this.indicatorGroups$ = this.indicatorsStore.pipe(select(getIndicatorGroups));
     if (this.indicatorsList$) {
       this.indicatorsList$.subscribe((indicatorList) => {
         if (indicatorList) {
-          this.totalAvailableIndicators = indicatorList['pager']['total'];
-          this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
+          this.totalAvailableIndicators = indicatorList['pager']['total']
+                this.allIndicators$.subscribe((indicatorsLoaded) => {
+                  if (indicatorsLoaded) {
+                    this.indicators = [];
+                    _.map(indicatorsLoaded, (indicatorsByPage) => {
+                      this.indicators = [...this.indicators, ...indicatorsByPage['indicators']];
+                      this.completedPercent = 100 * (this.indicators.length / this.totalAvailableIndicators);
+                      if (this.completedPercent === 100 ) {
+                        this.loading = false;
+                        this.error = false;
+                      }
+                    })
+                  }
+                })
         } else {
           this.store.dispatch(new indicators.loadIndicatorsAction());
           this.store.dispatch(new indicators.LoadIndicatorGroupsAction())
@@ -134,7 +148,6 @@ export class IndicatorsListComponent implements OnInit {
               }
             })
           }
-
           this.indicatorGroups$ = this.indicatorsStore.pipe(select(getIndicatorGroups));
         }
       })

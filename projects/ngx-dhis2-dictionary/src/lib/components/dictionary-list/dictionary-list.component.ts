@@ -125,9 +125,16 @@ export class DictionaryListComponent implements OnInit {
       })
     })
     this.metadataIdentifiers = _.uniq(identifiers);
-
-    this.activeItem = this.metadataIdentifiers.length -1;
-    if (this.activeItem == -1) {
+    if (this.selectedIndicator == 'all') {
+      this.loadAllIndicators();
+      const url = this.metadataIdentifiers.join(',') + '/selected/' + item.id;
+      this.dictionaryItemId.emit(url);
+    } else {
+      const url = this.metadataIdentifiers.join(',') + '/selected/' + item.id;
+      this.dictionaryItemId.emit(url);
+    }
+    this.selectedIndicator = this.metadataIdentifiers[this.metadataIdentifiers.length -1];
+    if (this.selectedIndicator == 'all') {
         this.loadAllIndicators();
     }
     this.store.dispatch(
