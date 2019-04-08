@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4200",
+    "start": "ng serve --port 4205",
     "build": "ng build",
     "build-lib": "ng build --prod ngx-dhis2-dictionary",
     "publish": "npm run build-lib && cd dist/ngx-dhis2-dictionary && npm publish --access public && cd ../../",
@@ -29,6 +29,7 @@
     "@ngrx/store-devtools": "^7.3.0",
     "bootstrap": "^4.1.2",
     "core-js": "^2.5.4",
+    "ngx-pagination": "^3.2.1",
     "rxjs": "^6.4.0",
     "zone.js": "^0.8.29"
   },
