@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-switching-btns',
@@ -8,12 +8,17 @@ import { Component, OnInit, Input } from '@angular/core';
 export class SwitchingBtnsComponent implements OnInit {
 
   @Input() metadataTypes: any;
-  constructor() { }
+  @Output() getActiveMetadataType = new EventEmitter<string>();
+  activeType: string;
+  constructor() {
+    this.activeType = 'indicator';
+   }
 
   ngOnInit() {
   }
 
-  switchMetadata(status, type) {
-    console.log(status, type);
+  switchMetadata(type) {
+    this.activeType = type
+    this.getActiveMetadataType.emit(type)
   }
 }

@@ -5,7 +5,7 @@
     class="indicator-btn"
     (click)="setActiveItem('all', $event, 'all')"
     [ngClass]="selectedIndicator === 'all' ? 'active-item': ''"
-    >All indicators</button>
+    >All</button>
     <ng-template ngFor let-dictionaryItem [ngForOf]="dictionaryList$ | async | filterBySearchInput: searchingText" let-i="index">
       <button
           *ngIf="dictionaryItem.name.indexOf('not found') < 0"

@@ -42,6 +42,7 @@ export class IndicatorsListComponent implements OnInit {
   completedPercent = 0;
   totalAvailableIndicators = 0;
   indicatorGroups: any[] = [];
+  activeMetadataType: string = 'indicator';
   constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>) {
     this.searchText = '';
     this.searchingTextForIndicatorGroup = '';
@@ -151,5 +152,10 @@ export class IndicatorsListComponent implements OnInit {
         }
       })
     }
+  }
+
+  getActiveMetadataType(type) {
+    console.log(type)
+    this.activeMetadataType = type;
   }
 }
