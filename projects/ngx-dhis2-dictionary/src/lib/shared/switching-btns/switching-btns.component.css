@@ -1,99 +1,25 @@
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
+.btn-group button {
+  background-color: #eee; /* Green background */
+  border: 1px solid #eee; /* Green border */
+  color: #222222; /* White text */
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
 }
 
-html,
-body {
-  background: #ecf0f1;
-  color: #444;
-  font-family: Tahoma, Geneva, sans-serif;
-  font-size: 16px;
-  padding: 10px;
+/* Clear floats (clearfix hack) */
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
 }
 
-.button-switch {
-  font-size: 1em;
-  height: 1.15em;
-  margin-bottom: 0.625em;
-  position: relative;
-  width: 4em;
-  margin-left: 5px;
-  display: inline-block
+.btn-group button:not(:last-child) {
+  border-right: none; /* Prevent double borders */
 }
-.button-switch .lbl-off,
-.button-switch .lbl-on {
-  cursor: pointer;
-  display: block;
-  font-size: 0.9em;
-  font-weight: bold;
-  line-height: 1em;
-  position: absolute;
-  top: 0.5em;
-  transition: opacity 0.25s ease-out 0.1s;
-  text-transform: uppercase;
-}
-.button-switch .lbl-off {
-  right: 0.4375em;
-}
-.button-switch .lbl-on {
-  color: #fefefe;
-  opacity: 0;
-  left: 0.4375em;
-}
-.button-switch .switch {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  height: 0;
-  font-size: 1em;
-  left: 0;
-  line-height: 0;
-  outline: none;
-  position: absolute;
-  top: 0;
-  width: 0;
-}
-.button-switch .switch:before, .button-switch .switch:after {
-  content: '';
-  font-size: 1em;
-  position: absolute;
-}
-.button-switch .switch:before {
-  border-radius: 1.25em;
-  background: #bdc3c7;
-  height: 1.875em;
-  left: -0.25em;
-  top: -0.1875em;
-  transition: background-color 0.25s ease-out 0.1s;
-  width: 4.5em;
-}
-.button-switch .switch:after {
-  box-shadow: 0 .0625em .375em 0 #666;
-  border-radius: 50%;
-  background: #fefefe;
-  height: 1.5em;
-  -webkit-transform: translate(0, 0);
-          transform: translate(0, 0);
-  transition: -webkit-transform 0.25s ease-out 0.1s;
-  transition: transform 0.25s ease-out 0.1s;
-  transition: transform 0.25s ease-out 0.1s, -webkit-transform 0.25s ease-out 0.1s;
-  width: 1.5em;
-}
-.button-switch .switch:checked:after {
-  -webkit-transform: translate(2.5em, 0);
-          transform: translate(2.5em, 0);
-}
-.button-switch .switch:checked ~ .lbl-off {
-  opacity: 0;
-}
-.button-switch .switch:checked ~ .lbl-on {
-  opacity: 1;
-}
-.button-switch .switch#switch-orange:checked:before {
-  background: #e67e22;
-}
-.button-switch .switch#switch-blue:checked:before {
-  background: #3498db;
+
+/* Add a background color on hover */
+.btn-group button:hover {
+  background-color: #086056;
+  color: #FFF;
+  font-weight: 600;
 }

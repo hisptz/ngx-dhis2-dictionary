@@ -1,50 +1,282 @@
 <div class="dictionary-list-container">
-    <div class="dictionary-header">
-      <input id="searching-input" placeholder="Search " [(ngModel)]="searchingText">
+  <div class="dictionary-header">
+    <input id="searching-input" placeholder="Search " [(ngModel)]="searchingText">
+    <button
+    class="indicator-btn"
+    (click)="setActiveItem('all', $event, 'all')"
+    [ngClass]="selectedIndicator === 'all' ? 'active-item': ''"
+    >All indicators</button>
+    <ng-template ngFor let-dictionaryItem [ngForOf]="dictionaryList$ | async | filterBySearchInput: searchingText" let-i="index">
       <button
-      class="indicator-btn"
-      (click)="setActiveItem('all', $event, 'all')"
-      [ngClass]="selectedIndicator === 'all' ? 'active-item': ''"
-      >All indicators</button>
-      <ng-template ngFor let-dictionaryItem [ngForOf]="dictionaryList$ | async | filterBySearchInput: searchingText" let-i="index">
-        <button
-            *ngIf="dictionaryItem.name.indexOf('not found') < 0"
-            class="dictionary-title indicator-btn"
-            (click)="setActiveItem(dictionaryItem.id, $event, dictionaryItem.id)"
-            [ngClass]="dictionaryItem.id === selectedIndicator? 'active-item': ''"
-          >
-          <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='in'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #e36e40">{{ dictionaryItem.category }}</span>
-          <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='pi'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #5c9d18">{{ dictionaryItem.category }}</span>
-          <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='ds'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #2d2d30">{{ dictionaryItem.category }}</span>
-          <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='de'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #27cec8">{{ dictionaryItem.category }}</span>
-          <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='fn'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #a763d8">{{ dictionaryItem.category }}</span>
-          
-          <span title="{{dictionaryItem.name}}">{{ dictionaryItem.name | shortenName }}</span>
-          <span *ngIf="dictionaryItem.name !== ''" (click)="remove(dictionaryItem, dictionaryList$)" title="remove" style="margin-left: 15px; padding: 2px; border-radius: 4px; color: #FFF; font-size: 1.2em; font-weight: 900;">
-              &#215;
-          </span>
-          <span *ngIf="dictionaryItem.name == ''" >Loading ...</span>
-        </button>
-      </ng-template>
-    </div>
-    <div *ngIf="selectedIndicator == 'all'">
-      <app-indicators-list
-      [metadataIdentifiers]="metadataIdentifiers"
-      (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"></app-indicators-list>
-    </div>
+          *ngIf="dictionaryItem.name.indexOf('not found') < 0"
+          class="dictionary-title indicator-btn"
+          (click)="setActiveItem(dictionaryItem.id, $event, dictionaryItem.id)"
+          [ngClass]="dictionaryItem.id === selectedIndicator? 'active-item': ''"
+        >
+        <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='in'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #e36e40">{{ dictionaryItem.category }}</span>
+        <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='pi'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #5c9d18">{{ dictionaryItem.category }}</span>
+        <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='ds'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #2d2d30">{{ dictionaryItem.category }}</span>
+        <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='de'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #27cec8">{{ dictionaryItem.category }}</span>
+        <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='fn'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #a763d8">{{ dictionaryItem.category }}</span>
+        
+        <span title="{{dictionaryItem.name}}">{{ dictionaryItem.name | shortenName }}</span>
+        <span *ngIf="dictionaryItem.name !== '' " (click)="remove(dictionaryItem, dictionaryList$)" title="remove" style="margin-left: 15px; padding: 2px; border-radius: 4px; color: #FFF; font-size: 1.2em; font-weight: 900;">x</span>
+        <span *ngIf="dictionaryItem.name == '' " >Loading ...</span>
+      </button>
+    </ng-template>
+  </div>
+  <div *ngIf="selectedIndicator == 'all'">
+    <app-indicators-list
+    [metadataIdentifiers]="metadataIdentifiers"
+    (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"></app-indicators-list>
+  </div>
+  <div
+    class="dictionary-item-container"
+    *ngFor="let dictionaryItem of dictionaryList$ | async | filterBySearchInput: searchingText; let i = index"
+  >
     <div
-      class="dictionary-item-container"
-      *ngFor="let dictionaryItem of dictionaryList$ | async | filterBySearchInput: searchingText; let i = index"
+      class="dictionary-body"
+      *ngIf="dictionaryItem.id === selectedIndicator"
     >
-      <div
-        class="dictionary-body"
-        *ngIf="dictionaryItem.id === selectedIndicator"
-      >
-        <div class="dictionary-description" [innerHtml]="getSafeHtml(dictionaryItem.description)"></div>
-        <div *ngIf="dictionaryItem.progress.loading">
-          <app-dictionary-progress></app-dictionary-progress>
+      <div class="dictionary-description" [innerHtml]="getSafeHtml(dictionaryItem.description)"></div>
+      <div *ngIf="dictionaryItem && dictionaryItem.data">
+        <h3 style="color: #355E7F; margin-bottom: 1.5rem">{{dictionaryItem.data.metadata.name}}</h3>
+        <h4 style="color: #464646;">Introduction</h4>
+        <p class="indicator">
+          <span style="color: #325E80;">
+            {{dictionaryItem.data.metadata.name}}
+          </span> is a 
+          <span style="color: #325E80;">
+              {{dictionaryItem.data.metadata.indicatorType.name}}
+          </span> indicator
+  
+          <span *ngIf="dictionaryItem.data.metadata.numeratorDescription">
+            , measured by 
+              <span style="color: #325E80;">
+                {{dictionaryItem.data.metadata.numeratorDescription}}
+              </span>
+          </span>
+  
+          <span *ngIf="dictionaryItem.data.metadata.denominatorDescription">
+              to
+              <span style="color: #325E80;">
+                {{dictionaryItem.data.metadata.denominatorDescription}}
+              </span>
+          </span>
+        </p>
+
+        <p *ngIf="dictionaryItem.data.metadata.description">Its described as {{dictionaryItem.data.metadata.description}}</p>
+
+        <p *ngIf="dictionaryItem.data.metadata.annualized">
+          It’s figure is annualized to support analysis in less than year period (monthly,quarterly,semi-annually)
+        </p>
+  
+        <!-- Indicator group -->
+        <div *ngIf="dictionaryItem.data.metadata.indicatorGroups && dictionaryItem.data.metadata.indicatorGroups.length > 0">
+          <h4 style="color: #464646;">Indicator facts</h4>
+          <h6>The indicator belongs to :-</h6>
+          <ul>
+              <li *ngFor="let indicatorGroup of dictionaryItem.data.metadata.indicatorGroups">
+                <span style="color: #325E80;">
+                {{indicatorGroup.name}}
+                </span> with 
+                <strong>
+                {{(indicatorGroup.indicators -1)}}
+                </strong>
+                other related indicators
+              </li>
+          </ul>
         </div>
+        <!-- Calculation details -->
+        <div>
+            <h4 style="color: #464646;">Calculation details</h4>
+            <div style="width: 100%; overflow: auto;">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr style="background-color: #f5f5f5; color: #555;">
+                      <th style="padding: 0.35rem;">Expression</th>
+                      <th style="padding: 0.35rem;">Formula </th>
+                      <th style="padding: 0.35rem;">Sources</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngIf="dictionaryItem.data.numeratorDatasets">
+                      <td>Numerator</td>
+                      <td>{{dictionaryItem.data.numeratorExpression.description}}</td>
+                      <td>
+                        <ul *ngIf="dictionaryItem.data.numeratorDatasets && dictionaryItem.data.numeratorDatasets.length > 0" style="padding-left: 10px">
+                          <li *ngFor="let dataSet of dictionaryItem.data.numeratorDatasets">
+                            <strong>
+                              {{dataSet.name}}
+                            </strong> that is collected 
+                            <strong>
+                              {{dataSet.periodType}}
+                            </strong> with deadline for submission after
+                            <strong>
+                              {{dataSet.timelyDays}}
+                              days 
+                            </strong>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                    <tr *ngIf="dictionaryItem.data.denominatorDatasets">
+                      <td>Denominator</td>
+                      <td>{{dictionaryItem.data.denominatorExpression.description}}</td>
+                      <td>
+                        <ul *ngIf="dictionaryItem.data.denominatorDatasets && dictionaryItem.data.denominatorDatasets.length > 0" style="padding-left: 10px">
+                          <li *ngFor="let dataSet of dictionaryItem.data.denominatorDatasets">
+                            <strong>
+                              {{dataSet.name}}
+                            </strong> that is collected 
+                            <strong>
+                              {{dataSet.periodType}}
+                            </strong> with deadline for submission after
+                            <strong>
+                              {{dataSet.timelyDays}}
+                              days 
+                            </strong>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+        </div>
+         <!-- Attribute values -->
+        <div *ngIf="dictionaryItem.data.metadata.attributeValues && dictionaryItem.data.metadata.attributeValues.length > 0">
+          <h6>Other related details associated with this indicators includes:-</h6>
+          <ul>
+            <li *ngFor="let attr of dictionaryItem.data.metadata.attributeValues">
+              <span>
+                <strong>
+                  {{attr.attribute.name}}
+                  :
+                  {{attr.value}}
+                </strong>
+              </span>
+            </li>
+          </ul>
+        </div>
+        <!--Legend sets  -->
+        <div class="container-fluid">
+          <div class="row">
+            <div [ngClass]="dictionaryItem.data.legendSetsInformation ? 'col-md-5 col-sm-12': ''" *ngIf="dictionaryItem.data.legendSetsInformation">
+                <h4 style="color: #464646;">Legend for analysis</h4>
+                <div *ngFor="let legendSetInformation of dictionaryItem.data.legendSetsInformation">
+                    <h6>
+                      Uses <span style="color: #325E80;">
+                        {{legendSetInformation.legendSets[0].name}}
+                      </span> for analysis, spread accross 
+                      <span style="color: #325E80;"> 
+                        {{legendSetInformation.legendSets[0].legends.length}}
+                      </span> classes for analysis.
+                    </h6>
+                    <div *ngIf="legendSetInformation.legendSets[0].legends.length > 0">
+                      <div style="width: 90%; overflow: auto;">
+                        <table class="table table-bordered">
+                          <thead>
+                            <tr style="background-color: #f5f5f5; color: #555;">
+                              <th style="padding: 0.45em;">Class</th>
+                              <th style="padding: 0.45em;">Lower</th>
+                              <th style="padding: 0.45em;">Upper</th>
+                              <th style="padding: 0.45em;">Color</th>
+                            </tr>
+                          </thead>
+                          <tbody class="legends-list">
+                            <tr *ngFor="let legend of sortLegends(legendSetInformation.legendSets[0].legends)">
+                              <td style="padding: 0.45em;"> {{legend.name}}  </td>
+                              <td style="padding: 0.45em;">  {{legend.startValue}} </td> 
+                              <td style="padding: 0.45em;"> {{legend.endValue}} </td>
+                              <td style="padding: 0.45em;" [ngStyle]="{'background-color': legend.color}"></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="dictionaryItem.data.legendSetsInformation ? '': 'col-md-5 col-sm-12'">
+              <!-- <app-visualization></app-visualization> -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Data elements in indicators -->
+        <div *ngIf="dictionaryItem.data.dataElements">
+          <h4 style="color: #464646;">Data elements in indicator</h4>
+          <h6>The following is the summary of the data elements used in the calculations</h6>
+            <div style="width: 100%; overflow: auto;">
+              <table class="table table-bordered">
+                <thead>
+                  <tr style="background-color: #f5f5f5; color: #555;">
+                      <th style="padding: 0.45em;">Data element</th>
+                      <th style="padding: 0.45em;">Aggregation</th>
+                      <th style="padding: 0.45em;">Value Type</th>
+                      <th style="padding: 0.45em;">Zero Signifcance</th>
+                      <th style="padding: 0.45em;">Categories</th>
+                      <th style="padding: 0.45em;">Data Sets/ Programs</th>
+                      <th style="padding: 0.45em;">Groups</th>
+                    </tr>
+                  </thead>
+                  <tbody class="dataelements-list">
+                    <tr *ngFor="let element of dictionaryItem.data.dataElements">
+                      <td> {{element.name}}</td>
+                      <td> {{formatTextToSentenceFormat(element.aggregationType)}}</td>
+                      <td> {{formatTextToSentenceFormat(element.valueType)}}</td>
+                      <td> {{element.zeroIsSignificant}} </td>
+                      <td>
+                        <ul style="padding-left: 10px"> 
+                          <li id="{{categoryOption.id}}" *ngFor="let categoryOption of getCategories(element.categoryCombo.categoryOptionCombos)">
+                            <span *ngIf="categoryOption.name === 'default'">None</span>
+                            <span *ngIf="categoryOption.name !== 'default'">{{categoryOption.name}}</span>
+                          </li>
+                        </ul>
+                      </td>
+                      <td>
+                        <ul style="padding-left: 10px">
+                          <li *ngFor="let dataSetElement of getDataSetFromDataElement(element.dataSetElements)">
+                              {{dataSetElement['dataSet'].name}}
+                          </li>
+                        </ul>
+                      </td>
+                      <td>
+                        <ul style="padding-left: 10px">
+                          <li *ngFor="let dataElementGroup of getDataElementsGroups(element.dataElementGroups)">
+                            {{dataElementGroup.name}} (with other <strong> {{(dataElementGroup.dataElements - 1)}} </strong>) data elements 
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+        </div>
+        <!-- User -->
+        <div *ngIf="dictionaryItem.data.metadata.user">
+          <div style="float: right"><p><i>Created in the system on
+            <strong>
+              {{dictionaryItem.data.metadata.created | date}}
+            </strong> by 
+            <strong>
+              <span *ngIf="dictionaryItem.data.metadata.user.phoneNumber"  title="Phone: ' + dictionaryItem.data.metadata.user.phoneNumber + ', Email: ' + dictionaryItem.data.metadata.user.email +'">
+                {{dictionaryItem.data.metadata.user.name}}
+              </span>
+           </strong>
+          <span *ngIf="dictionaryItem.data.metadata.lastUpdatedBy">
+              and last updated on <strong>
+              {{dictionaryItem.data.metadata.lastUpdated | date}}
+              </strong> by 
+              <span *ngIf="dictionaryItem.data.metadata.lastUpdatedBy.phoneNumber" title="Phone: ' + dictionaryItem.data.metadata.lastUpdatedBy.phoneNumber + ', Email: ' + dictionaryItem.data.metadata.lastUpdatedBy.email +'">
+              <strong>{{dictionaryItem.data.metadata.lastUpdatedBy.name}}</strong>
+            </span>
+          </span></i></p></div>
+        </div>
+      </div>
+      <div *ngIf="dictionaryItem.progress.loading">
+        <app-dictionary-progress></app-dictionary-progress>
       </div>
     </div>
   </div>
-  
+</div>

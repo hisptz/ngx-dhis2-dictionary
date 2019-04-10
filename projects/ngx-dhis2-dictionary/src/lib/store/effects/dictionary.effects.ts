@@ -167,6 +167,7 @@ export class DictionaryEffects {
                         this.store.dispatch(
                             new UpdateDictionaryMetadataAction(metadata, {
                                 name: functionInfo.name,
+                                category: 'fn',
                                 progress: {
                                 loading: true,
                                 loadingSucceeded: true,
@@ -430,69 +431,16 @@ export class DictionaryEffects {
   }
 
   getIndicatorInfo(indicatorUrl: string, indicatorId: string) {
+    let dataLoaded = {};
+    let indicatorDescription = ''
+    dataLoaded['type'] = "indicator";
     this.httpClient.get(`${indicatorUrl}`, true).subscribe((indicator: any) => {
-      let indicatorDescription = '<h3 style="color: #355E7F; margin-bottom: 1.5rem">' + indicator.name + '</h3>';
-      indicatorDescription +=
-        '<h4 style="color: #464646;">Introduction</h4>'+
-        '<p class="indicator"><span style="color: #325E80;">' +
-        indicator.name +
-        '</span> is a <span style="color: #325E80;">' +
-        indicator.indicatorType.name +
-        ' </span> indicator';
-
-      if (indicator.numeratorDescription) {
-        indicatorDescription +=
-          '<span>, measured by <span style="color: #325E80;">' +
-          indicator.numeratorDescription +
-          '</span></span>';
-      }
-
-      if (indicator.denominatorDescription) {
-        indicatorDescription +=
-          '<span> to <span style="color: #325E80;">' +
-          indicator.denominatorDescription +
-          '</span></span></p>';
-      } 
-
-      if (indicator.description) {
-        indicatorDescription += `<p>It's described as ` + indicator.description + `</p>`;
-      }
-
-
-      if (indicator.annualized) {
-        indicatorDescription +=
-          '<p><span>It’s figure is annualized to support analysis in less than year period ' +
-          '(monthly,quarterly,semi-annually)</span></p>';
-      }
-
-          /**
-           * Indicator group
-           */
-
-          if (
-            indicator.indicatorGroups &&
-            indicator.indicatorGroups.length > 0
-          ) {
-
-          indicatorDescription += 
-          '<h4 style="color: #464646;">Indicator facts</h4>' +
-          '<h6>The indicator belongs to :-</h6><ul>';
-
-            indicator.indicatorGroups.forEach((indicatorGroup, index) => {
-              indicatorDescription +=
-                '<li><span><span style="color: #325E80;">' +
-                indicatorGroup.name +
-                '</span> with <strong>' +
-                (indicatorGroup.indicators -1) +
-                '</strong> other related indicators</span></li>';
-            });
-
-            indicatorDescription += '</ul>';
-          }
+      dataLoaded['metadata'] = indicator;
 
       this.store.dispatch(
         new UpdateDictionaryMetadataAction(indicatorId, {
           description: indicatorDescription,
+          data: dataLoaded,
           progress: {
             loading: true,
             loadingSucceeded: true,
@@ -519,36 +467,17 @@ export class DictionaryEffects {
         )
       ).subscribe((numeratorResults: any[]) => {
         if (numeratorResults[0]) {
-          indicatorDescription +=
-          '<h4 style="color: #464646;">Calculation details</h4>'+
-          '<div style="width: 100%; overflow: auto;">'+
-              '<table class="table table-bordered">'+
-                '<thead>'+
-                  '<tr style="background-color: #f5f5f5; color: #555;">'+
-                    '<th style="padding: 0.35rem;"></th>'+
-                    '<th style="padding: 0.35rem;">Formula </th>'+
-                    '<th style="padding: 0.35rem;">Sources</th>'+
-                  '</tr>'+
-                '</thead>'+
-                '<tbody>'+
-                '<tr>'+
-                '<td>Numerator</td>' +
-                '<td>' +numeratorResults[0].description + '</td>';
+          dataLoaded['numeratorExpression'] = numeratorResults[0];
         }
 
         if (numeratorResults[1] && numeratorResults[1].dataSets) {
-          const dataSets: any[] = numeratorResults[1].dataSets;
-
-          indicatorDescription +='<td><ul style="padding-left: 10px">';
-          if (dataSets.length > 0) {
-            indicatorDescription += this.listAllDataSets(dataSets)
-          }
-          indicatorDescription += '</ul></td></tr>';
+          dataLoaded['numeratorDatasets'] = numeratorResults[1].dataSets;
         }
 
         this.store.dispatch(
           new UpdateDictionaryMetadataAction(indicatorId, {
             description: indicatorDescription,
+            data: dataLoaded,
             progress: {
               loading: true,
               loadingSucceeded: true,
@@ -575,49 +504,17 @@ export class DictionaryEffects {
           )
         ).subscribe((denominatorResults: any[]) => {
           if (denominatorResults[0]) {
-            indicatorDescription +=
-              '<tr><td>' + 
-              'Denominator' +
-              '</td><td>'+
-              denominatorResults[0].description +
-              '</td>';
+            dataLoaded['denominatorExpression'] = denominatorResults[0];
           }
 
           if (denominatorResults[1] && denominatorResults[1].dataSets) {
-            const dataSets: any[] = denominatorResults[1].dataSets;
-
-            indicatorDescription +='<td><ul style="padding-left: 10px">';
-            if (dataSets.length > 0) {
-                indicatorDescription += this.listAllDataSets(dataSets)
-            }
-            indicatorDescription += '</ul></td></tr></tbody></table></div>';
-            }
-
-          /**
-           * Attribute values
-           */
-          if (
-            indicator.attributeValues &&
-            indicator.attributeValues.length > 0
-          ) {
-            indicatorDescription +=
-              '<div><p>Other related details associated with this indicators includes: ';
-
-            indicator.attributeValues.forEach(attr => {
-              indicatorDescription +=
-                '<span><strong>' +
-                attr.attribute.name +
-                ': ' +
-                attr.value +
-                '</strong></span>';
-            });
-
-            indicatorDescription += '</p></div>';
+            dataLoaded['denominatorDatasets'] = denominatorResults[1].dataSets;
           }
 
           this.store.dispatch(
             new UpdateDictionaryMetadataAction(indicatorId, {
               description: indicatorDescription,
+              data: dataLoaded,
               progress: {
                 loading: true,
                 loadingSucceeded: true,
@@ -637,49 +534,13 @@ export class DictionaryEffects {
             this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(';') +']')
           ).subscribe((legendSetsInformation) => {
             if (legendSetsInformation && legendSetsInformation[0].legendSets[0]) {
-              let legendSetTable = '';
-              let legendRows = '';
-              legendSetTable +=
-              '<h4 style="color: #464646;">Legend for analysis</h4>'
-              if (legendSetsInformation[0].legendSets[0]) {
-                legendSetTable += '<h6>Uses <span style="color: #325E80;">' + legendSetsInformation[0].legendSets[0].name +'</span> for analysis, spread accross <span style="color: #325E80;">' +legendSetsInformation[0].legendSets[0].legends.length +'</span> classes for analysis.</h6>'
-              }
-              if (legendSetsInformation[0].legendSets[0].legends.length > 0) {
-                legendSetTable += 
-                '<div style="width: 50%; overflow: auto;">' +
-                  '<table class="table table-bordered">' +
-                    '<thead>'+
-                      '<tr style="background-color: #f5f5f5; color: #555;">'+
-                        '<th style="padding: 0.45em;">Class</th>'+
-                        '<th style="padding: 0.45em;">Lower</th>'+
-                        '<th style="padding: 0.45em;">Upper</th>'+
-                        '<th style="padding: 0.45em;">Color</th>'+
-                      '</tr>'+
-                    '</thead>'+
-                    '<tbody class="legends-list">';
-                    _.reverse(_.sortBy(legendSetsInformation[0].legendSets[0].legends, ['startValue'])).forEach((legend) => {
-                      legendRows +=
-                      '<tr>'+
-                        '<td style="padding: 0.45em;">'+ legend.name + '</td>'+
-                        '<td style="padding: 0.45em;">' + legend.startValue + '</td>' +
-                        '<td style="padding: 0.45em;">'+ legend.endValue + '</legend.colortd>'+
-                        '<td style="padding: 0.45em;background-color: '+ legend.color +'"></td>'+
-                      '</tr>'
-                    });
-                    
-                    legendSetTable += legendRows;
-                    legendSetTable +=
-                    '</tbody>'+
-                  '</table>'+
-                '</div>';
-              }
-
-                indicatorDescription += legendSetTable;
+              dataLoaded['legendSetsInformation'] = legendSetsInformation;
             }
 
             this.store.dispatch(
               new UpdateDictionaryMetadataAction(indicatorId, {
                 description: indicatorDescription,
+                data: dataLoaded,
                 progress: {
                   loading: true,
                   loadingSucceeded: true,
@@ -695,86 +556,12 @@ export class DictionaryEffects {
              forkJoin(
                this.httpClient.get('dataElements.json?filter=id:in:[' + this.getAvailableDataElements(indicator.numerator + ' + ' + indicator.denominator) +']&paging=false&fields=id,name,zeroIsSignificant,aggregationType,domainType,valueType,categoryCombo[id,name,categoryOptionCombos[id,name,categoryOptions[id,name,categories[id,name]]]],dataSetElements[dataSet[id,name,periodType]],dataElementGroups[id,name,dataElements~size]',true)
              ).subscribe((dataElements) => {
-               let dataElementsTable = ''; let dataElementsListBody = '';
-               if (dataElements && dataElements[0]['dataElements'] && dataElements[0]['dataElements'].length > 0) {
-                  dataElementsTable +=
-                  '<br><h4 style="color: #464646;">Data elements in indicator</h4>'+
-                '<h6>The following is the summary of the data elements used in the calculations</h6>' +
-                '<div style="width: 100%; overflow: auto;">' +
-                    '<table class="table table-bordered">' +
-                      '<thead>'+
-                        '<tr style="background-color: #f5f5f5; color: #555;">'+
-                          '<th style="padding: 0.45em;">Data element</th>'+
-                          '<th style="padding: 0.45em;">Aggregation</th>'+
-                          '<th style="padding: 0.45em;">Value Type</th>'+
-                          '<th style="padding: 0.45em;">Zero Signifcance</th>'+
-                          '<th style="padding: 0.45em;">Categories</th>'+
-                          '<th style="padding: 0.45em;">Data Sets/ Programs</th>'+
-                          '<th style="padding: 0.45em;">Groups</th>'+
-                        '</tr>'+
-                      '</thead>'+
-                      '<tbody class="dataelements-list">';
-                dataElements[0]['dataElements'].forEach((element) => {
-                  dataElementsListBody += 
-                  '<tr><td>' + element.name + '</td>'+
-                  '<td>' + this.formatTextToSentenceFormat(element.aggregationType) + '</td>'+
-                  '<td>' + this.formatTextToSentenceFormat(element.valueType) +'</td>'+
-                  '<td>' + element.zeroIsSignificant + '</td>'+
-                  '<td><ul style="padding-left: 10px">' + this.getCategories(element.categoryCombo.categoryOptionCombos)+ '</ul></td>'+
-                  '<td><ul style="padding-left: 10px">' + this.getDataSetFromDataElement(element.dataSetElements) + '</ul></td>'+
-                  '<td><ul style="padding-left: 10px">' + this.getDataElementsGroups(element.dataElementGroups)+'</ul></td></tr>';
-                })
-                dataElementsTable += dataElementsListBody;
-                dataElementsTable += '</tbody></table></div>';
-               }
-
-              indicatorDescription += dataElementsTable;
+              dataLoaded['dataElements'] = dataElements[0].dataElements;
               
               this.store.dispatch(
                 new UpdateDictionaryMetadataAction(indicatorId, {
                   description: indicatorDescription,
-                  progress: {
-                    loading: true,
-                    loadingSucceeded: true,
-                    loadingFailed: false
-                  }
-                })
-              );
-
-              /**
-               * User info
-               */
-              if (indicator.user) {
-                indicatorDescription +=
-                  '<br><div style="float: right"><p><i>Created in the system on <strong>' +
-                  this.datePipe.transform(indicator.created) +
-                  '</strong> by <strong>';
-                  if (indicator.user.phoneNumber) {
-                    indicatorDescription += '<span  title="Phone: ' + indicator.user.phoneNumber + ', Email: ' + indicator.user.email +'">';
-                  }
-                  
-                  indicatorDescription +=
-                  indicator.user.name +
-                  '</span></strong>';
-                  if (indicator.lastUpdatedBy) {
-                    indicatorDescription +=
-                    ' and last updated on <strong>' +
-                    this.datePipe.transform(indicator.lastUpdated)
-                    + '</strong> by ';
-                    if (indicator.lastUpdatedBy.phoneNumber) {
-                      indicatorDescription += '<span  title="Phone: ' + indicator.lastUpdatedBy.phoneNumber + ', Email: ' + indicator.lastUpdatedBy.email +'">';
-                    }
-
-                  indicatorDescription +=
-                    '<strong>' +indicator.lastUpdatedBy.name + '</strong>'
-                  }
-                  indicatorDescription +=
-                  '</span></i></p></div>';
-              }
-    
-              this.store.dispatch(
-                new UpdateDictionaryMetadataAction(indicatorId, {
-                  description: indicatorDescription,
+                  data: dataLoaded,
                   progress: {
                     loading: false,
                     loadingSucceeded: true,
