@@ -21,6 +21,7 @@ import { IndicatorsListComponent } from './components/indicators-list/indicators
 import { IndicatorPropertiesComponent } from './components/indicators-list/indicator-properties/indicator-properties.component';
 
 import { NgxPaginationModule } from 'ngx-pagination';
+import { SwitchingBtnsComponent } from './shared/switching-btns/switching-btns.component';
 
 @NgModule({
   imports: [
@@ -36,7 +37,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     EffectsModule.forFeature([IndicatorsEffects])
   ],
 
-  declarations: [DictionaryListComponent, DictionaryProgressComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe, IndicatorsListComponent, IndicatorPropertiesComponent],
+  declarations: [DictionaryListComponent, DictionaryProgressComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe, IndicatorsListComponent, IndicatorPropertiesComponent, SwitchingBtnsComponent],
   exports: [DictionaryListComponent],
   providers: [DatePipe, IndicatorsService]
 })

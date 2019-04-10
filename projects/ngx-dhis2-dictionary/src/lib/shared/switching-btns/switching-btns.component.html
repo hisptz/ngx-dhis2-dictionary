@@ -1,0 +1,18 @@
+<div style="display: inline-block;">
+  <div class="button-switch">
+      <input type="checkbox" id="switch-orange" class="switch" />
+      <label for="switch-orange" class="lbl-off" (click)="switchMetadata('off','indicator')">Off</label>
+      <label for="switch-orange" class="lbl-on" (click)="switchMetadata('on','indicator')">On</label>
+  </div>
+  <span>Indicator</span>
+</div>
+  
+<div style="display: inline-block;">
+  <div class="button-switch">
+    <input type="checkbox" id="switch-blue" class="switch" checked />
+    <label for="switch-blue" class="lbl-off" (click)="switchMetadata('off','program-indicator')">Off</label>
+    <label for="switch-blue" class="lbl-on" (click)="switchMetadata('on','program-indicator')">On</label>
+  </div>
+  <span>Program indicator</span>
+</div>
+  
