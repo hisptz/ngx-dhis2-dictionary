@@ -26,9 +26,9 @@
     </ng-template>
   </div>
   <div *ngIf="selectedIndicator == 'all'">
-    <app-indicators-list
+    <app-metadata-list
     [metadataIdentifiers]="metadataIdentifiers"
-    (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"></app-indicators-list>
+    (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"></app-metadata-list>
   </div>
   <div
     class="dictionary-item-container"

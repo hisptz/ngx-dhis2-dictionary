@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash';
 import { Observable, pipe } from 'rxjs';
-import { IndicatorGroupsState } from '../../store/state/indicators.state';
+import { IndicatorGroupsState } from '../../../store/state/indicators.state';
 import { Store, select } from '@ngrx/store';
-import { AppState } from '../../store/reducers/indicators.reducers';
-import { getListOfIndicators, getAllIndicators, getIndicatorGroups } from '../../store/selectors/indicators.selectors';
-import * as indicators from '../../store/actions/indicators.actions'
-import { DictionaryState } from '../../store/reducers/dictionary.reducer';
+import { AppState } from '../../../store/reducers/indicators.reducers';
+import { getListOfIndicators, getAllIndicators, getIndicatorGroups } from '../../../store/selectors/indicators.selectors';
+import * as indicators from '../../../store/actions/indicators.actions'
+import { DictionaryState } from '../../../store/reducers/dictionary.reducer';
 
 @Component({
   selector: 'app-indicators-list',
@@ -15,12 +15,7 @@ import { DictionaryState } from '../../store/reducers/dictionary.reducer';
 })
 export class IndicatorsListComponent implements OnInit {
 
-  // @Input() indicators: any;
-  // @Input() completedPercent: number;
-  // @Input() totalAvailableIndicators: number;
   @Input() metadataIdentifiers: any;
-  // @Input() indicatorGroups: any;
-  @Input() routingConfiguration: any;
   @Output() selectedMetadataIdentifier = new EventEmitter<string>()
   error: boolean = false;
   loading: boolean = true;

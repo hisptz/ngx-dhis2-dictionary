@@ -17,11 +17,14 @@ import { DictionaryProgressComponent } from './components/dictionary-progress/di
 import { dictionaryReducer } from './store/reducers/dictionary.reducer';
 import { DictionaryEffects } from './store/effects/dictionary.effects';
 import { IndicatorsService } from './services/indicators.service';
-import { IndicatorsListComponent } from './components/indicators-list/indicators-list.component';
-import { IndicatorPropertiesComponent } from './components/indicators-list/indicator-properties/indicator-properties.component';
+// import { IndicatorsListComponent } from './components/metadata-list/indicators-list/indicators-list.component';
+// import { IndicatorPropertiesComponent } from './components/metadata-list/indicators-list/indicator-properties/indicator-properties.component';
 
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SwitchingBtnsComponent } from './shared/switching-btns/switching-btns.component';
+import { MetadataListComponent } from './components/metadata-list/metadata-list.component';
+import { IndicatorPropertiesComponent } from './components/metadata-list/indicators-list/indicator-properties/indicator-properties.component';
+import { IndicatorsListComponent } from './components/metadata-list/indicators-list/indicators-list.component';
 
 @NgModule({
   imports: [
@@ -37,7 +40,7 @@ import { SwitchingBtnsComponent } from './shared/switching-btns/switching-btns.c
     EffectsModule.forFeature([IndicatorsEffects])
   ],
 
-  declarations: [DictionaryListComponent, DictionaryProgressComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe, IndicatorsListComponent, IndicatorPropertiesComponent, SwitchingBtnsComponent],
+  declarations: [DictionaryListComponent, DictionaryProgressComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe, IndicatorsListComponent, IndicatorPropertiesComponent, SwitchingBtnsComponent, MetadataListComponent],
   exports: [DictionaryListComponent],
   providers: [DatePipe, IndicatorsService]
 })
