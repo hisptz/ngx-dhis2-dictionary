@@ -9,7 +9,7 @@ import { SearchIndicatorGroupPipe } from './pipes/search-indicator-group.pipe';
 import { FilterBySearchInputPipe } from './pipes/filter-by-search-input.pipe';
 import { FilterIndicatorsByGroupIdPipe } from './pipes/filter-indicators-by-group-id.pipe';
 import { ShortenNamePipe } from './pipes/shorten-name.pipe';
-import { indicatorsListReducer, allIndicatorsRedcuer, indicatorGroupsReducer } from './store/reducers/indicators.reducers';
+import { indicatorsListReducer, allIndicatorsRedcuer, indicatorGroupsReducer, programIndicatorsListReducer } from './store/reducers/indicators.reducers';
 import { IndicatorsEffects } from './store/effects/indicators.effects';
 
 import { DictionaryListComponent } from './components/dictionary-list/dictionary-list.component';
@@ -25,6 +25,8 @@ import { SwitchingBtnsComponent } from './shared/switching-btns/switching-btns.c
 import { MetadataListComponent } from './components/metadata-list/metadata-list.component';
 import { IndicatorPropertiesComponent } from './components/metadata-list/indicators-list/indicator-properties/indicator-properties.component';
 import { IndicatorsListComponent } from './components/metadata-list/indicators-list/indicators-list.component';
+import { ProgramIndicatorsComponent } from './components/metadata-list/program-indicators/program-indicators.component';
+import { ProgramIndicatorPropertiesComponent } from './components/metadata-list/program-indicators/program-indicator-properties/program-indicator-properties.component';
 
 @NgModule({
   imports: [
@@ -34,13 +36,14 @@ import { IndicatorsListComponent } from './components/metadata-list/indicators-l
     NgxPaginationModule,
     StoreModule.forFeature('dictionary', dictionaryReducer),
     StoreModule.forFeature('indicatorsList', indicatorsListReducer),
+    StoreModule.forFeature('programIndicatorsList', programIndicatorsListReducer),
     StoreModule.forFeature('allIndicators', allIndicatorsRedcuer),
     StoreModule.forFeature('indicatorGroups', indicatorGroupsReducer),
     EffectsModule.forFeature([DictionaryEffects]),
     EffectsModule.forFeature([IndicatorsEffects])
   ],
 
-  declarations: [DictionaryListComponent, DictionaryProgressComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe, IndicatorsListComponent, IndicatorPropertiesComponent, SwitchingBtnsComponent, MetadataListComponent],
+  declarations: [DictionaryListComponent, DictionaryProgressComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe, IndicatorsListComponent, IndicatorPropertiesComponent, SwitchingBtnsComponent, MetadataListComponent, ProgramIndicatorsComponent, ProgramIndicatorPropertiesComponent],
   exports: [DictionaryListComponent],
   providers: [DatePipe, IndicatorsService]
 })

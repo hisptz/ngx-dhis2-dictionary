@@ -8,6 +8,7 @@ import { createFeatureSelector, ActionReducerMap } from '@ngrx/store';
 
 export interface State extends EntityState<AllIndicatorsState> {
     indicators: any;
+    programIndicators: any;
     progressLoadingValue: number;
 }
 
@@ -15,6 +16,7 @@ export const adapter: EntityAdapter<AllIndicatorsState> = createEntityAdapter<Al
 
 export const INITIAL_STATE_LOADED_INDICATORS: State = adapter.getInitialState({
     indicators: null,
+    programIndicators: null,
     progressLoadingValue: 0
 })
 
@@ -31,6 +33,18 @@ export function indicatorsListReducer(state: IndicatorsState = null, action: Ind
     }
 }
 
+export function programIndicatorsListReducer(state: any = null, action: IndicatorsAction) {
+    switch (action.type) {
+        case IndicatorsActions.LoadProgramIndicatorsSuccess:
+            return {
+                ...state,
+                ...action.payload
+            }
+        default:
+            return state;
+    }
+}
+
 export function allIndicatorsRedcuer(state: AllIndicatorsState = INITIAL_STATE_LOADED_INDICATORS, action: IndicatorsAction) {
     switch (action.type) {
         case IndicatorsActions.LoadIndicatorsByPagesSuccess:
@@ -38,9 +52,10 @@ export function allIndicatorsRedcuer(state: AllIndicatorsState = INITIAL_STATE_L
                 ...state,
                 indicators: action.payload
             }
-        case IndicatorsActions.LoadIndicatorsByPagesSuccess:
-            return {...state,
-                progressLoadingValue: action.payload
+        case IndicatorsActions.LoadProgramIndicatorsByPagesSuccess:
+            return {
+                ...state,
+                programIndicators: action.payload
             }
         default:
             return state;
@@ -60,12 +75,14 @@ export function indicatorGroupsReducer(state: IndicatorGroupsState = null, actio
 
 export interface AppState {
     indicatorsList: IndicatorsState;
+    programIndicatorsList: any;
     allIndicators: AllIndicatorsState;
     indicatorGroups: IndicatorGroupsState;
   }
 
 export const indicatorsReducers: ActionReducerMap<AppState> = {
     indicatorsList: indicatorsListReducer,
+    programIndicatorsList: programIndicatorsListReducer,
     allIndicators: allIndicatorsRedcuer,
     indicatorGroups: indicatorGroupsReducer
   };

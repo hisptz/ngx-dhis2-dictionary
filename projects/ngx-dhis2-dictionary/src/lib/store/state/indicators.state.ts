@@ -5,6 +5,7 @@ export interface IndicatorsState {
 
 export interface AllIndicatorsState {
     indicators: any;
+    programIndicators: any;
     progressLoadingValue: number;
 }
 

@@ -7,6 +7,7 @@
     "@ngrx/effects": "^6.0.1 || ^7.3.0",
     "@ngrx/entity": "^6.0.1 || ^7.3.0",
     "@ngrx/store": "^6.0.1 || ^7.3.0",
-    "@hisptz/ngx-dhis2-http-client": "^1.0.2"
+    "@hisptz/ngx-dhis2-http-client": "^1.0.2",
+    "ngx-pagination": "^3.2.1"
   }
 }

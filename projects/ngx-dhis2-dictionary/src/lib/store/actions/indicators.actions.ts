@@ -5,9 +5,12 @@ import { IndicatorGroupsState } from '../state/indicators.state';
 export enum IndicatorsActions {
     LoadIndicators = '[Indicators] Load indicators',
     LoadIndicatorsSuccess = '[Indicators] Load indicators success',
+    LoadProgramIndicators = '[Program Indicators] Load program indicators',
+    LoadProgramIndicatorsSuccess = '[Program Indicators] Load program indicators success',
     LoadIndicatorsFail = '[Indicators] Load indicators fail',
     LoadIndicatorsByPages = '[Indicators] Load indicators by pages',
     LoadIndicatorsByPagesSuccess = '[Indicators] Load indicators by pages success',
+    LoadProgramIndicatorsByPagesSuccess = '[Program Indicators] Load program indicators by pages success',
     LoadIndicatorsByPagesFail = '[Indicators] Load indicators by pages fail',
     ProgressLoadingIndicators = '[Progress bar] progress bar for loaded indicators',
     LoadIndicatorProperties = '[Indicator properties] Load indicator properties',
@@ -22,8 +25,19 @@ export class loadIndicatorsAction implements Action {
     readonly type = IndicatorsActions.LoadIndicators;
 }
 
+
 export class loadIndicatorsSuccessAction implements Action {
     readonly type = IndicatorsActions.LoadIndicatorsSuccess;
+
+    constructor(public payload: any) {}
+}
+
+export class loadProgramIndicatorsAction implements Action {
+    readonly type = IndicatorsActions.LoadProgramIndicators;
+}
+
+export class loadProgramIndicatorsSuccessAction implements Action {
+    readonly type = IndicatorsActions.LoadProgramIndicatorsSuccess;
 
     constructor(public payload: any) {}
 }
@@ -43,6 +57,12 @@ export class LoadIndicatorsByPagesAction implements Action {
 
 export class LoadIndicatorsByPagesSuccessAction implements Action {
     readonly type = IndicatorsActions.LoadIndicatorsByPagesSuccess;
+
+    constructor(public payload: any) {}
+}
+
+export class LoadProgramIndicatorsByPagesSuccessAction implements Action {
+    readonly type = IndicatorsActions.LoadProgramIndicatorsByPagesSuccess;
 
     constructor(public payload: any) {}
 }
@@ -73,9 +93,12 @@ export class LoadIndicatorGroupsFailAction implements Action {
 export type IndicatorsAction = loadIndicatorsAction
     | loadIndicatorsFailAction
     | loadIndicatorsSuccessAction
+    | loadProgramIndicatorsAction
+    | loadProgramIndicatorsSuccessAction
     | LoadIndicatorsByPagesAction
     | LoadIndicatorsByPagesFailAction
     | LoadIndicatorsByPagesSuccessAction
+    | LoadProgramIndicatorsByPagesSuccessAction
     | LoadIndicatorGroupsAction
     | LoadIndicatorGroupsSuccessAction
     | LoadIndicatorGroupsFailAction;

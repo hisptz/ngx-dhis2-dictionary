@@ -8,12 +8,16 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class MetadataListComponent implements OnInit {
 
   @Input() metadataIdentifiers: any;
-  @Output() selectedMetadataIdentifier = new EventEmitter<string>()
+  @Output() selectedMetadataId = new EventEmitter<string>()
   activeMetadataType: string = 'indicator';
   constructor() {
   }
 
   ngOnInit() {
+  }
+
+  selectedMetadataIdentifier(e) {
+    this.selectedMetadataId.emit(e)
   }
 
   getActiveMetadataType(type) {

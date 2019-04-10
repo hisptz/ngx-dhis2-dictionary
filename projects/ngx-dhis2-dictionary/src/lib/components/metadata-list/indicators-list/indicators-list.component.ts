@@ -119,8 +119,8 @@ export class IndicatorsListComponent implements OnInit {
                   }
                 })
         } else {
-          this.store.dispatch(new indicators.loadIndicatorsAction());
-          this.store.dispatch(new indicators.LoadIndicatorGroupsAction())
+          this.indicatorsStore.dispatch(new indicators.loadIndicatorsAction());
+          this.indicatorsStore.dispatch(new indicators.LoadIndicatorGroupsAction())
           this.indicatorsList$ = this.indicatorsStore.select(pipe(getListOfIndicators));
           this.allIndicators$ = this.indicatorsStore.select(pipe(getAllIndicators));
           if (this.indicatorsList$) {

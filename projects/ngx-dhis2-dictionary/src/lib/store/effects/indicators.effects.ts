@@ -22,15 +22,15 @@ export class IndicatorsEffects {
         ))
     );
 
-    // @Effect()
-    // programIndicatorsList$: Observable<any> = this.actions$
-    // .pipe(ofType<indicators.IndicatorsAction>(indicators.IndicatorsActions.LoadIndicators),
-    //     switchMap(() => this.httpClient.get('programIndicators.json').pipe(
-    //       map((indicatorsListObject: any) =>
-    //         new indicators.loadIndicatorsSuccessAction(indicatorsListObject)),
-    //       catchError((error) => of(new indicators.loadIndicatorsFailAction(error)))
-    //     ))
-    // );
+    @Effect()
+    programIndicatorsList$: Observable<any> = this.actions$
+    .pipe(ofType<indicators.IndicatorsAction>(indicators.IndicatorsActions.LoadProgramIndicators),
+        switchMap(() => this.httpClient.get('programIndicators.json').pipe(
+          map((programIndicatorsListObject: any) =>
+            new indicators.loadProgramIndicatorsSuccessAction(programIndicatorsListObject)),
+          catchError((error) => of(new indicators.loadIndicatorsFailAction(error)))
+        ))
+    );
 
     @Effect()
     indicatorGroups$: Observable<any> = this.actions$
@@ -52,6 +52,19 @@ export class IndicatorsEffects {
         this.indicatorService._loadAllIndicators(action.payload['pager']).subscribe((allIndicators) => {
           indicatorsArr = [...indicatorsArr, ...allIndicators['indicators']]
           this.store.dispatch(new indicators.LoadIndicatorsByPagesSuccessAction(indicatorsArr));
+        });
+      })
+    )
+
+    @Effect({dispatch: false})
+    programIndicator$: Observable<any> = this.actions$
+    .pipe(
+      ofType<indicators.IndicatorsAction>(indicators.IndicatorsActions.LoadProgramIndicatorsSuccess),
+      tap((action: any) => {
+        let programIndicatorsArr: any[] = [];
+        this.indicatorService._loadAllProgramIndicators(action.payload['pager']).subscribe((allIndicators) => {
+          programIndicatorsArr = [...programIndicatorsArr, ...allIndicators['programIndicators']]
+          this.store.dispatch(new indicators.LoadProgramIndicatorsByPagesSuccessAction(programIndicatorsArr));
         });
       })
     )

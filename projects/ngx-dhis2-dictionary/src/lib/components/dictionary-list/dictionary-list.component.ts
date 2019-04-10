@@ -74,7 +74,8 @@ export class DictionaryListComponent implements OnInit {
     } else {}
   }
 
-  selectedMetadataIdentifier(identifier) {
+  selectedMetadataId(identifier) {
+    console.log('identified', identifier);
     this.selectedIndicator = identifier;
     let identifiers = [];
     if (_.indexOf(this.metadataIdentifiers, identifier) < 0) {

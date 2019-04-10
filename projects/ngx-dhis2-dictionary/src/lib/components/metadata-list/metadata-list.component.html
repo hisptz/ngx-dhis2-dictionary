@@ -4,11 +4,20 @@
       <app-switching-btns (getActiveMetadataType)="getActiveMetadataType($event)"></app-switching-btns>
     </div>
   </div>
+  <!-- Indicators -->
   <div class="row" *ngIf="activeMetadataType == 'indicator'">
     <div class="col-md-12">
       <app-indicators-list
         [metadataIdentifiers]="metadataIdentifiers"
         (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"></app-indicators-list>
+    </div>
+  </div>
+<!-- Program indicators -->
+  <div class="row" *ngIf="activeMetadataType == 'programIndicator'">
+    <div class="col-md-12">
+      <app-program-indicators
+        [metadataIdentifiers]="metadataIdentifiers"
+        (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"></app-program-indicators>
     </div>
   </div>
 </div>

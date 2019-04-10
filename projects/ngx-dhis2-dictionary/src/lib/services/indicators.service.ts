@@ -66,6 +66,44 @@ export class IndicatorsService {
     )
   }
 
+  _loadAllProgramIndicators(pagerDefinitions): Observable<any> {
+    // format pageSize as per number of indicators
+    let pageSize = 20; let pageCount = 1
+    if (pagerDefinitions.total < 200) {
+      pageSize = 20;
+      pageCount = Math.ceil(pagerDefinitions.total / pageSize);
+    } else if (pagerDefinitions.total <= 3000 && pagerDefinitions.total > 200) {
+      pageSize = 100;
+      pageCount = Math.ceil(pagerDefinitions.total / pageSize);
+    } else if (pagerDefinitions.total > 3000) {
+      pageSize = 400;
+      pageCount = Math.ceil(pagerDefinitions.total / pageSize);
+      // pageSize = pagerDefinitions.pageSize;
+      // pageCount = pagerDefinitions.pageCount;
+    }
+    return from(
+      _.map(
+        _.range(1, pageCount + 1),
+        pageNumber =>
+        'programIndicators.json?fields=:all&pageSize='
+        + pageSize +
+        '&page=' + pageNumber
+      )
+    ).pipe(
+      mergeMap(
+        (url: string) =>
+        this.httpClient.get(url).pipe(
+            map(
+              (indicators: any) =>
+                indicators
+            )
+          ),
+      null,
+      1
+      )
+    )
+  }
+
   _indicatorProperties(indicatorsObj): Observable<any> {
     this.indicators = [...this.indicators, ...indicatorsObj]
     console.log(this.indicators);
