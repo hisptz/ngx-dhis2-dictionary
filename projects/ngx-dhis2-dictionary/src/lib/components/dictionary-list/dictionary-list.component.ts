@@ -258,7 +258,6 @@ export class DictionaryListComponent implements OnInit {
   }
 
   getOtherMetadata(allMedatada, listAllMetadataInGroup) {
-    console.log(listAllMetadataInGroup)
     let newSlicedList = [];
     _.map(allMedatada, (metadata) => {
       if (metadata.id !== this.selectedIndicator) {
@@ -273,8 +272,6 @@ export class DictionaryListComponent implements OnInit {
   }
 
   getExpressionPart(element, indicator) {
-    console.log(element)
-    console.log('ind', indicator)
     let expressionPartAvailability = [];
     if (indicator.numerator.indexOf(element.id) > -1) {
       expressionPartAvailability.push('Numerator')

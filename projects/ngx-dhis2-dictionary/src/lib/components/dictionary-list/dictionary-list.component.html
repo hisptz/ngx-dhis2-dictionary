@@ -102,7 +102,10 @@
                   <td>
                       <ul style="max-height: 100px; overflow: auto">
                           <li *ngFor="let indicator of getOtherMetadata(indicatorGroup.indicators, listAllMetadataInGroup)">
-                            <span id={{indicator.id}} (click)="setActiveItem($event, indicator.id)" style="color: #325E80; cursor: pointer;">
+                            <span 
+                            id={{indicator.id}} 
+                            (click)="setActiveItem($event, indicator.id)" 
+                            style="color: #325E80; cursor: pointer;text-decoration: underline">
                             {{indicator.name}}
                             </span>
                           </li>
@@ -201,13 +204,13 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngIf="dictionaryItem.data.numeratorExpression && dictionaryItem.data.numeratorDatasets">
+                    <tr *ngIf="dictionaryItem.data.numeratorExpression && dictionaryItem.data.numeratorDatasets && dictionaryItem.data.numeratorDatasets.length > 0">
                       <td>Numerator</td>
                       <td>{{dictionaryItem.data.numeratorExpression.description}}</td>
                       <td>
                         <ul *ngIf="dictionaryItem.data.numeratorDatasets && dictionaryItem.data.numeratorDatasets.length > 0" style="padding-left: 10px">
                           <li *ngFor="let dataSet of dictionaryItem.data.numeratorDatasets">
-                            <strong>
+                            <strong style="cursor: pointer;color: #325E80;text-decoration: underline;" (click)="setActiveItem($event, dataSet.id)">
                               {{dataSet.name}}
                             </strong> that is collected 
                             <strong>
@@ -221,13 +224,13 @@
                         </ul>
                       </td>
                     </tr>
-                    <tr *ngIf="dictionaryItem.data.denominatorExpression && dictionaryItem.data.denominatorDatasets">
+                    <tr *ngIf="dictionaryItem.data.denominatorExpression && dictionaryItem.data.denominatorDatasets && dictionaryItem.data.denominatorDatasets.length > 0">
                       <td>Denominator</td>
                       <td>{{dictionaryItem.data.denominatorExpression.description}}</td>
                       <td>
                         <ul *ngIf="dictionaryItem.data.denominatorDatasets && dictionaryItem.data.denominatorDatasets.length > 0" style="padding-left: 10px">
                           <li *ngFor="let dataSet of dictionaryItem.data.denominatorDatasets">
-                            <strong>
+                            <strong style="cursor: pointer;color: #325E80;text-decoration: underline;" (click)="setActiveItem($event, dataSet.id)">
                               {{dataSet.name}}
                             </strong> that is collected 
                             <strong>
@@ -265,7 +268,11 @@
                   </thead>
                   <tbody class="dataelements-list">
                     <tr *ngFor="let element of dictionaryItem.data.dataElements">
-                      <td> {{element.name}}</td>
+                      <td> 
+                        <span 
+                        style="cursor: pointer;color: #325E80;text-decoration: underline;" 
+                        (click)="setActiveItem($event, element.id)">{{element.name}}</span>
+                      </td>
                       <td> {{getExpressionPart(element,dictionaryItem.data.metadata)}}</td>
                       <td> {{formatTextToSentenceFormat(element.aggregationType)}}</td>
                       <td> {{formatTextToSentenceFormat(element.valueType)}}</td>
@@ -281,7 +288,11 @@
                       <td>
                         <ul style="padding-left: 10px">
                           <li *ngFor="let dataSetElement of getDataSetFromDataElement(element.dataSetElements)">
-                              {{dataSetElement['dataSet'].name}}
+                              <span
+                            (click)="setActiveItem($event, dataSetElement['dataSet'].id)" 
+                            style="color: #325E80; cursor: pointer;text-decoration: underline">
+                            {{dataSetElement['dataSet'].name}}
+                            </span>
                           </li>
                         </ul>
                       </td>
