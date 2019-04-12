@@ -27,6 +27,7 @@ import { IndicatorPropertiesComponent } from './components/metadata-list/indicat
 import { IndicatorsListComponent } from './components/metadata-list/indicators-list/indicators-list.component';
 import { ProgramIndicatorsComponent } from './components/metadata-list/program-indicators/program-indicators.component';
 import { ProgramIndicatorPropertiesComponent } from './components/metadata-list/program-indicators/program-indicator-properties/program-indicator-properties.component';
+import { ExportService } from './services/export.service';
 
 @NgModule({
   imports: [
@@ -45,6 +46,6 @@ import { ProgramIndicatorPropertiesComponent } from './components/metadata-list/
 
   declarations: [DictionaryListComponent, DictionaryProgressComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe, IndicatorsListComponent, IndicatorPropertiesComponent, SwitchingBtnsComponent, MetadataListComponent, ProgramIndicatorsComponent, ProgramIndicatorPropertiesComponent],
   exports: [DictionaryListComponent],
-  providers: [DatePipe, IndicatorsService]
+  providers: [DatePipe, IndicatorsService, ExportService]
 })
 export class NgxDhis2DictionaryModule {}

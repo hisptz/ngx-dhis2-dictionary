@@ -35,42 +35,44 @@
     *ngFor="let dictionaryItem of dictionaryList$ | async | filterBySearchInput: searchingText; let i = index"
   >
     <div
+    id="ex"
       class="dictionary-body"
       *ngIf="dictionaryItem.id === selectedIndicator"
     >
-      <div class="dictionary-description" [innerHtml]="getSafeHtml(dictionaryItem.description)"></div>
-      <div *ngIf="dictionaryItem && dictionaryItem.data">
-        <h3 style="color: #355E7F; margin-bottom: 1.5rem">{{dictionaryItem.data.metadata.name}}</h3>
-        <h4 style="color: #464646;">Introduction</h4>
-        <p class="indicator">
+      <div class="dictionary-description" id="dictionary-description-{{dictionaryItem.id}}" [innerHtml]="getSafeHtml(dictionaryItem.description)"></div>
+      <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='indicator'">
+        <div class="indicator-name"><h3 style="color: #355E7F; margin-bottom: 1.5rem">{{dictionaryItem.data.metadata.name}}</h3></div>
+        <div class="introduction"><h4 style="color: #464646;">Introduction</h4></div>
+        <div class="description"><p class="indicator">
           <span style="color: #325E80;">
             {{dictionaryItem.data.metadata.name}}
           </span> is a 
           <span style="color: #325E80;">
               {{dictionaryItem.data.metadata.indicatorType.name}}
           </span> indicator
-  
           <span *ngIf="dictionaryItem.data.metadata.numeratorDescription">
             , measured by 
               <span style="color: #325E80;">
                 {{dictionaryItem.data.metadata.numeratorDescription}}
               </span>
           </span>
-  
           <span *ngIf="dictionaryItem.data.metadata.denominatorDescription">
               to
               <span style="color: #325E80;">
                 {{dictionaryItem.data.metadata.denominatorDescription}}
               </span>
           </span>
-        </p>
-
-        <p *ngIf="dictionaryItem.data.metadata.description">Its described as {{dictionaryItem.data.metadata.description}}</p>
-
-        <p *ngIf="dictionaryItem.data.metadata.annualized">
+        </p></div>
+        <div>
+          <p *ngIf="dictionaryItem.data.metadata.description">
+          Its described as {{dictionaryItem.data.metadata.description}}
+          </p>
+        </div>
+        <div>
+          <p *ngIf="dictionaryItem.data.metadata.annualized">
           It’s figure is annualized to support analysis in less than year period (monthly,quarterly,semi-annually)
-        </p>
-  
+          </p>
+        </div>
         <!-- Indicator group -->
         <div *ngIf="dictionaryItem.data.metadata.indicatorGroups && dictionaryItem.data.metadata.indicatorGroups.length > 0">
           <h4 style="color: #464646;">Indicator facts</h4>
@@ -89,7 +91,7 @@
         </div>
         <!-- Calculation details -->
         <div>
-            <h4 style="color: #464646;">Calculation details</h4>
+            <div><h4 style="color: #464646;">Calculation details</h4></div>
             <div style="width: 100%; overflow: auto;">
                 <table class="table table-bordered">
                   <thead>
@@ -100,7 +102,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngIf="dictionaryItem.data.numeratorDatasets">
+                    <tr *ngIf="dictionaryItem.data.numeratorExpression && dictionaryItem.data.numeratorDatasets">
                       <td>Numerator</td>
                       <td>{{dictionaryItem.data.numeratorExpression.description}}</td>
                       <td>
@@ -120,7 +122,7 @@
                         </ul>
                       </td>
                     </tr>
-                    <tr *ngIf="dictionaryItem.data.denominatorDatasets">
+                    <tr *ngIf="dictionaryItem.data.denominatorExpression && dictionaryItem.data.denominatorDatasets">
                       <td>Denominator</td>
                       <td>{{dictionaryItem.data.denominatorExpression.description}}</td>
                       <td>
@@ -142,7 +144,7 @@
                     </tr>
                   </tbody>
                 </table>
-              </div>
+            </div>
         </div>
          <!-- Attribute values -->
         <div *ngIf="dictionaryItem.data.metadata.attributeValues && dictionaryItem.data.metadata.attributeValues.length > 0">
@@ -202,9 +204,8 @@
             </div>
           </div>
         </div>
-
         <!-- Data elements in indicators -->
-        <div *ngIf="dictionaryItem.data.dataElements">
+        <div *ngIf="dictionaryItem.data.dataElements && dictionaryItem.data.dataElements.length > 0">
           <h4 style="color: #464646;">Data elements in indicator</h4>
           <h6>The following is the summary of the data elements used in the calculations</h6>
             <div style="width: 100%; overflow: auto;">
@@ -276,6 +277,9 @@
       </div>
       <div *ngIf="dictionaryItem.progress.loading">
         <app-dictionary-progress></app-dictionary-progress>
+      </div>
+      <div *ngIf="dictionaryItem.data">
+        <button class="export-to-excel" style="float: left" (click)="exportMetadataInformation(dictionaryItem.id)">Export</button>
       </div>
     </div>
   </div>

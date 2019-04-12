@@ -4,7 +4,8 @@ import {
   Input,
   OnInit,
   Output,
-  EventEmitter
+  EventEmitter,
+  ElementRef
 } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'lodash';
@@ -20,6 +21,7 @@ import { getListOfIndicators, getAllIndicators, getIndicatorGroups } from '../..
 import { AppState } from '../../store/reducers/indicators.reducers';
 import { Identifiers } from '@angular/compiler';
 import { IndicatorGroupsState } from '../../store/state/indicators.state';
+import { ExportService } from '../../services/export.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -47,8 +49,9 @@ export class DictionaryListComponent implements OnInit {
   indicatorGroups: any[] = [];
   error: boolean;
   loading: boolean;
+  html: any;
 
-  constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>, private sanitizer: DomSanitizer) {
+  constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>, private exportService: ExportService, private sanitizer: DomSanitizer) {
     this.searchingText = '';
     this.indicators = [];
     this.loading = true;
@@ -242,5 +245,10 @@ export class DictionaryListComponent implements OnInit {
       return stringSection.slice(0,1).toUpperCase() + stringSection.slice(1).toLowerCase();
     }).join(' ')
     return text.split('_').join(' ').slice(0,1).toUpperCase() + text.split('_').join(' ').slice(1).toLowerCase();
+  }
+
+  exportMetadataInformation(id) {
+    this.html = document.getElementById('ex').outerHTML;
+    this.exportService.exportXLS('filename.xls', this.html)
   }
 }

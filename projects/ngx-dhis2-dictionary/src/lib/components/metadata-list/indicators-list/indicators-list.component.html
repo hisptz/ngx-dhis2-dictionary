@@ -93,8 +93,7 @@
             <app-indicator-properties 
             [metadataIdentifiers]="metadataIdentifiers" 
             [indicator]="indicator" 
-            [listingIsSet]="listingIsSet" 
-            [routingConfiguration]="routingConfiguration"
+            [listingIsSet]="listingIsSet"
             (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
           </div>
         </div>
@@ -103,13 +102,13 @@
               <app-indicator-properties 
               [metadataIdentifiers]="metadataIdentifiers" 
               [indicator]="indicator" 
-              [listingIsSet]="listingIsSet" 
-              [routingConfiguration]="routingConfiguration"
+              [listingIsSet]="listingIsSet"
               (selectedMetadata) ="selectedMetadata($event)"></app-indicator-properties>
           </div>
         </div>
         <div style="margin-top: 30px;" *ngIf="allIndicators$">
           <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+          <button class="export-to-csv" (click)="export(allIndicators$)">Export to csv</button>
         </div>
     </div>
 

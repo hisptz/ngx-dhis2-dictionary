@@ -20,7 +20,6 @@ import { getDictionaryList } from '../selectors/dictionary.selectors';
 
 @Injectable()
 export class DictionaryEffects {
-    identifierIds = [];
   constructor(
     private actions$: Actions,
     private store: Store<DictionaryState>,
@@ -431,16 +430,27 @@ export class DictionaryEffects {
   }
 
   getIndicatorInfo(indicatorUrl: string, indicatorId: string) {
-    let dataLoaded = {};
     let indicatorDescription = ''
-    dataLoaded['type'] = "indicator";
+    let dataLoaded = {
+    };
+    let metadataInfoLoaded = {
+      type: '',
+      metadata: {},
+      numeratorExpression: {},
+      numeratorDatasets: [],
+      denominatorExpression: {},
+      denominatorDatasets: [],
+      legendSetsInformation: [],
+      dataElements: []
+    };
+    metadataInfoLoaded.type = "indicator";
     this.httpClient.get(`${indicatorUrl}`, true).subscribe((indicator: any) => {
-      dataLoaded['metadata'] = indicator;
+      metadataInfoLoaded.metadata = indicator;
 
       this.store.dispatch(
         new UpdateDictionaryMetadataAction(indicatorId, {
           description: indicatorDescription,
-          data: dataLoaded,
+          data: metadataInfoLoaded,
           progress: {
             loading: true,
             loadingSucceeded: true,
@@ -467,17 +477,17 @@ export class DictionaryEffects {
         )
       ).subscribe((numeratorResults: any[]) => {
         if (numeratorResults[0]) {
-          dataLoaded['numeratorExpression'] = numeratorResults[0];
+          metadataInfoLoaded = {...metadataInfoLoaded, numeratorExpression: numeratorResults[0]};
         }
 
         if (numeratorResults[1] && numeratorResults[1].dataSets) {
-          dataLoaded['numeratorDatasets'] = numeratorResults[1].dataSets;
+          metadataInfoLoaded = {...metadataInfoLoaded, numeratorDatasets: numeratorResults[1].dataSets};
         }
 
         this.store.dispatch(
           new UpdateDictionaryMetadataAction(indicatorId, {
             description: indicatorDescription,
-            data: dataLoaded,
+            data: metadataInfoLoaded,
             progress: {
               loading: true,
               loadingSucceeded: true,
@@ -504,17 +514,17 @@ export class DictionaryEffects {
           )
         ).subscribe((denominatorResults: any[]) => {
           if (denominatorResults[0]) {
-            dataLoaded['denominatorExpression'] = denominatorResults[0];
+            metadataInfoLoaded = {...metadataInfoLoaded, denominatorExpression:denominatorResults[0]};
           }
 
           if (denominatorResults[1] && denominatorResults[1].dataSets) {
-            dataLoaded['denominatorDatasets'] = denominatorResults[1].dataSets;
+            metadataInfoLoaded = {...metadataInfoLoaded, denominatorDatasets:denominatorResults[1].dataSets};
           }
 
           this.store.dispatch(
             new UpdateDictionaryMetadataAction(indicatorId, {
               description: indicatorDescription,
-              data: dataLoaded,
+              data: metadataInfoLoaded,
               progress: {
                 loading: true,
                 loadingSucceeded: true,
@@ -534,13 +544,13 @@ export class DictionaryEffects {
             this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(';') +']')
           ).subscribe((legendSetsInformation) => {
             if (legendSetsInformation && legendSetsInformation[0].legendSets[0]) {
-              dataLoaded['legendSetsInformation'] = legendSetsInformation;
+              metadataInfoLoaded = {...metadataInfoLoaded, legendSetsInformation:legendSetsInformation};
             }
 
             this.store.dispatch(
               new UpdateDictionaryMetadataAction(indicatorId, {
                 description: indicatorDescription,
-                data: dataLoaded,
+                data: metadataInfoLoaded,
                 progress: {
                   loading: true,
                   loadingSucceeded: true,
@@ -556,12 +566,12 @@ export class DictionaryEffects {
              forkJoin(
                this.httpClient.get('dataElements.json?filter=id:in:[' + this.getAvailableDataElements(indicator.numerator + ' + ' + indicator.denominator) +']&paging=false&fields=id,name,zeroIsSignificant,aggregationType,domainType,valueType,categoryCombo[id,name,categoryOptionCombos[id,name,categoryOptions[id,name,categories[id,name]]]],dataSetElements[dataSet[id,name,periodType]],dataElementGroups[id,name,dataElements~size]',true)
              ).subscribe((dataElements) => {
-              dataLoaded['dataElements'] = dataElements[0].dataElements;
+              metadataInfoLoaded = {...metadataInfoLoaded, dataElements:dataElements[0].dataElements};
               
               this.store.dispatch(
                 new UpdateDictionaryMetadataAction(indicatorId, {
                   description: indicatorDescription,
-                  data: dataLoaded,
+                  data: metadataInfoLoaded,
                   progress: {
                     loading: false,
                     loadingSucceeded: true,
@@ -577,6 +587,8 @@ export class DictionaryEffects {
   }
 
   getProgramIndicatorInfo(programIndicatorUrl, programIndicatorId) {
+    let dataLoaded = {};
+    dataLoaded['type'] = "programIndicator";
     this.httpClient.get(`${programIndicatorUrl}`, true).subscribe((programIndicator: any) => {
         let indicatorDescription = ''; let filterDescription = '';
         // get expression and filter then describe it
@@ -626,6 +638,7 @@ export class DictionaryEffects {
             programIndicatorDescriptionExpression = programIndicatorDescriptionExpression.split(dataElement.id).join(dataElement.name);
             filterDescription = filterDescription.split(dataElement.id).join(' ' + dataElement.name)
           });
+          dataLoaded['metadata'] = programIndicator;
           indicatorDescription += '<h3 style="color: #355E7F; margin-bottom: 1.5rem">' + programIndicator.name + '</h3>';
           indicatorDescription +=
           '<h4 style="color: #464646;">Introduction</h4>'+
@@ -641,6 +654,7 @@ export class DictionaryEffects {
             overallExpression = programIndicatorDescriptionExpression;
           }
           
+          dataLoaded['filter'] = this.formatProgramIndicatorExpression(overallExpression)
           indicatorDescription += this.formatProgramIndicatorExpression(overallExpression);
           indicatorDescription +=
           ' </span>'+
@@ -672,6 +686,7 @@ export class DictionaryEffects {
             this.store.dispatch(
               new UpdateDictionaryMetadataAction(programIndicatorId, {
                 description: indicatorDescription,
+                data: dataLoaded,
                 progress: {
                   loading: false,
                   loadingSucceeded: true,

@@ -7,6 +7,7 @@ import { AppState } from '../../../store/reducers/indicators.reducers';
 import { getListOfIndicators, getAllIndicators, getIndicatorGroups } from '../../../store/selectors/indicators.selectors';
 import * as indicators from '../../../store/actions/indicators.actions'
 import { DictionaryState } from '../../../store/reducers/dictionary.reducer';
+import { ExportToCsv } from 'export-to-csv';
 
 @Component({
   selector: 'app-indicators-list',
@@ -150,7 +151,45 @@ export class IndicatorsListComponent implements OnInit {
   }
 
   getActiveMetadataType(type) {
-    console.log(type)
     this.activeMetadataType = type;
+  }
+
+  export(metadataObject$) {
+    let data = [];
+    metadataObject$.subscribe((metadataArr) => {
+      if (metadataArr) {metadataArr.forEach((metadata) => {
+        let object = {}
+          object['identifier'] = metadata.id;
+          object['name'] = metadata.name;
+          if (metadata.description) {
+            object['description'] = metadata.description;
+          } else {
+            object['description'] = 'Measured by ' + metadata.numeratorDescription + ' to ' + metadata.denominatorDescription
+          }
+          object['numeratorDescription'] = metadata.numeratorDescription;
+          object['numeratorExpression'] = metadata.numeratorExpression;
+          object['denominatorDescription'] = metadata.denominatorDescription,
+          object['denominatorExpression'] = metadata.denominatorExpression;
+          object['dataOfCreation'] = metadata.created;
+          object['createdBy'] = metadata.user.name;
+        data.push(object)
+      })}
+    })
+    const options = { 
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true, 
+      showTitle: true,
+      title: 'Indicators available in the system',
+      useTextFile: false,
+      useBom: true,
+      useKeysAsHeaders: true,
+      // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
+    };
+     
+    const csvExporter = new ExportToCsv(options);
+     
+    csvExporter.generateCsv(data);
   }
 }

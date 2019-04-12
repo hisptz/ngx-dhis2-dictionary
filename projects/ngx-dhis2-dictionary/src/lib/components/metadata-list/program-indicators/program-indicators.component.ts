@@ -4,7 +4,8 @@ import { Store } from '@ngrx/store';
 import { Observable, pipe } from 'rxjs';
 import * as _ from 'lodash';
 import { getListOfProgramIndicators, getAllProgramIndicators } from '../../../store/selectors/indicators.selectors';
-import * as indicators from '../../../store/actions/indicators.actions'
+import * as indicators from '../../../store/actions/indicators.actions';
+import { ExportToCsv } from 'export-to-csv';
 
 @Component({
   selector: 'app-program-indicators',
@@ -143,5 +144,45 @@ export class ProgramIndicatorsComponent implements OnInit {
         }
       })
     }
+  }
+
+  export(metadataObject$) {
+    let data = [];
+    metadataObject$.subscribe((metadataArr) => {
+      if (metadataArr) {metadataArr.forEach((metadata) => {
+        let object = {}
+          object['identifier'] = metadata.id;
+          object['name'] = metadata.name;
+          object['aggregationType']= metadata.aggregationType;
+          if (metadata.description) {
+            object['description'] = metadata.description;
+          } else {
+            object['description'] = metadata.name
+          }
+          object['expression'] = metadata.expression;
+          if (metadata.filter) {
+            object['filter'] = metadata.filter;
+          } else {
+            object['filter'] = "None"
+          }
+        data.push(object)
+      })}
+    })  
+    const options = { 
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true, 
+      showTitle: true,
+      title: 'Program indicators in the system',
+      useTextFile: false,
+      useBom: true,
+      useKeysAsHeaders: true,
+      // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
+    };
+     
+    const csvExporter = new ExportToCsv(options);
+     
+    csvExporter.generateCsv(data);
   }
 }

@@ -10,13 +10,13 @@
       </div>
       <div class="col-md-4">
         <div style="float: right;">
-          <button (click)="toggleListingOfItems()" id="listing-btn" style="border-radius: 4px; border: none; background-color: #FFF; padding: 2px;">
+          <!-- <button (click)="toggleListingOfItems()" id="listing-btn" style="border-radius: 4px; border: none; background-color: #FFF; padding: 2px;">
             <span *ngIf="!listingIsSet" title="Switch to list view">
               <img height="30" width="30" 
               src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACXSURBVGhD7dexDYJQFIXhV1g4ALGwsKCixhVcgQ2orampqRmCFViBFVzBFeRYv5tgDPG9a/4v+Wc4OQHAx14OG1Xk6bBBAQD8OqgyYYXaxUVZi/urzGX/xlk9EtYrAEAerg57D3LEWs7cM5d9cVinAAB+HdUtYZXaxd989pOaE3ZXAIA8NA6rVcRaztwzl31yWKsAbAphBQ5/i9OD8QfcAAAAAElFTkSuQmCC">
             </span>
             <span *ngIf="listingIsSet" title="Switch to grid view"><img height="30" width="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJjSURBVGhD7dhJqM1hHMbxY3bJXLoyEzaSKfNGlGKlWNkpllZsbJQNG2yUpJSpkLJAZjtFlGGjyMpGMqUUJXyfOq9+Xs/7v5270un91mf3nMV777n/4bZqtVqtVqv92xCMKxiEvKFwWxmAvOFw27Fw9cDtx6Cxl/hVcA+xkXgLt5VziE3GF7itHEZsPr7BbWUPirkPJJ8Rmwa3S54jtgZul1xFbBPcLsl/UH/lPpDUg7T7bw7yEbFOD7Iabpd0epCzKHYBrwuOIDYYN+G2shex0bgPt32FHYhNxWO4vS5KW9D9jcKsAl3T83T9d1vRPSlvAtx2Jtx9aiLcfgbcfepPb+C+j/IAMR36E9xWLiM2HU33hWOILcIPuK3sQzH3gaReftvVgxT0+yAfENPl0e2SZ4itgtslnR7kDIodh67dzn7EdJXRfcdtZRdiesi8Brd9hG2I9eIO3P4hNqL703V7SYF7Z9CjuduKfgN5ugS77WIMQ94cuP1C6Mmi2Du476M8RUwvN1/htnIdsdloui+cRGwZfsJt5QCKuQ8k9fLbrh6koN8HeY9YX/eR/G9qJdwu6fQgp1HsIG4X7EZsIHTfcVvZjtgI6KfotrewGTE9KV+C29/AWnR/ei9YXzAJeXPhtjIeeQvgtuug14K8pXB7/Tb0P7JiTe8XLxDTDfI73FbuIjYPTfeF/Nmpr3f8QyjmPpDUy2+7epCCxoM0fYfz+8gUuF3yBLEVcLvkCmJ6THe75BSK6X9RFwt2Iqb/Yui+47ayFTE93R6F2+q9ZgNieig9Abc/j+Wo1Wq1Wq3WhbVavwE61eDXWXWDaAAAAABJRU5ErkJggg=="></span>
-          </button>
+          </button> -->
         </div>
         <!-- <div class="cursor-pointer" style="float: right; margin-right: 10px;">
             <a
@@ -108,6 +108,7 @@
           </div>
           <div style="margin-top: 30px;" *ngIf="allProgramIndicators$">
             <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+            <button class="export-to-csv" (click)="export(allProgramIndicators$)">Export to csv</button>
           </div>
       </div>
   
