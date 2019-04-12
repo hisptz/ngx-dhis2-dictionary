@@ -271,4 +271,22 @@ export class DictionaryListComponent implements OnInit {
       return newSlicedList;
     }
   }
+
+  getExpressionPart(element, indicator) {
+    console.log(element)
+    console.log('ind', indicator)
+    let expressionPartAvailability = [];
+    if (indicator.numerator.indexOf(element.id) > -1) {
+      expressionPartAvailability.push('Numerator')
+    } else if(indicator.denominator.indexOf(element.id) > -1) {
+      expressionPartAvailability.push('Denominator')
+    }
+    if (expressionPartAvailability.length == 1) {
+      return expressionPartAvailability[0]
+    } else if (expressionPartAvailability.length == 2) {
+      return expressionPartAvailability[0] + ' and ' + expressionPartAvailability[1];
+    } else {
+      return 'None'
+    }
+  }
 }
