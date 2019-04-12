@@ -42,7 +42,7 @@
       <div class="dictionary-description" id="dictionary-description-{{dictionaryItem.id}}" [innerHtml]="getSafeHtml(dictionaryItem.description)"></div>
       <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='indicator'">
         <div class="indicator-name"><h3 style="color: #355E7F; margin-bottom: 1.5rem">{{dictionaryItem.data.metadata.name}}</h3></div>
-        <div class="introduction"><h4 style="color: #464646;">Introduction</h4></div>
+        <div class="introduction"><h3 style="color: #464646;">Introduction</h3></div>
         <div class="description"><p class="indicator">
           <span style="color: #325E80;">
             {{dictionaryItem.data.metadata.name}}
@@ -68,16 +68,43 @@
           Its described as {{dictionaryItem.data.metadata.description}}
           </p>
         </div>
+      <div><p style="color: #464646; font-size: 0.7em; margin-top: -10px;"><i>Identifed by: {{dictionaryItem.data.metadata.id}} </i></p></div>
         <div>
           <p *ngIf="dictionaryItem.data.metadata.annualized">
           It’s figure is annualized to support analysis in less than year period (monthly,quarterly,semi-annually)
           </p>
         </div>
-        <!-- Indicator group -->
+        <!-- Data sources (Datasets/Programs) -->
+        <div></div>
+
+        <!-- Indicator facts -->
         <div *ngIf="dictionaryItem.data.metadata.indicatorGroups && dictionaryItem.data.metadata.indicatorGroups.length > 0">
           <h4 style="color: #464646;">Indicator facts</h4>
-          <h6>The indicator belongs to :-</h6>
-          <ul>
+          <h6>Belongs to the following groups of indicators :-</h6>
+          <div>
+            <table class="table table-bordered">
+              <thead>
+                <tr style="background-color: #f5f5f5; color: #555;">
+                  <th style="padding: 0.35rem;">Name</th>
+                  <th style="padding: 0.35rem;">Code </th>
+                  <th style="padding: 0.35rem;">Indicators</th>
+                  <th style="padding: 0.35rem;">Indicators List</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let indicatorGroup of dictionaryItem.data.metadata.indicatorGroups">
+                  <td>{{indicatorGroup.name}}</td>
+                  <td>
+                    <span *ngIf="indicatorGroup.code">{{indicatorGroup.code}}</span>
+                    <span *ngIf="!indicatorGroup.code">None</span>
+                    </td>
+                  <td>{{(indicatorGroup.indicators)}}</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- <ul>
               <li *ngFor="let indicatorGroup of dictionaryItem.data.metadata.indicatorGroups">
                 <span style="color: #325E80;">
                 {{indicatorGroup.name}}
@@ -87,64 +114,7 @@
                 </strong>
                 other related indicators
               </li>
-          </ul>
-        </div>
-        <!-- Calculation details -->
-        <div>
-            <div><h4 style="color: #464646;">Calculation details</h4></div>
-            <div style="width: 100%; overflow: auto;">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr style="background-color: #f5f5f5; color: #555;">
-                      <th style="padding: 0.35rem;">Expression</th>
-                      <th style="padding: 0.35rem;">Formula </th>
-                      <th style="padding: 0.35rem;">Sources</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngIf="dictionaryItem.data.numeratorExpression && dictionaryItem.data.numeratorDatasets">
-                      <td>Numerator</td>
-                      <td>{{dictionaryItem.data.numeratorExpression.description}}</td>
-                      <td>
-                        <ul *ngIf="dictionaryItem.data.numeratorDatasets && dictionaryItem.data.numeratorDatasets.length > 0" style="padding-left: 10px">
-                          <li *ngFor="let dataSet of dictionaryItem.data.numeratorDatasets">
-                            <strong>
-                              {{dataSet.name}}
-                            </strong> that is collected 
-                            <strong>
-                              {{dataSet.periodType}}
-                            </strong> with deadline for submission after
-                            <strong>
-                              {{dataSet.timelyDays}}
-                              days 
-                            </strong>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-                    <tr *ngIf="dictionaryItem.data.denominatorExpression && dictionaryItem.data.denominatorDatasets">
-                      <td>Denominator</td>
-                      <td>{{dictionaryItem.data.denominatorExpression.description}}</td>
-                      <td>
-                        <ul *ngIf="dictionaryItem.data.denominatorDatasets && dictionaryItem.data.denominatorDatasets.length > 0" style="padding-left: 10px">
-                          <li *ngFor="let dataSet of dictionaryItem.data.denominatorDatasets">
-                            <strong>
-                              {{dataSet.name}}
-                            </strong> that is collected 
-                            <strong>
-                              {{dataSet.periodType}}
-                            </strong> with deadline for submission after
-                            <strong>
-                              {{dataSet.timelyDays}}
-                              days 
-                            </strong>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-            </div>
+          </ul> -->
         </div>
          <!-- Attribute values -->
         <div *ngIf="dictionaryItem.data.metadata.attributeValues && dictionaryItem.data.metadata.attributeValues.length > 0">
@@ -203,6 +173,64 @@
               <!-- <app-visualization></app-visualization> -->
             </div>
           </div>
+        </div>
+
+        <!-- Calculation details -->
+        <div>
+            <div><h4 style="color: #464646;">Calculation details</h4></div>
+            <div style="width: 100%; overflow: auto;">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr style="background-color: #f5f5f5; color: #555;">
+                      <th style="padding: 0.35rem;">Expression</th>
+                      <th style="padding: 0.35rem;">Formula </th>
+                      <th style="padding: 0.35rem;">Sources</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngIf="dictionaryItem.data.numeratorExpression && dictionaryItem.data.numeratorDatasets">
+                      <td>Numerator</td>
+                      <td>{{dictionaryItem.data.numeratorExpression.description}}</td>
+                      <td>
+                        <ul *ngIf="dictionaryItem.data.numeratorDatasets && dictionaryItem.data.numeratorDatasets.length > 0" style="padding-left: 10px">
+                          <li *ngFor="let dataSet of dictionaryItem.data.numeratorDatasets">
+                            <strong>
+                              {{dataSet.name}}
+                            </strong> that is collected 
+                            <strong>
+                              {{dataSet.periodType}}
+                            </strong> with deadline for submission after
+                            <strong>
+                              {{dataSet.timelyDays}}
+                              days 
+                            </strong>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                    <tr *ngIf="dictionaryItem.data.denominatorExpression && dictionaryItem.data.denominatorDatasets">
+                      <td>Denominator</td>
+                      <td>{{dictionaryItem.data.denominatorExpression.description}}</td>
+                      <td>
+                        <ul *ngIf="dictionaryItem.data.denominatorDatasets && dictionaryItem.data.denominatorDatasets.length > 0" style="padding-left: 10px">
+                          <li *ngFor="let dataSet of dictionaryItem.data.denominatorDatasets">
+                            <strong>
+                              {{dataSet.name}}
+                            </strong> that is collected 
+                            <strong>
+                              {{dataSet.periodType}}
+                            </strong> with deadline for submission after
+                            <strong>
+                              {{dataSet.timelyDays}}
+                              days 
+                            </strong>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
         </div>
         <!-- Data elements in indicators -->
         <div *ngIf="dictionaryItem.data.dataElements && dictionaryItem.data.dataElements.length > 0">
