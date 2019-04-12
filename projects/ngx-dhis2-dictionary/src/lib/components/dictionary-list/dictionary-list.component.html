@@ -164,7 +164,7 @@
         <!--Legend sets  -->
         <div class="container-fluid">
           <div class="row">
-            <div [ngClass]="dictionaryItem.data.legendSetsInformation ? 'col-md-5 col-sm-12': ''" *ngIf="dictionaryItem.data.legendSetsInformation">
+            <div [ngClass]="dictionaryItem.data.legendSetsInformation ? 'col-md-5 col-sm-12': ''" *ngIf="dictionaryItem.data.legendSetsInformation && dictionaryItem.data.legendSetsInformation.length > 0">
                 <h4 style="color: #464646;">Legend for analysis</h4>
                 <div *ngFor="let legendSetInformation of dictionaryItem.data.legendSetsInformation">
                     <h6>
