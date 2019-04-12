@@ -3,14 +3,14 @@
     <input id="searching-input" placeholder="Search " [(ngModel)]="searchingText">
     <button
     class="indicator-btn"
-    (click)="setActiveItem('all', $event, 'all')"
+    (click)="setActiveItem($event, 'all')"
     [ngClass]="selectedIndicator === 'all' ? 'active-item': ''"
     >All</button>
     <ng-template ngFor let-dictionaryItem [ngForOf]="dictionaryList$ | async | filterBySearchInput: searchingText" let-i="index">
       <button
           *ngIf="dictionaryItem.name.indexOf('not found') < 0"
           class="dictionary-title indicator-btn"
-          (click)="setActiveItem(dictionaryItem.id, $event, dictionaryItem.id)"
+          (click)="setActiveItem($event, dictionaryItem.id)"
           [ngClass]="dictionaryItem.id === selectedIndicator? 'active-item': ''"
         >
         <span class="category" *ngIf="dictionaryItem.category && dictionaryItem.category =='in'" style="color:#FFF; margin-right: 10px; margin-left: -8px; background-color: #e36e40">{{ dictionaryItem.category }}</span>
@@ -98,23 +98,20 @@
                     <span *ngIf="indicatorGroup.code">{{indicatorGroup.code}}</span>
                     <span *ngIf="!indicatorGroup.code">None</span>
                     </td>
-                  <td>{{(indicatorGroup.indicators)}}</td>
-                  <td></td>
+                  <td>{{(indicatorGroup.indicators.length)}}</td>
+                  <td>
+                      <ul>
+                          <li *ngFor="let indicator of indicatorGroup.indicators.slice(1,4)">
+                            <p id={{indicator.id}} (click)="setActiveItem($event, indicator.id)" style="color: #325E80; cursor: pointer;">
+                            {{indicator.name}}
+                            </p>
+                          </li>
+                      </ul>
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <!-- <ul>
-              <li *ngFor="let indicatorGroup of dictionaryItem.data.metadata.indicatorGroups">
-                <span style="color: #325E80;">
-                {{indicatorGroup.name}}
-                </span> with 
-                <strong>
-                {{(indicatorGroup.indicators -1)}}
-                </strong>
-                other related indicators
-              </li>
-          </ul> -->
         </div>
          <!-- Attribute values -->
         <div *ngIf="dictionaryItem.data.metadata.attributeValues && dictionaryItem.data.metadata.attributeValues.length > 0">

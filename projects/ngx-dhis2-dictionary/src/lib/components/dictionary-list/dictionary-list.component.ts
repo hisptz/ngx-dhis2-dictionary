@@ -78,7 +78,6 @@ export class DictionaryListComponent implements OnInit {
   }
 
   selectedMetadataId(identifier) {
-    console.log('identified', identifier);
     this.selectedIndicator = identifier;
     let identifiers = [];
     if (_.indexOf(this.metadataIdentifiers, identifier) < 0) {
@@ -96,12 +95,14 @@ export class DictionaryListComponent implements OnInit {
     this.dictionaryItemId.emit(url);
   }
 
-  setActiveItem(index, e?, dictionaryItemId?) {
+  setActiveItem(e?, dictionaryItemId?) {
     if (e) {
       e.stopPropagation();
     }
+    this.selectedMetadataId(dictionaryItemId)
     this.selectedIndicator = dictionaryItemId;
-    this.activeItem = index;
+    this.metadataIdentifiers.push(dictionaryItemId);
+    this.metadataIdentifiers = _.uniq(this.metadataIdentifiers);
     if (this.selectedIndicator == 'all') {
       this.loadAllIndicators();
       const url = this.metadataIdentifiers.join(',') + '/selected/' + dictionaryItemId;
