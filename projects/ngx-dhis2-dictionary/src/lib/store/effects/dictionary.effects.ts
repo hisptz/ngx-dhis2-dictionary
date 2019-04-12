@@ -659,6 +659,8 @@ export class DictionaryEffects {
           indicatorDescription +=
           ' </span>'+
           '</span></span></p>';
+
+          indicatorDescription += '<div><p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by:' + programIndicator.id + '</i></p></div>';
           /**
            * Data sources
            */

@@ -1,15 +1,15 @@
 {
     "/api": {
-      "target": "https://play.dhis2.org/2.29/",
+      "target": "https://etl.moh.go.tz/tracker",
       "secure": "false",
-      "auth":"admin:district",
+      "auth":"josephatjulius:Jovan@2013",
       "changeOrigin": "true"
 
     },
     "/": {
-      "target": "https://play.dhis2.org/2.29/",
+      "target": "https://etl.moh.go.tz/tracker",
       "secure": "false",
-      "auth":"admin:district",
+      "auth":"josephatjulius:Jovan@2013",
       "changeOrigin": "true"
     }
   }

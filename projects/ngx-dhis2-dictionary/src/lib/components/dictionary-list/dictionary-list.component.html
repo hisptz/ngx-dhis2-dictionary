@@ -193,7 +193,7 @@
 
         <!-- Calculation details -->
         <div>
-            <div><h4 style="color: #464646;">Calculation details</h4></div>
+            <div *ngIf="dictionaryItem.data.numeratorExpression && dictionaryItem.data.numeratorDatasets && dictionaryItem.data.numeratorDatasets.length > 0"><h4 style="color: #464646;">Calculation details</h4></div>
             <div style="width: 100%; overflow: auto;">
                 <table class="table table-bordered">
                   <thead>
@@ -204,7 +204,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngIf="dictionaryItem.data.numeratorExpression && dictionaryItem.data.numeratorDatasets && dictionaryItem.data.numeratorDatasets.length > 0">
+                    <tr>
                       <td>Numerator</td>
                       <td>{{dictionaryItem.data.numeratorExpression.description}}</td>
                       <td>
@@ -222,9 +222,12 @@
                             </strong>
                           </li>
                         </ul>
+                        <ul *ngIf="dictionaryItem.data.denominatorDatasets && dictionaryItem.data.denominatorDatasets.length == 0" style="padding-left: 10px">
+                          <li>None</li>
+                        </ul>
                       </td>
                     </tr>
-                    <tr *ngIf="dictionaryItem.data.denominatorExpression && dictionaryItem.data.denominatorDatasets && dictionaryItem.data.denominatorDatasets.length > 0">
+                    <tr *ngIf="dictionaryItem.data.denominatorExpression && dictionaryItem.data.denominatorDatasets">
                       <td>Denominator</td>
                       <td>{{dictionaryItem.data.denominatorExpression.description}}</td>
                       <td>
@@ -241,6 +244,9 @@
                               days 
                             </strong>
                           </li>
+                        </ul>
+                        <ul *ngIf="dictionaryItem.data.denominatorDatasets && dictionaryItem.data.denominatorDatasets.length == 0" style="padding-left: 10px">
+                          <li>None</li>
                         </ul>
                       </td>
                     </tr>
