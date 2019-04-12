@@ -91,7 +91,7 @@ export class DictionaryEffects {
                       metadata.id +
                       '.json?fields=:all,user[name,email,phoneNumber],displayName,lastUpdatedBy[id,name,phoneNumber,email],id,name,numeratorDescription,' +
                       'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
-                      'attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,' +
+                      'attributeValues[value,attribute[name]],indicatorGroups[id,name,code,indicators[id,name]],legendSet[name,symbolizer,' +
                       'legends~size],dataSets[name]';
                   this.getIndicatorInfo(indicatorUrl, metadata.id);
                 } else if (metadata.href && metadata.href.indexOf('programIndicator') !== -1) {
