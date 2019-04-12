@@ -68,7 +68,7 @@
           Its described as {{dictionaryItem.data.metadata.description}}
           </p>
         </div>
-      <div><p style="color: #464646; font-size: 0.7em; margin-top: -10px;"><i>Identifed by: {{dictionaryItem.data.metadata.id}} </i></p></div>
+        <div><p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: {{dictionaryItem.data.metadata.id}} </i></p></div>
         <div>
           <p *ngIf="dictionaryItem.data.metadata.annualized">
           It’s figure is annualized to support analysis in less than year period (monthly,quarterly,semi-annually)
@@ -100,13 +100,23 @@
                     </td>
                   <td>{{(indicatorGroup.indicators.length)}}</td>
                   <td>
-                      <ul>
-                          <li *ngFor="let indicator of indicatorGroup.indicators.slice(1,4)">
-                            <p id={{indicator.id}} (click)="setActiveItem($event, indicator.id)" style="color: #325E80; cursor: pointer;">
+                      <ul style="max-height: 100px; overflow: auto">
+                          <li *ngFor="let indicator of getOtherMetadata(indicatorGroup.indicators, listAllMetadataInGroup)">
+                            <span id={{indicator.id}} (click)="setActiveItem($event, indicator.id)" style="color: #325E80; cursor: pointer;">
                             {{indicator.name}}
-                            </p>
+                            </span>
                           </li>
+                          <a
+                          style="text-decoration: underline; color:#007bff; font-size: 0.7em;" 
+                          *ngIf="indicatorGroup.indicators.length > 3 && !listAllMetadataInGroup"
+                          (click)="getOtherMetadata(indicatorGroup.indicators, listAllMetadataInGroup = true)"
+                          >more</a>
                       </ul>
+                      <a 
+                      style="text-decoration: underline; color:#007bff; font-size: 0.7em;"
+                      *ngIf="listAllMetadataInGroup"
+                      (click)="getOtherMetadata(indicatorGroup.indicators, listAllMetadataInGroup = false)"
+                      >less</a>
                   </td>
                 </tr>
               </tbody>

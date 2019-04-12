@@ -49,6 +49,7 @@ export class DictionaryListComponent implements OnInit {
   indicatorGroups: any[] = [];
   error: boolean;
   loading: boolean;
+  listAllMetadataInGroup: boolean = false;
   html: any;
 
   constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>, private exportService: ExportService, private sanitizer: DomSanitizer) {
@@ -59,6 +60,7 @@ export class DictionaryListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.listAllMetadataInGroup = false;
     if(this.selectedItem) {
       this.selectedIndicator = this.selectedItem;
     } else {
@@ -96,6 +98,7 @@ export class DictionaryListComponent implements OnInit {
   }
 
   setActiveItem(e?, dictionaryItemId?) {
+    this.listAllMetadataInGroup = false;
     if (e) {
       e.stopPropagation();
     }
@@ -120,6 +123,7 @@ export class DictionaryListComponent implements OnInit {
   }
 
   remove(item, allIdentifiers) {
+    this.listAllMetadataInGroup = false;
     let identifiers = [];
     allIdentifiers.subscribe((identifiersInfo) => {
       identifiersInfo.forEach((identifier) => {
@@ -250,6 +254,21 @@ export class DictionaryListComponent implements OnInit {
 
   exportMetadataInformation(id) {
     this.html = document.getElementById('ex').outerHTML;
-    this.exportService.exportXLS('filename.xls', this.html)
+    this.exportService.exportXLS('Metadata template', this.html)
+  }
+
+  getOtherMetadata(allMedatada, listAllMetadataInGroup) {
+    console.log(listAllMetadataInGroup)
+    let newSlicedList = [];
+    _.map(allMedatada, (metadata) => {
+      if (metadata.id !== this.selectedIndicator) {
+        newSlicedList.push(metadata);
+      }
+    })
+    if (!listAllMetadataInGroup) {
+      return newSlicedList.slice(0,3)
+    } else {
+      return newSlicedList;
+    }
   }
 }
