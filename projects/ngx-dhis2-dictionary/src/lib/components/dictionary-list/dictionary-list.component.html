@@ -192,8 +192,8 @@
         </div>
 
         <!-- Calculation details -->
-        <div>
-            <div *ngIf="dictionaryItem.data.numeratorExpression && dictionaryItem.data.numeratorDatasets && dictionaryItem.data.numeratorDatasets.length > 0"><h4 style="color: #464646;">Calculation details</h4></div>
+        <div *ngIf="dictionaryItem.data.numeratorExpression && dictionaryItem.data.numeratorDatasets">
+            <div><h4 style="color: #464646;">Calculation details</h4></div>
             <div style="width: 100%; overflow: auto;">
                 <table class="table table-bordered">
                   <thead>
@@ -316,7 +316,7 @@
         </div>
         <!-- User -->
         <div *ngIf="dictionaryItem.data.metadata.user">
-          <div style="float: right"><p><i>Created in the system on
+          <div style="float: right"><p style="font-size: 0.8em;"><i>Created in the system on
             <strong>
               {{dictionaryItem.data.metadata.created | date}}
             </strong> by 

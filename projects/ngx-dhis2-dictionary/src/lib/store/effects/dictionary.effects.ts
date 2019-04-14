@@ -759,7 +759,7 @@ export class DictionaryEffects {
   displayUserInformation(programIndicator) {
     let indicatorDescription = '';
     if (programIndicator.user) {
-      indicatorDescription +='<br><div style="float: right"><p><i>Created in the system on <strong>' +
+      indicatorDescription +='<br><div style="float: right"><p style="font-size: 0.8em;"><i>Created in the system on <strong>' +
         this.datePipe.transform(programIndicator.created) +
         '</strong> by <strong>';
         if (programIndicator.user.phoneNumber) {
@@ -886,7 +886,7 @@ export class DictionaryEffects {
        this.httpClient.get('users/' + functionInfo.user.id + '.json?fields=id,name,phoneNumber,email',true)
      ).subscribe((userInfo) => {
        if (functionInfo.created) {
-          indicatorDescription += '<br><div style="float: right;"><p><i> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
+          indicatorDescription += '<br><div style="float: right;"><p style="font-size: 0.8em;"><i> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
         }
 
         if (functionInfo.lastUpdated) {
