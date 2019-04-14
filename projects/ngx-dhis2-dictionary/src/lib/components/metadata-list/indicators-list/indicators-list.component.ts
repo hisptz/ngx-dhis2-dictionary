@@ -7,7 +7,7 @@ import { AppState } from '../../../store/reducers/indicators.reducers';
 import { getListOfIndicators, getAllIndicators, getIndicatorGroups } from '../../../store/selectors/indicators.selectors';
 import * as indicators from '../../../store/actions/indicators.actions'
 import { DictionaryState } from '../../../store/reducers/dictionary.reducer';
-import { ExportToCsv } from 'export-to-csv';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-indicators-list',
@@ -39,7 +39,8 @@ export class IndicatorsListComponent implements OnInit {
   totalAvailableIndicators = 0;
   indicatorGroups: any[] = [];
   activeMetadataType: string = 'indicator';
-  constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>) {
+  dataToDownload: any = [];
+  constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>, private datePipe: DatePipe) {
     this.searchText = '';
     this.searchingTextForIndicatorGroup = '';
     this.listingIsSet = true;
@@ -154,42 +155,86 @@ export class IndicatorsListComponent implements OnInit {
     this.activeMetadataType = type;
   }
 
-  export(metadataObject$) {
-    let data = [];
+  dwndToCSV(metadataObject$) {
     metadataObject$.subscribe((metadataArr) => {
+      let arr = [];
+      arr.push('UID'); arr.push('Indicator Name'); arr.push('Description'); arr.push('Numerator formula');
+      arr.push('Numerator description'); arr.push('Denominator formula'); arr.push('Numerator description');
+      arr.push('Created on'); arr.push('Created by');
+      this.dataToDownload.push(arr);
       if (metadataArr) {metadataArr.forEach((metadata) => {
-        let object = {}
-          object['identifier'] = metadata.id;
-          object['name'] = metadata.name;
+        let arr = [];
+        arr.push(metadata.id);
+        arr.push(metadata.name);
           if (metadata.description) {
-            object['description'] = metadata.description;
+            arr.push(metadata.description);
           } else {
-            object['description'] = 'Measured by ' + metadata.numeratorDescription + ' to ' + metadata.denominatorDescription
+            arr.push('Measured by ' + metadata.numeratorDescription + ' to ' + metadata.denominatorDescription)
           }
-          object['numeratorDescription'] = metadata.numeratorDescription;
-          object['numeratorExpression'] = metadata.numeratorExpression;
-          object['denominatorDescription'] = metadata.denominatorDescription,
-          object['denominatorExpression'] = metadata.denominatorExpression;
-          object['dataOfCreation'] = metadata.created;
-          object['createdBy'] = metadata.user.name;
-        data.push(object)
+        arr.push(metadata.numeratorExpression);
+        arr.push(metadata.numeratorDescription);
+        arr.push(metadata.denominatorExpression);
+        arr.push(metadata.denominatorDescription),
+        arr.push(metadata.created);
+        arr.push(metadata.user.name);
+        this.dataToDownload.push(arr)
       })}
+      (function() {
+        let asUtf16, downloadExcelCsv, makeExcelCsvBlob, toTsv;
+        let rows = this.dataToDownload;
+      
+        asUtf16 = function(str) {
+          var buffer, bufferView, i, val, _i, _ref;
+          buffer = new ArrayBuffer(str.length * 2);
+          bufferView = new Uint16Array(buffer);
+          bufferView[0] = 0xfeff;
+          for (i = _i = 0, _ref = str.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+            val = str.charCodeAt(i);
+            bufferView[i + 1] = val;
+          }
+          return bufferView;
+        };
+      
+        makeExcelCsvBlob = function(rows) {
+          return new Blob([asUtf16(toTsv(rows)).buffer], {
+            type: "text/csv;charset=UTF-16"
+          });
+        };
+      
+        toTsv = function(rows) {
+          var escapeValue;
+          escapeValue = function(val) {
+            if (typeof val === 'string') {
+              return '"' + val.replace(/"/g, '""') + '"';
+            } else if (val != null) {
+              return val;
+            } else {
+              return '';
+            }
+          };
+          return rows.map(function(row) {
+            return row.map(escapeValue).join(',');
+          }).join('\n') + '\n';
+        };
+      
+        downloadExcelCsv = function(rows, attachmentFilename) {
+          var a, blob;
+          blob = makeExcelCsvBlob(rows);
+          a = document.createElement('a');
+          a.style.display = 'none';
+          a.download = attachmentFilename;
+          document.body.appendChild(a);
+          a.href = URL.createObjectURL(blob);
+          a.click();
+          URL.revokeObjectURL(a.href);
+          a.remove();
+        };
+        rows = this.dataToDownload;
+        let theDate = new Date();
+        theDate = this.datePipe.transform(theDate, 'yyyy-MM-dd')
+       return downloadExcelCsv(this.dataToDownload, 'List_of_'  + this.totalAvailableIndicators + '_indicators_' + theDate + '.csv');
+      }).call(this);
     })
-    const options = { 
-      fieldSeparator: ',',
-      quoteStrings: '"',
-      decimalSeparator: '.',
-      showLabels: true, 
-      showTitle: true,
-      title: 'Indicators available in the system',
-      useTextFile: false,
-      useBom: true,
-      useKeysAsHeaders: true,
-      // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
-    };
-     
-    const csvExporter = new ExportToCsv(options);
-     
-    csvExporter.generateCsv(data);
   }
+
 }

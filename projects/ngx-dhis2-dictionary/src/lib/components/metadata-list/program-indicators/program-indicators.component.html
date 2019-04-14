@@ -108,7 +108,7 @@
           </div>
           <div style="margin-top: 30px;" *ngIf="allProgramIndicators$">
             <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
-            <button class="export-to-csv" (click)="export(allProgramIndicators$)">Export to csv</button>
+            <button class="export-to-csv" (click)="dwndToCSV(allProgramIndicators$)">Export to csv</button>
           </div>
       </div>
   
