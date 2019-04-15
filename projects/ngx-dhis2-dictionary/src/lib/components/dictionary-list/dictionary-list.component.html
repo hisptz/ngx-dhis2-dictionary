@@ -338,7 +338,7 @@
       <div *ngIf="dictionaryItem.progress.loading">
         <app-dictionary-progress></app-dictionary-progress>
       </div>
-      <div *ngIf="dictionaryItem.data">
+      <div class="export-btn" *ngIf="dictionaryItem.data">
         <button class="export-to-excel" style="float: left" (click)="exportMetadataInformation(dictionaryItem)">Export</button>
       </div>
     </div>

@@ -132,15 +132,17 @@ export class DictionaryListComponent implements OnInit {
     let identifiers = [];
     allIdentifiers.subscribe((identifiersInfo) => {
       identifiersInfo.forEach((identifier) => {
-        if (item.id !== identifier.id && identifier.name.indexOf('not found') < 0) {
+        if (item.id !== identifier.id && identifier.name.indexOf('not found') < 0 && identifiersInfo.length > 0) {
           identifiers.push(identifier.id);
+        } else {
+          this.selectedIndicator = 'all';
         }
       })
     })
     this.metadataIdentifiers = _.uniq(identifiers);
     if (this.selectedIndicator == 'all') {
       this.loadAllIndicators();
-      const url = this.metadataIdentifiers.join(',') + '/selected/' + item.id;
+      const url = '';
       this.dictionaryItemId.emit(url);
     } else {
       const url = this.metadataIdentifiers.join(',') + '/selected/' + item.id;
