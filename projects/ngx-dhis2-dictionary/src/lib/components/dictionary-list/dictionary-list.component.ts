@@ -22,6 +22,7 @@ import { AppState } from '../../store/reducers/indicators.reducers';
 import { Identifiers } from '@angular/compiler';
 import { IndicatorGroupsState } from '../../store/state/indicators.state';
 import { ExportService } from '../../services/export.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -52,7 +53,11 @@ export class DictionaryListComponent implements OnInit {
   listAllMetadataInGroup: boolean = false;
   html: any;
 
-  constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>, private exportService: ExportService, private sanitizer: DomSanitizer) {
+  constructor(private store: Store<DictionaryState>, 
+    private indicatorsStore: Store<AppState>, 
+    private exportService: ExportService, 
+    private sanitizer: DomSanitizer,
+    private datePipe: DatePipe) {
     this.searchingText = '';
     this.indicators = [];
     this.loading = true;
@@ -252,9 +257,11 @@ export class DictionaryListComponent implements OnInit {
     return text.split('_').join(' ').slice(0,1).toUpperCase() + text.split('_').join(' ').slice(1).toLowerCase();
   }
 
-  exportMetadataInformation(id) {
-    this.html = document.getElementById('ex').outerHTML;
-    this.exportService.exportXLS('Metadata template', this.html)
+  exportMetadataInformation(dictionaryItem) {
+    this.html = document.getElementById('template-to-export').outerHTML;
+    let theDate = new Date();
+    this.datePipe.transform(theDate, 'yyyy-MM-dd')
+    this.exportService.exportXLS(dictionaryItem.name + '_generated_on_' + this.datePipe.transform(theDate, 'yyyy-MM-dd'), this.html)
   }
 
   getOtherMetadata(allMedatada, listAllMetadataInGroup) {

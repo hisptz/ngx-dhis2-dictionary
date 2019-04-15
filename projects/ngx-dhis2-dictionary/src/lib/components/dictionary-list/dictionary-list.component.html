@@ -35,7 +35,7 @@
     *ngFor="let dictionaryItem of dictionaryList$ | async | filterBySearchInput: searchingText; let i = index"
   >
     <div
-    id="ex"
+    id="template-to-export"
       class="dictionary-body"
       *ngIf="dictionaryItem.id === selectedIndicator"
     >
@@ -339,7 +339,7 @@
         <app-dictionary-progress></app-dictionary-progress>
       </div>
       <div *ngIf="dictionaryItem.data">
-        <button class="export-to-excel" style="float: left" (click)="exportMetadataInformation(dictionaryItem.id)">Export</button>
+        <button class="export-to-excel" style="float: left" (click)="exportMetadataInformation(dictionaryItem)">Export</button>
       </div>
     </div>
   </div>

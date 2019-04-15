@@ -5,6 +5,7 @@ import { Observable, pipe } from 'rxjs';
 import * as _ from 'lodash';
 import { getListOfProgramIndicators, getAllProgramIndicators } from '../../../store/selectors/indicators.selectors';
 import * as indicators from '../../../store/actions/indicators.actions';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-program-indicators',
@@ -38,7 +39,7 @@ export class ProgramIndicatorsComponent implements OnInit {
   totalAvailableProgramIndicators = 0;
   indicatorGroups: any[] = [];
   dataToDownload: any = [];
-  constructor(private metadataStore: Store<AppState>) {
+  constructor(private metadataStore: Store<AppState>, private datePipe: DatePipe) {
     this.searchText = '';
     this.searchingTextForIndicatorGroup = '';
     this.listingIsSet = true;
@@ -222,7 +223,7 @@ export class ProgramIndicatorsComponent implements OnInit {
         };
         rows = this.dataToDownload;let theDate = new Date();
         theDate = this.datePipe.transform(theDate, 'yyyy-MM-dd')
-       return downloadExcelCsv(this.dataToDownload, 'List_of_'  + this.totalAvailableProgramIndicators + '_program_indicators_' + theDate + '.csv');      
+       return downloadExcelCsv(this.dataToDownload, 'List_of_'  + this.totalAvailableProgramIndicators + '_program_indicators_generated_on' + theDate + '.csv');      
       }).call(this);
     })
   }

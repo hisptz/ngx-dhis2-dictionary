@@ -232,7 +232,7 @@ export class IndicatorsListComponent implements OnInit {
         rows = this.dataToDownload;
         let theDate = new Date();
         theDate = this.datePipe.transform(theDate, 'yyyy-MM-dd')
-       return downloadExcelCsv(this.dataToDownload, 'List_of_'  + this.totalAvailableIndicators + '_indicators_' + theDate + '.csv');
+       return downloadExcelCsv(this.dataToDownload, 'List_of_'  + this.totalAvailableIndicators + '_indicators_generated_on' + theDate + '.csv');
       }).call(this);
     })
   }
