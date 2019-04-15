@@ -308,4 +308,8 @@ export class DictionaryListComponent implements OnInit {
       return 'None'
     }
   }
+
+  getToCapitalLetters(color) {
+    return _.upperCase(color);
+  }
 }
