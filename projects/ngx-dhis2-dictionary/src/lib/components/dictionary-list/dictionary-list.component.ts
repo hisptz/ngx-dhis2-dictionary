@@ -33,7 +33,7 @@ import { DatePipe } from '@angular/common';
 })
 export class DictionaryListComponent implements OnInit {
   @Input() metadataIdentifiers: Array<string>;
-  @Output() dictionaryItemId = new EventEmitter<string>();
+  @Output() dictionaryItemId = new EventEmitter<any>();
   @Input() selectedItem: string;
   dictionaryList$: Observable<MetadataDictionary[]>;
   indicatorGroups$: Observable<IndicatorGroupsState>;
@@ -113,11 +113,9 @@ export class DictionaryListComponent implements OnInit {
     this.metadataIdentifiers = _.uniq(this.metadataIdentifiers);
     if (this.selectedIndicator == 'all') {
       this.loadAllIndicators();
-      const url = this.metadataIdentifiers.join(',') + '/selected/' + dictionaryItemId;
-      this.dictionaryItemId.emit(url);
+      this.dictionaryItemId.emit('all');
     } else {
-      const url = this.metadataIdentifiers.join(',') + '/selected/' + dictionaryItemId;
-      this.dictionaryItemId.emit(url);
+      this.dictionaryItemId.emit(this.metadataIdentifiers);
     }
   }
 
@@ -142,11 +140,9 @@ export class DictionaryListComponent implements OnInit {
     this.metadataIdentifiers = _.uniq(identifiers);
     if (this.selectedIndicator == 'all') {
       this.loadAllIndicators();
-      const url = '';
-      this.dictionaryItemId.emit(url);
+      this.dictionaryItemId.emit('all');
     } else {
-      const url = this.metadataIdentifiers.join(',') + '/selected/' + item.id;
-      this.dictionaryItemId.emit(url);
+      this.dictionaryItemId.emit(this.metadataIdentifiers);
     }
     this.selectedIndicator = this.metadataIdentifiers[this.metadataIdentifiers.length -1];
     if (this.selectedIndicator == 'all') {

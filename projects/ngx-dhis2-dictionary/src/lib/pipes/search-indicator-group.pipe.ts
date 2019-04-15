@@ -6,24 +6,15 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class SearchIndicatorGroupPipe implements PipeTransform {
 
   transform(indicatorGroups: any[], searchingTextForGroups: any): any {
-    if (searchingTextForGroups !== undefined) {
-      if (indicatorGroups.length > 0 && searchingTextForGroups != '') {
-        let splittedText = searchingTextForGroups;
-        [',', '[', ']', '(', ')', ',', '.', '-', '_'].forEach((char) => {
-          splittedText = splittedText.split(char).join(' ');
-        });
-        return indicatorGroups.filter((indicatorGroup) => {
-          let foundIndicatorGroupMatchingSearchingInput = true;
-          splittedText.split(' ').forEach((partOfSearchingText) =>{
-            if (indicatorGroup.name.toLowerCase().indexOf(partOfSearchingText.toLowerCase()) === -1) {
-              foundIndicatorGroupMatchingSearchingInput = false;
-            }
-          });
-          return foundIndicatorGroupMatchingSearchingInput;
-        });
-      }
-    }
-    return indicatorGroups;
+    const splittedName = searchingTextForGroups ? searchingTextForGroups.split(/[\.\-_,; ]/) : [];
+    return splittedName.length > 0
+      ? indicatorGroups.filter((item: any) =>
+          splittedName.some(
+            (nameString: string) =>
+              item.name.toLowerCase().indexOf(nameString.toLowerCase()) !== -1
+          )
+        )
+      : indicatorGroups;
   }
 
 }
