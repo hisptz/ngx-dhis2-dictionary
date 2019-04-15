@@ -69,7 +69,7 @@ export class DictionaryListComponent implements OnInit {
     if(this.selectedItem) {
       this.selectedIndicator = this.selectedItem;
     } else {
-      this.selectedItem = this.metadataIdentifiers[0]
+      this.selectedIndicator = this.metadataIdentifiers[0]
     }
     if (this.metadataIdentifiers.length > 0 && this.metadataIdentifiers[0] !== '') {
       this.store.dispatch(
@@ -98,8 +98,11 @@ export class DictionaryListComponent implements OnInit {
     this.dictionaryList$ = this.store.select(
       getDictionaryList(identifiers)
     );
-    const url = this.metadataIdentifiers.join(',') + '/selected/' + identifier;
-    this.dictionaryItemId.emit(url);
+    let objToEmit = {
+      selected: this.selectedIndicator,
+      otherSelectedIds: this.metadataIdentifiers
+    }
+    this.dictionaryItemId.emit(objToEmit);
   }
 
   setActiveItem(e?, dictionaryItemId?) {
@@ -113,9 +116,17 @@ export class DictionaryListComponent implements OnInit {
     this.metadataIdentifiers = _.uniq(this.metadataIdentifiers);
     if (this.selectedIndicator == 'all') {
       this.loadAllIndicators();
-      this.dictionaryItemId.emit('all');
+      let objToEmit = {
+        selected: 'all',
+        otherSelectedIds: this.metadataIdentifiers
+      }
+      this.dictionaryItemId.emit(objToEmit);
     } else {
-      this.dictionaryItemId.emit(this.metadataIdentifiers);
+      let objToEmit = {
+        selected: this.selectedIndicator,
+        otherSelectedIds: this.metadataIdentifiers
+      }
+      this.dictionaryItemId.emit(objToEmit);
     }
   }
 
@@ -129,32 +140,38 @@ export class DictionaryListComponent implements OnInit {
     this.listAllMetadataInGroup = false;
     let identifiers = [];
     allIdentifiers.subscribe((identifiersInfo) => {
-      identifiersInfo.forEach((identifier) => {
-        if (item.id !== identifier.id && identifier.name.indexOf('not found') < 0 && identifiersInfo.length > 0) {
-          identifiers.push(identifier.id);
-        } else {
-          this.selectedIndicator = 'all';
-        }
-      })
+      if (identifiersInfo.length > 0) {
+        identifiersInfo.forEach((identifier) => {
+          if (item.id !== identifier.id && identifier.name.indexOf('not found') < 0) {
+            identifiers.push(identifier.id);
+          }
+        })
+      }
     })
     this.metadataIdentifiers = _.uniq(identifiers);
-    if (this.selectedIndicator == 'all') {
+    if (this.metadataIdentifiers.length == 0) {
+      this.selectedIndicator = 'all';
       this.loadAllIndicators();
-      this.dictionaryItemId.emit('all');
+      let objToEmit = {
+        selected: 'all',
+        otherSelectedIds: []
+      }
+      this.dictionaryItemId.emit(objToEmit);
     } else {
-      this.dictionaryItemId.emit(this.metadataIdentifiers);
+      this.selectedIndicator = this.metadataIdentifiers[this.metadataIdentifiers.length -1];
+      let objToEmit = {
+        selected: this.selectedIndicator,
+        otherSelectedIds: this.metadataIdentifiers
+      }
+      this.dictionaryItemId.emit(objToEmit);
+      this.store.dispatch(
+        new InitializeDictionaryMetadataAction(this.metadataIdentifiers)
+      );
+  
+      this.dictionaryList$ = this.store.select(
+        getDictionaryList(this.metadataIdentifiers)
+      );
     }
-    this.selectedIndicator = this.metadataIdentifiers[this.metadataIdentifiers.length -1];
-    if (this.selectedIndicator == 'all') {
-        this.loadAllIndicators();
-    }
-    this.store.dispatch(
-      new InitializeDictionaryMetadataAction(this.metadataIdentifiers)
-    );
-
-    this.dictionaryList$ = this.store.select(
-      getDictionaryList(this.metadataIdentifiers)
-    );
   }
 
   loadAllIndicators() {

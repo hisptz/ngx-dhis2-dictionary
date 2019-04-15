@@ -8,6 +8,10 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
+    path: 'dictionary/:selected',
+    component: HomeComponent
+  },
+  {
     path: '',
     component: HomeComponent
   },

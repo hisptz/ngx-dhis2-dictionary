@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import * as _ from 'lodash';
+import { Identifiers } from '@angular/compiler';
 
 @Component({
   selector: 'app-home',
@@ -15,37 +17,56 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.forEach((params: Params) => {
-      // dictionary/:ids/:option/:selected
-      if(params['selected'] && params['selected'] !== 'all') {
-        this.selectedItem = params['selected'];
-        let identifiers = [];
-        params['ids'].split(',').forEach((param) => {
-          identifiers.push(param);
-        })
-        this.metadataIdentifiers = identifiers;
+      console.log(params['selected'])
+      if (params['selected'] != undefined) {
+        if (params['selected'] == 'all' && !params['ids']) {
+          this.metadataIdentifiers = [];
+          this.selectedItem = params['selected']
+          this.router.navigate(['dictionary/all'])
+        } else {
+          this.selectedItem = params['selected'];
+          let identifiers = [];
+          params['ids'].split(',').forEach((param) => {
+            identifiers.push(param);
+          })
+          identifiers.push(this.selectedItem);
+          this.metadataIdentifiers = _.uniq(identifiers);
+          this.router.navigate(['dictionary/' + _.uniq(identifiers).join(',') + '/selected/' + this.selectedItem])
+        }
       } else {
         this.metadataIdentifiers = this.metadataIdentifiersArr;
-        this.selectedItem = 'all';
-        let identifiers = [];
-        params['ids'].split(',').forEach((param) => {
-          identifiers.push(param);
-        })
-        this.metadataIdentifiers = identifiers;
-        this.router.navigate(['dictionary/' + identifiers.join(',') + '/selected/all'])
+        this.router.navigate(['dictionary/' + _.uniq(this.metadataIdentifiers).join(',') + '/selected/' + this.metadataIdentifiers[0]])
       }
     })
   }
 
-  dictionaryItemId(event) {
-    if (event.indexOf('all') < 0) {
-      this.router.navigate(['dictionary/' + event])
+  dictionaryItemId(listOfItemsObj) {
+    if (listOfItemsObj.selected == 'all') {
+      this.metadataIdentifiers = listOfItemsObj['otherSelectedIds'];
+      if (this.metadataIdentifiers.length > 0) {
+        let identifiers = [];
+        _.map(this.metadataIdentifiers, (identifier) =>{
+          if (identifier != 'all') {
+            identifiers.push(identifier)
+          }
+        })
+        this.metadataIdentifiers = identifiers;
+        this.router.navigate(['dictionary/' + _.uniq(identifiers).join(',') + '/selected/' + listOfItemsObj.selected])
+      } else {
+        this.router.navigate(['dictionary/all'])
+      }
     } else {
       let identifiers = [];
-      event.split('/')[2].split(',').forEach((id) => {
-        identifiers.push(id);
+      listOfItemsObj['otherSelectedIds'].forEach((identifier) => {
+        if (identifier != 'all') {
+          identifiers.push(identifier);
+        }
       })
-      this.metadataIdentifiers = identifiers;
-      this.router.navigate(['dictionary/' + event])
+      if (_.indexOf(listOfItemsObj.selected) < 0) {
+        identifiers.push(listOfItemsObj.selected)
+      }
+      this.metadataIdentifiers = _.uniq(identifiers);
+      this.router.navigate(['dictionary/' + _.uniq(identifiers).join(',') + '/selected/' + listOfItemsObj.selected])
     }
   }
 
