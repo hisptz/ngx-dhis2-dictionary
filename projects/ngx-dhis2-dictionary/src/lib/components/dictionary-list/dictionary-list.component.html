@@ -100,7 +100,7 @@
                     </td>
                   <td>{{(indicatorGroup.indicators.length)}}</td>
                   <td>
-                      <ul style="max-height: 100px; overflow: auto">
+                      <ol style="max-height: 100px; overflow: auto">
                           <li *ngFor="let indicator of getOtherMetadata(indicatorGroup.indicators, listAllMetadataInGroup)">
                             <span 
                             id={{indicator.id}} 
@@ -114,7 +114,7 @@
                           *ngIf="indicatorGroup.indicators.length > 3 && !listAllMetadataInGroup"
                           (click)="getOtherMetadata(indicatorGroup.indicators, listAllMetadataInGroup = true)"
                           >more</a>
-                      </ul>
+                      </ol>
                       <a 
                       style="text-decoration: underline; color:#007bff; font-size: 0.7em;"
                       *ngIf="listAllMetadataInGroup"
