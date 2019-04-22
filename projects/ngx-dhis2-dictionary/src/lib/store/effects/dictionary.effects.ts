@@ -107,7 +107,7 @@ export class DictionaryEffects {
                         }
                     })
                     );
-                  const programIndicatorUrl = 'programIndicators/' + metadata.id + '.json?fields=id,name,shortName,lastUpdated,created,aggregationType,expression,filter,expiryDays' +
+                  const programIndicatorUrl = 'programIndicators/' + metadata.id + '.json?fields=id,name,shortName,lastUpdated,analyticsPeriodBoundaries,created,aggregationType,expression,filter,expiryDays' +
                   ',user[id,name,phoneNumber],lastUpdatedBy[id,name,phoneNumber],program[id,name,programIndicators[id,name]]';
                   this.getProgramIndicatorInfo(programIndicatorUrl, metadata.id);
                 } else if (
@@ -438,7 +438,8 @@ export class DictionaryEffects {
       programStages: {},
       dataElements: {},
       filter: {},
-      programIndicatorDescriptionExpression: {}
+      programIndicatorDescriptionExpression: {},
+      legendSetsInformation: []
     }
     this.httpClient.get(`${programIndicatorUrl}`, true).subscribe((programIndicator: any) => {
         let indicatorDescription = ''; let filterDescription = '';
@@ -506,6 +507,35 @@ export class DictionaryEffects {
                 }
               })
             );
+
+            /**
+             * Legend sets
+            */
+           let legendSetsIds = [];
+           if (programIndicator.legendSets.length > 0) {
+            programIndicator.legendSets.forEach((legendSet) => {
+              legendSetsIds.push(legendSet.id);
+            })
+           }
+          forkJoin(
+            this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(';') +']')
+          ).subscribe((legendSetsInformation) => {
+            if (legendSetsInformation && legendSetsInformation[0].legendSets[0]) {
+              metadataInfoLoaded = {...metadataInfoLoaded, legendSetsInformation:legendSetsInformation};
+            }
+
+            this.store.dispatch(
+              new UpdateDictionaryMetadataAction(programIndicatorId, {
+                description: indicatorDescription,
+                data: metadataInfoLoaded,
+                progress: {
+                  loading: true,
+                  loadingSucceeded: true,
+                  loadingFailed: false
+                }
+              })
+            );
+          });
         })
     })
   }
