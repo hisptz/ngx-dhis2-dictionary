@@ -107,7 +107,7 @@ export class DictionaryEffects {
                         }
                     })
                     );
-                  const programIndicatorUrl = 'programIndicators/' + metadata.id + '.json?fields=id,name,lastUpdated,created,aggregationType,expression,filter,expiryDays' +
+                  const programIndicatorUrl = 'programIndicators/' + metadata.id + '.json?fields=id,name,shortName,lastUpdated,created,aggregationType,expression,filter,expiryDays' +
                   ',user[id,name,phoneNumber],lastUpdatedBy[id,name,phoneNumber],program[id,name,programIndicators[id,name]]';
                   this.getProgramIndicatorInfo(programIndicatorUrl, metadata.id);
                 } else if (
@@ -128,8 +128,8 @@ export class DictionaryEffects {
                 const dataElementUrl =
                     'dataElements/' +
                     metadata.id +
-                    '.json?fields=:all,id,name,aggregationType,displayName,' +
-                    'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSets[:all,!compulsoryDataElementOperands]';
+                    '.json?fields=:all,id,name,aggregationType,user[id,name],lastUpdatedBy[id,name],displayName,legendSets,optionSetValue,aggregationLevels,dataElementGroups[id,name],' +
+                    'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSetElements[dataSet[id,name,formType,periodType,expiryDays,legendSet]]';
                 this.getDataElementInfo(dataElementUrl, metadata.id);
                 } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
                   this.store.dispatch(
@@ -222,145 +222,47 @@ export class DictionaryEffects {
   }
 
   getDataElementInfo(dataElementUrl: string, dataElementId: string) {
+    let metadataInfoLoaded = {
+      type: 'dataElement',
+      metadata: {},
+      legendSetsInformation: {}
+    }
     this.httpClient
       .get(`${dataElementUrl}`, true)
       .subscribe((dataElement: any) => {
-        let dataElementDescription =
-          '<p>This ' +
-          dataElement.name +
-          ' of this method of data aggregation <strong>' +
-          dataElement.aggregationType +
-          '</strong> created at <strong>' +
-          this.datePipe.transform(dataElement.created) +
-          '</strong> is only taking <strong>' +
-          dataElement.domainType +
-          '</strong> data. As the culture of helping user ' +
-          'not entering unrecognized data, therefore its only taking <strong>' +
-          dataElement.valueType +
-          '</strong> values ' +
-          'from the user input</p>';
-
-        if (dataElement.categoryCombo.name !== 'default') {
-          dataElementDescription +=
-            '<p><strong>' +
-            dataElement.name +
-            '</strong> consists of <strong>' +
-            dataElement.categoryCombo.name +
-            '</strong> category combinations of ';
-
-          dataElement.categoryCombo.categories.forEach((category, index) => {
-            if (
-              index !== 0 &&
-              index !== dataElement.categoryCombo.categories.length - 1
-            ) {
-              dataElementDescription += ', ';
-            }
-
-            if (
-              index === dataElement.categoryCombo.categories.length - 1 &&
-              dataElement.categoryCombo.categories.length > 1
-            ) {
-              dataElementDescription += ' and ';
-            }
-
-            dataElementDescription += '<strong>(';
-            category.categoryOptions.forEach(
-              (categoryOption, categoryOptionIndex) => {
-                if (
-                  categoryOptionIndex !== 0 &&
-                  categoryOptionIndex !== category.categoryOptions.length - 1
-                ) {
-                  dataElementDescription += ', ';
-                }
-
-                if (
-                  categoryOptionIndex === category.categoryOptions.length - 1 &&
-                  category.categoryOptions.length > 1
-                ) {
-                  dataElementDescription += ' and ';
-                }
-
-                dataElementDescription +=
-                  '<span>' + categoryOption.name + '</span>';
+        metadataInfoLoaded = {...metadataInfoLoaded, metadata: dataElement};
+        let dataElementDescription = ''
+        
+          this.store.dispatch(
+            new UpdateDictionaryMetadataAction(dataElementId, {
+              description: dataElementDescription,
+              data: metadataInfoLoaded,
+              progress: {
+                loading: true,
+                loadingSucceeded: true,
+                loadingFailed: false
               }
-            );
+            })
+          );
 
-            dataElementDescription +=
-              ')</strong> of the <strong>' +
-              category.name +
-              '</strong> category';
-          });
-
-          dataElementDescription += '</strong></p>';
-
-          // TODO deal with different version of dhis
-          if (dataElement.dataSets && dataElement.dataSets.length > 0) {
-            dataElementDescription +=
-              '<h5>' + dataElement.name + ' Sources</h5>';
-
-            dataElementDescription +=
-              '<p>More than <strong>' +
-              dataElement.dataSets.length +
-              '</strong> dataset ie ';
-
-            dataElement.dataSets.forEach(
-              (dataSet: any, dataSetIndex: number) => {
-                if (
-                  dataSetIndex !== 0 &&
-                  dataSetIndex !== dataElement.dataSets.length - 1
-                ) {
-                  dataElementDescription += ', ';
-                }
-
-                if (
-                  dataSetIndex === dataElement.dataSets.length - 1 &&
-                  dataElement.dataSets.length > 1
-                ) {
-                  dataElementDescription += ' and ';
-                }
-                dataElementDescription +=
-                  '<strong>' + dataSet.name + '</strong>';
-              }
-            );
-
-            dataElementDescription +=
-              ' use this ' + dataElement.name + ' data element';
-
-            if (
-              dataElement.dataElementGroups &&
-              dataElement.dataElementGroups.length > 0
-            ) {
-              dataElementDescription += ' and it belongs to ';
-
-              dataElement.dataElementGroups.forEach(
-                (dataElementGroup, dataElementGroupIndex) => {
-                  if (
-                    dataElementGroupIndex !== 0 &&
-                    dataElementGroupIndex !==
-                      dataElement.dataElementGroups.length - 1
-                  ) {
-                    dataElementDescription += ', ';
-                  }
-
-                  if (
-                    dataElementGroupIndex ===
-                      dataElement.dataElementGroups.length - 1 &&
-                    dataElement.dataElementGroups.length > 1
-                  ) {
-                    dataElementDescription += ' and ';
-                  }
-                  dataElementDescription +=
-                    '<strong>' + dataElementGroup.name + ' Group</strong>';
-                }
-              );
-            }
-
-            dataElementDescription += '</p>';
+        /**
+         * Legend set
+         */
+        let legendSetsIds = [];
+        dataElement.legendSets.forEach((legendSet) => {
+          legendSetsIds.push(legendSet.id);
+        })
+        forkJoin(
+          this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(';') +']')
+        ).subscribe((legendSetsInformation) => {
+          if (legendSetsInformation && legendSetsInformation[0].legendSets[0]) {
+            metadataInfoLoaded = {...metadataInfoLoaded, legendSetsInformation:legendSetsInformation};
           }
 
           this.store.dispatch(
             new UpdateDictionaryMetadataAction(dataElementId, {
               description: dataElementDescription,
+              data: metadataInfoLoaded,
               progress: {
                 loading: false,
                 loadingSucceeded: true,
@@ -368,7 +270,7 @@ export class DictionaryEffects {
               }
             })
           );
-        }
+        });
       });
   }
 
@@ -530,8 +432,14 @@ export class DictionaryEffects {
   }
 
   getProgramIndicatorInfo(programIndicatorUrl, programIndicatorId) {
-    let dataLoaded = {};
-    dataLoaded['type'] = "programIndicator";
+    let metadataInfoLoaded = {
+      type: 'programIndicator',
+      metadata: {},
+      programStages: {},
+      dataElements: {},
+      filter: {},
+      programIndicatorDescriptionExpression: {}
+    }
     this.httpClient.get(`${programIndicatorUrl}`, true).subscribe((programIndicator: any) => {
         let indicatorDescription = ''; let filterDescription = '';
         // get expression and filter then describe it
@@ -569,6 +477,7 @@ export class DictionaryEffects {
           this.httpClient.get('programStages.json?filter=id:in:[' + programStages.join(',') + ']&fields=id,name,user,created,description,formType,programStageDataElements~size', true),
           this.httpClient.get('dataElements.json?filter=id:in:[' + allDataElements.join(',') +']&paging=false&fields=id,name,valueType,aggregationType,domainType',true)
         ).subscribe((results: any) => {
+          metadataInfoLoaded = {...metadataInfoLoaded, programStages: results[0]['programStages']};
           results[0]['programStages'].forEach((stage) => {
             programIndicatorDescriptionExpression = programIndicatorDescriptionExpression.split(stage.id + '.').join(stage.name);
             if (programIndicatorDescriptionExpression.indexOf(stage.name) < 0) {
@@ -577,61 +486,19 @@ export class DictionaryEffects {
             filterDescription = filterDescription.split(stage.id + '.').join(' ')
         })
 
+          metadataInfoLoaded = {...metadataInfoLoaded, dataElements: results[1]['dataElements']};
           results[1]['dataElements'].forEach((dataElement) => {
             programIndicatorDescriptionExpression = programIndicatorDescriptionExpression.split(dataElement.id).join(dataElement.name);
             filterDescription = filterDescription.split(dataElement.id).join(' ' + dataElement.name)
           });
-          dataLoaded['metadata'] = programIndicator;
-          indicatorDescription += '<h3 style="color: #355E7F; margin-bottom: 1.5rem">' + programIndicator.name + '</h3>';
-          indicatorDescription +=
-          '<h4 style="color: #464646;">Introduction</h4>'+
-          '<p class="indicator"><span style="color: #325E80;">' +programIndicator.name
-          if(programIndicator.description) {
-            indicatorDescription += '</span> described as <span style="color: #325E80;">' + programIndicator.description + '</span></span> and <br>';
-          }
-          indicatorDescription += '</span> whose expression is <span style="color: #325E80;">';
-          let overallExpression = ''
-          if (programIndicator.filter) {
-            overallExpression = programIndicatorDescriptionExpression + ' <b>where by</b> ' + filterDescription
-          } else {
-            overallExpression = programIndicatorDescriptionExpression;
-          }
+          metadataInfoLoaded = {...metadataInfoLoaded, metadata: programIndicator};
           
-          dataLoaded['filter'] = this.formatProgramIndicatorExpression(overallExpression)
-          indicatorDescription += this.formatProgramIndicatorExpression(overallExpression);
-          indicatorDescription +=
-          ' </span>'+
-          '</span></span></p>';
-
-          indicatorDescription += '<div><p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by:' + programIndicator.id + '</i></p></div>';
-          /**
-           * Data sources
-           */
-          indicatorDescription +=
-          '<h4 style="color: #464646;">Data source(Programs) associations</h4>' +
-          '<h6>It is captured from <span style="color: #325E80;">' + programIndicator.program.name + '</span> through the following stages/steps</h6>';
-          indicatorDescription += '<ul>';
-          results[0]['programStages'].forEach((programStage) => {
-            indicatorDescription += '<li> <span style="color: #325E80;">' + programStage.name + '</span> submitting records on every event(case or individual) by <span style="color: #325E80;">' + programStage.formType.toLowerCase() +' form</span></li>';
-          })
-          indicatorDescription += '</ul>';
-          /**
-           * Facts
-           */
-          indicatorDescription += 
-          '<br><h4 style="color: #464646;">Indicator facts</h4>';
-          indicatorDescription += '<ul>';
-          if (programIndicator.program.programIndicators.length > 1) {
-            indicatorDescription += '<li> Has <span style="color: #325E80;">' + (programIndicator.program.programIndicators.length -1) + '</span> related indicators ' +
-            'such as ' + this.listRelatedIndicators(programIndicator.program.programIndicators, programIndicator.id) +' </li>';
-          }
-            indicatorDescription += '</ul>'
-            indicatorDescription += this.displayUserInformation(programIndicator);
-
+          metadataInfoLoaded = {...metadataInfoLoaded, filter: this.formatProgramIndicatorExpression(filterDescription)};
+          metadataInfoLoaded = {...metadataInfoLoaded, programIndicatorDescriptionExpression: this.formatProgramIndicatorExpression(programIndicatorDescriptionExpression)};
             this.store.dispatch(
               new UpdateDictionaryMetadataAction(programIndicatorId, {
                 description: indicatorDescription,
-                data: dataLoaded,
+                data: metadataInfoLoaded,
                 progress: {
                   loading: false,
                   loadingSucceeded: true,

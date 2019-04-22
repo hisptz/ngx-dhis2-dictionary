@@ -1,0 +1,28 @@
+
+<div class="indicator-name"><h3 style="color: #355E7F; margin-bottom: 1.5rem">{{programIndicatorInfo.data.metadata.name}}</h3></div>
+<div class="introduction"><h3 style="color: #464646;">Introduction</h3></div>
+<div class="description">
+  <p>
+    <span style="color: #325E80;">{{programIndicatorInfo.data.metadata.name}}</span>
+    is a <strong>{{programIndicatorInfo.data.metadata.aggregationType}}</strong> indicator,
+    <span *ngIf="programIndicatorInfo.data.metadata.description"> described as {{programIndicatorInfo.data.metadata.description}} and</span>
+    whose expression is
+    <span style="color: #325E80;">
+      {{programIndicatorInfo.data.programIndicatorDescriptionExpression}} <b>where by</b>
+      {{programIndicatorInfo.data.filter}}
+    </span>
+  </p>
+  <p>
+    <span>It’s labelled in short as <strong>{{programIndicatorInfo.data.metadata.shortName}}</strong> </span>
+    <span *ngIf="programIndicatorInfo.data.metadata.code">and has a code of {{programIndicatorInfo.data.metadata.code}}</span>
+      <!-- In analytics it displays up to {{decimal In Data Output}} decimals. {{It’s set to display in form}} -->
+  </p>
+  <p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/identifiableObjects/{{programIndicatorInfo.data.metadata.id}}.json">{{programIndicatorInfo.data.metadata.id}} </a></i></p> 
+</div>
+<div>
+  <h3 style="color: #464646;"> Data sources (Datasets/Programs)</h3>
+  <p>Indicator is captured from event based data collection with following program</p>
+  <ul>
+    <li><span style="color: #325E80;">{{getProgramName(programIndicatorInfo.data)}}</span> submitting records on every event(case or individual)</li>
+  </ul>
+</div>

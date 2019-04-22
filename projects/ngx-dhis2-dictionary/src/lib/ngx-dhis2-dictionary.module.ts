@@ -29,6 +29,8 @@ import { ProgramIndicatorsComponent } from './components/metadata-list/program-i
 import { ProgramIndicatorPropertiesComponent } from './components/metadata-list/program-indicators/program-indicator-properties/program-indicator-properties.component';
 import { ExportService } from './services/export.service';
 import { DataSetComponent } from './components/dictionary-list/data-set/data-set.component';
+import { DataElementComponent } from './components/dictionary-list/data-element/data-element.component';
+import { ProgramIndicatorComponent } from './components/dictionary-list/program-indicator/program-indicator.component';
 
 @NgModule({
   imports: [
@@ -45,7 +47,7 @@ import { DataSetComponent } from './components/dictionary-list/data-set/data-set
     EffectsModule.forFeature([IndicatorsEffects])
   ],
 
-  declarations: [DictionaryListComponent, DictionaryProgressComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe, IndicatorsListComponent, IndicatorPropertiesComponent, SwitchingBtnsComponent, MetadataListComponent, ProgramIndicatorsComponent, ProgramIndicatorPropertiesComponent, DataSetComponent],
+  declarations: [DictionaryListComponent, DictionaryProgressComponent, SearchIndicatorGroupPipe, FilterBySearchInputPipe, FilterIndicatorsByGroupIdPipe, ShortenNamePipe, IndicatorsListComponent, IndicatorPropertiesComponent, SwitchingBtnsComponent, MetadataListComponent, ProgramIndicatorsComponent, ProgramIndicatorPropertiesComponent, DataSetComponent, DataElementComponent, ProgramIndicatorComponent],
   exports: [DictionaryListComponent],
   providers: [DatePipe, IndicatorsService, ExportService]
 })

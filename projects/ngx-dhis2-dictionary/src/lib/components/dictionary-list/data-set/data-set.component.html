@@ -1,36 +1,36 @@
 <div class="indicator-name"><h3 style="color: #355E7F; margin-bottom: 1.5rem">{{dataSetInfo.data.metadata.name}}</h3></div>
-    <div class="introduction"><h3 style="color: #464646;">Introduction</h3></div>
-    <div class="description">
-      <p class="dataset">
-        <span style="color: #325E80;">
-          {{dataSetInfo.data.metadata.name}}
-        </span> of the  
-        <span style="font-weight: 600">
-            {{dataSetInfo.data.metadata.formType}}
-        </span> form created on 
-        <span style="font-weight: 600">
-          {{dataSetInfo.data.metadata.created  | date}}
-        </span> by 
-        <span style="font-weight: 600">
-            {{dataSetInfo.data.metadata.user.name}}
-          </span>
-      </p>
-    </div>
-    <div *ngIf="dataSetInfo.data.metadata.categoryCombo && dataSetInfo.data.metadata.categoryCombo.name !== 'default'">
-      <h4 style="color: #464646;">Category Combination</h4>
-      <p>The form has <span style="color: #325E80;">{{dataSetInfo.data.metadata.categoryCombo.name}}</span>
-         dimension which is divided into :-
-      </p>
-      <table class="table table-bordered">
-        <thead>
-          <tr style="background-color: #f5f5f5; color: #555;">
-            <th>Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let category of dataSetInfo.data.metadata.categoryCombo.categories">
-            <td>{{category.name}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<div class="introduction"><h3 style="color: #464646;">Introduction</h3></div>
+<div class="description">
+  <p class="dataset">
+    <span style="color: #325E80;">
+      {{dataSetInfo.data.metadata.name}}
+    </span> of the  
+    <span style="font-weight: 600">
+        {{dataSetInfo.data.metadata.formType}}
+    </span> form created on 
+    <span style="font-weight: 600">
+      {{dataSetInfo.data.metadata.created  | date}}
+    </span> by 
+    <span style="font-weight: 600">
+        {{dataSetInfo.data.metadata.user.name}}
+      </span>
+  </p>
+</div>
+<div *ngIf="dataSetInfo.data.metadata.categoryCombo && dataSetInfo.data.metadata.categoryCombo.name !== 'default'">
+  <h4 style="color: #464646;">Category Combination</h4>
+  <p>The form has <span style="color: #325E80;">{{dataSetInfo.data.metadata.categoryCombo.name}}</span>
+      dimension which is divided into :-
+  </p>
+  <table class="table table-bordered">
+    <thead>
+      <tr style="background-color: #f5f5f5; color: #555;">
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let category of dataSetInfo.data.metadata.categoryCombo.categories">
+        <td>{{category.name}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
