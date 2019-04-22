@@ -1,0 +1,31 @@
+
+<div class="indicator-name"><h3 style="color: #355E7F; margin-bottom: 1.5rem">{{dataElementGroupInfo.data.metadata.name}}</h3></div>
+<div class="introduction"><h3 style="color: #464646;">Introduction</h3></div>
+<div class="description">
+  <p>
+    <span style="color: #325E80;">{{dataElementGroupInfo.data.metadata.name}}</span>
+    <span *ngIf="dataElementGroupInfo.data.metadata.description">can be described as <strong>{{dataElementGroupInfo.data.metadata.description}}</strong>.</span>
+  </p>
+  <p>
+    It’s labelled in short as {{dataElementGroupInfo.data.metadata.shortName}} 
+    <span *ngIf="dataElementGroupInfo.data.metadata.code">and has a code of {{dataElementGroupInfo.data.metadata.code}}.</span>  
+  </p>
+  <p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/identifiableObjects/{{dataElementGroupInfo.data.metadata.id}}.json">{{dataElementGroupInfo.data.metadata.id}} </a></i></p> 
+</div>
+<div>
+    <h4 style="color: #464646;">Data sources (Datasets/Programs)</h4>
+    <p>Data elements in this group are captured from routine data collection with following sources</p>
+    <ul>
+      <li *ngFor="let dataSet of getDistinctDataSetsCount(dataElementGroupInfo.data.metadata.dataElements)"><strong>{{dataSet.name}}</strong> submitting <strong>{{dataSet.periodType}}</strong> after every <strong>{{dataSet.timelyDays}}</strong> for timely submission</li>
+    </ul>
+    <!-- {{datasetName}} submitting {{periodType}} after every {{days for timely submission}}
+    {{programName}} submitting records on every event(case or individual) -->
+</div>
+<div>
+    <h4 style="color: #464646;">Data element group Facts</h4>
+    <ul>
+      <li>It has <strong>{{dataElementGroupInfo.data.metadata.dataElements.length}}</strong> data Elements</li>
+      <li>It’s data elements belongs to <strong>{{getDistinctDataSetsCount(dataElementGroupInfo.data.metadata.dataElements).length}}</strong> dataset source of data</li>
+      <!-- <li>It’s data elements belongs to {{indicatorCount}} indicators using it as numerator/denominator</li> -->
+    </ul>    
+</div>

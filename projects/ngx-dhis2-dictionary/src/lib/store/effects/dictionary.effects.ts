@@ -130,7 +130,7 @@ export class DictionaryEffects {
                     'dataElements/' +
                     metadata.id +
                     '.json?fields=:all,id,name,aggregationType,user[id,name],lastUpdatedBy[id,name],displayName,legendSets,optionSetValue,aggregationLevels,dataElementGroups[id],' +
-                    'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSetElements[dataSet[id,name,formType,periodType,expiryDays,legendSet]]';
+                    'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSetElements[dataSet[id,name,formType,periodType,timelyDays,expiryDays,legendSet]]';
                 this.getDataElementInfo(dataElementUrl, metadata.id);
                 } else if (
                   metadata.href &&
@@ -148,9 +148,9 @@ export class DictionaryEffects {
                       })
                       );
                   const dataElementGroupUrl =
-                      'dataElementGoups/' +
+                      'dataElementGroups/' +
                       metadata.id +
-                      '.json?fields=:all';
+                      '.json?fields=:all,description,dataElements[id,name,dataSetElements[id,name,dataSet[id,name,periodType,timelyDays,formType,created,expiryDays,categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataElements[id,name]]]],user[id,name]';
                   this.getDataElementGroupInfo(dataElementGroupUrl, metadata.id);
                   } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
                   this.store.dispatch(
@@ -250,6 +250,7 @@ export class DictionaryEffects {
     this.httpClient
       .get(`${dataElementGroupUrl}`, true)
       .subscribe((dataElementGroup: any) => {
+        console.log(dataElementGroup)
         metadataInfoLoaded = {...metadataInfoLoaded, metadata: dataElementGroup};
         let dataElementDescription = ''
         this.store.dispatch(

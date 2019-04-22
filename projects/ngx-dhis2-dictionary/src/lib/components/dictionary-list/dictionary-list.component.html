@@ -345,6 +345,10 @@
       <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='dataElement'">
         <app-data-element (selectedMetadataId)="selectedMetadataId($event)" [dataElementInfo]="dictionaryItem"></app-data-element>
       </div>
+      <!-- Data element group -->
+      <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='dataElementGroup'">
+        <app-data-element-group (selectedMetadataId)="selectedMetadataId($event)" [dataElementGroupInfo]="dictionaryItem"></app-data-element-group>
+      </div>
       <!-- Data set -->
       <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='dataSet'">
         <app-data-set [dataSetInfo]="dictionaryItem"></app-data-set>
