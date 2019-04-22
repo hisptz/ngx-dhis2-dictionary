@@ -132,7 +132,27 @@ export class DictionaryEffects {
                     '.json?fields=:all,id,name,aggregationType,user[id,name],lastUpdatedBy[id,name],displayName,legendSets,optionSetValue,aggregationLevels,dataElementGroups[id],' +
                     'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSetElements[dataSet[id,name,formType,periodType,expiryDays,legendSet]]';
                 this.getDataElementInfo(dataElementUrl, metadata.id);
-                } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
+                } else if (
+                  metadata.href &&
+                  metadata.href.indexOf('dataElementGroups') !== -1
+                  ) {
+                    this.store.dispatch(
+                      new UpdateDictionaryMetadataAction(metadata.id, {
+                          name: metadata.name,
+                          category: 'dg',
+                          progress: {
+                          loading: true,
+                          loadingSucceeded: true,
+                          loadingFailed: false
+                          }
+                      })
+                      );
+                  const dataElementGroupUrl =
+                      'dataElementGoups/' +
+                      metadata.id +
+                      '.json?fields=:all';
+                  this.getDataElementGroupInfo(dataElementGroupUrl, metadata.id);
+                  } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
                   this.store.dispatch(
                     new UpdateDictionaryMetadataAction(metadata.id, {
                         name: metadata.name,
@@ -222,6 +242,29 @@ export class DictionaryEffects {
     });
   }
 
+  getDataElementGroupInfo(dataElementGroupUrl, groupId) {
+    let metadataInfoLoaded = {
+      type: 'dataElementGroup',
+      metadata: {}
+    }
+    this.httpClient
+      .get(`${dataElementGroupUrl}`, true)
+      .subscribe((dataElementGroup: any) => {
+        metadataInfoLoaded = {...metadataInfoLoaded, metadata: dataElementGroup};
+        let dataElementDescription = ''
+        this.store.dispatch(
+          new UpdateDictionaryMetadataAction(groupId, {
+            description: dataElementDescription,
+            data: metadataInfoLoaded,
+            progress: {
+              loading: false,
+              loadingSucceeded: true,
+              loadingFailed: false
+            }
+          })
+        );
+      })
+  }
 
   getDataElementInfo(dataElementUrl: string, dataElementId: string) {
     let metadataInfoLoaded = {
