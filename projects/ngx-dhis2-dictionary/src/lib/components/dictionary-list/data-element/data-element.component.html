@@ -97,6 +97,29 @@
     <!-- <li>Has {{validationRulesMatchCount}} related validation rules</li> -->
     <!-- <li>Part of numerators of {{indicatorNumeratorExpressionMatchCount}} indicators</li>
     <li>Part of denominators of {{indicatorDenominatorExpressionMatchCount}} indicators</li> -->
+    <li *ngIf="dataElementInfo.data && dataElementInfo.data.dataElementGroups">
+        <p>It belongs to the following data element groups :-</p>
+        <div>
+          <table class="table table-bordered">
+            <thead>
+              <tr style="background-color: #f5f5f5; color: #555;">
+                <th style="padding: 0.45em;">Data element group</th>
+                <th style="padding: 0.45em;">Data elements</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let dataElementGroup of dataElementInfo.data.dataElementGroups">
+                <td style="padding: 0.45em;">
+                    <span style="cursor: pointer;color: #325E80;text-decoration: underline;" (click)="setActiveItem(dataElementGroup.id)">
+                      {{dataElementGroup.name}}
+                    </span>
+                </td>
+                <td style="padding: 0.45em;">{{dataElementGroup.dataElements.length}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+    </li>
   </ul>
 </div>
 <div>

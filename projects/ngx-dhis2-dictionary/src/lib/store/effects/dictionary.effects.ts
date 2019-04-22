@@ -112,7 +112,8 @@ export class DictionaryEffects {
                   this.getProgramIndicatorInfo(programIndicatorUrl, metadata.id);
                 } else if (
                 metadata.href &&
-                metadata.href.indexOf('dataElement') !== -1
+                metadata.href.indexOf('dataElement') !== -1 &&
+                metadata.href.indexOf('dataElementGroups') == -1
                 ) {
                   this.store.dispatch(
                     new UpdateDictionaryMetadataAction(metadata.id, {
@@ -128,7 +129,7 @@ export class DictionaryEffects {
                 const dataElementUrl =
                     'dataElements/' +
                     metadata.id +
-                    '.json?fields=:all,id,name,aggregationType,user[id,name],lastUpdatedBy[id,name],displayName,legendSets,optionSetValue,aggregationLevels,dataElementGroups[id,name],' +
+                    '.json?fields=:all,id,name,aggregationType,user[id,name],lastUpdatedBy[id,name],displayName,legendSets,optionSetValue,aggregationLevels,dataElementGroups[id],' +
                     'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSetElements[dataSet[id,name,formType,periodType,expiryDays,legendSet]]';
                 this.getDataElementInfo(dataElementUrl, metadata.id);
                 } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
@@ -221,10 +222,12 @@ export class DictionaryEffects {
     });
   }
 
+
   getDataElementInfo(dataElementUrl: string, dataElementId: string) {
     let metadataInfoLoaded = {
       type: 'dataElement',
       metadata: {},
+      dataElementGroups: [],
       legendSetsInformation: {}
     }
     this.httpClient
@@ -245,15 +248,40 @@ export class DictionaryEffects {
             })
           );
 
-        /**
+          /**
+         * Data element groups
+         */
+        let dataElementGroupsArr = [];
+        dataElement.dataElementGroups.forEach((group) => {
+          dataElementGroupsArr.push(group.id);
+        })
+         forkJoin(
+           this.httpClient.get('dataElementGroups.json?paging=false&fields=id,name,dataElements[id,name]&filter=id:in:[' + dataElementGroupsArr.join(',') +']', true)
+         ).subscribe((dataElementGroups) => {
+           
+          metadataInfoLoaded = {...metadataInfoLoaded, dataElementGroups: dataElementGroups[0]['dataElementGroups']};
+          this.store.dispatch(
+            new UpdateDictionaryMetadataAction(dataElementId, {
+              description: dataElementDescription,
+              data: metadataInfoLoaded,
+              progress: {
+                loading: true,
+                loadingSucceeded: true,
+                loadingFailed: false
+              }
+            })
+          );
+           /**
          * Legend set
          */
         let legendSetsIds = [];
-        dataElement.legendSets.forEach((legendSet) => {
-          legendSetsIds.push(legendSet.id);
-        })
+        if (dataElement.legendSets) {
+          dataElement.legendSets.forEach((legendSet) => {
+            legendSetsIds.push(legendSet.id);
+          })
+        }
         forkJoin(
-          this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(';') +']')
+          this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(',') +']')
         ).subscribe((legendSetsInformation) => {
           if (legendSetsInformation && legendSetsInformation[0].legendSets[0]) {
             metadataInfoLoaded = {...metadataInfoLoaded, legendSetsInformation:legendSetsInformation};
@@ -271,7 +299,8 @@ export class DictionaryEffects {
             })
           );
         });
-      });
+      })
+    });
   }
 
   getIndicatorInfo(indicatorUrl: string, indicatorId: string) {
@@ -512,7 +541,7 @@ export class DictionaryEffects {
              * Legend sets
             */
            let legendSetsIds = [];
-           if (programIndicator.legendSets.length > 0) {
+           if (programIndicator.legendSets) {
             programIndicator.legendSets.forEach((legendSet) => {
               legendSetsIds.push(legendSet.id);
             })
