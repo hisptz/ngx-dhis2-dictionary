@@ -200,74 +200,17 @@ export class DictionaryEffects {
   );
 
   getDataSetInfo(dataSetUrl: string, dataSetId: string) {
+    let metadataInfoLoaded = {
+      type: 'dataSet',
+      metadata: {}
+    }
+    let dataSetDescription = ''
     this.httpClient.get(`${dataSetUrl}`, true).subscribe((dataSet: any) => {
-      let dataSetDescription =
-        '<p>' +
-        dataSet.name +
-        ' of the <strong>' +
-        dataSet.formType +
-        '</strong> Form created ' +
-        'at <strong>' +
-        this.datePipe.transform(dataSet.created) +
-        ' by ' +
-        dataSet.user.name +
-        '</strong>';
-
-      if (dataSet.categoryCombo && dataSet.categoryCombo.name !== 'default') {
-        dataSetDescription +=
-          '<span> With <strong>' +
-          dataSet.categoryCombo.name +
-          '</strong> Dimension which is divided' +
-          ' into ';
-
-        dataSet.categoryCombo.categories.forEach((category, categoryIndex) => {
-          if (
-            categoryIndex !== 0 &&
-            categoryIndex !== dataSet.categoryCombo.categories.length - 1
-          ) {
-            dataSetDescription += ', ';
-          }
-
-          if (
-            categoryIndex === dataSet.categoryCombo.categories.length - 1 &&
-            dataSet.categoryCombo.categories.length > 1
-          ) {
-            dataSetDescription += ' and ';
-          }
-
-          dataSetDescription += '<strong>';
-
-          category.categoryOptions.forEach(
-            (categoryOption, categoryOptionIndex) => {
-              if (
-                categoryOptionIndex !== 0 &&
-                categoryOptionIndex !== category.categoryOptions.length - 1
-              ) {
-                dataSetDescription += ', ';
-              }
-
-              if (
-                categoryOptionIndex === category.categoryOptions.length - 1 &&
-                category.categoryOptions.length > 1
-              ) {
-                dataSetDescription += ' and ';
-              }
-
-              dataSetDescription += '<span>' + categoryOption.name + '</span>';
-            }
-          );
-
-          dataSetDescription += '</strong>';
-        });
-
-        dataSetDescription += '</span>';
-      }
-
-      dataSetDescription += '</p>';
-
+      metadataInfoLoaded = {...metadataInfoLoaded, metadata: dataSet};
       this.store.dispatch(
         new UpdateDictionaryMetadataAction(dataSetId, {
           description: dataSetDescription,
+          data: metadataInfoLoaded,
           progress: {
             loading: false,
             loadingSucceeded: true,

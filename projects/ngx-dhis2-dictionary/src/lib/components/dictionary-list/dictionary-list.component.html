@@ -335,6 +335,10 @@
           </span></i></p></div>
         </div>
       </div>
+      <!-- Data set -->
+      <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='dataSet'">
+        <app-data-set [dataSetInfo]="dictionaryItem"></app-data-set>
+      </div>
       <div *ngIf="dictionaryItem.progress.loading">
         <app-dictionary-progress></app-dictionary-progress>
       </div>
