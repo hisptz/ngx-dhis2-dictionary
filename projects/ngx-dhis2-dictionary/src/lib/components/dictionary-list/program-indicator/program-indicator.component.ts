@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-program-indicator',
@@ -28,5 +29,9 @@ export class ProgramIndicatorComponent implements OnInit {
       return stringSection.slice(0,1).toUpperCase() + stringSection.slice(1).toLowerCase();
     }).join(' ')
     return text.split('_').join(' ').slice(0,1).toUpperCase() + text.split('_').join(' ').slice(1).toLowerCase();
+  }
+
+  sortLegends(legends) {
+    return _.reverse(_.sortBy(legends, ['startValue']))
   }
 }

@@ -94,7 +94,7 @@
 <div>
   <h4 style="color: #464646;">Calculation details</h4>
   <p>Calculation of the values will be {{programIndicatorInfo.data.metadata.aggregationType}} of values across orgunit and period.  </p>
-  <p>Program indicator calculation will be based on {{analyticsType}}, for distinction purposes:  </p>
+  <p *ngIf="programIndicatorInfo.data.metadata.analyticsType">Program indicator calculation will be based on {{programIndicatorInfo.data.metadata.analyticsType}}, for distinction purposes:  </p>
   <ul>
     <li>Events implies, each event from data source is considered as independent row to be counted, and properties and details of the event are used to filter events.</li>
     <li>Enrollment implies, each enrollment from data source is considered as independent row to be counted, and events from any stage and other properties and details of enrollment are used to filter enrollments.</li>

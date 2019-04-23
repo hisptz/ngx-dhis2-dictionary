@@ -14,7 +14,7 @@
   <h4 style="color: #464646;">Data sources (Datasets/Programs)</h4>
   <p>Data element is captured from 
     <span *ngIf="dataElementInfo.data.metadata.domainType== 'AGGREGATE'">Routine data source</span>
-    <span *ngIf="!dataElementInfo.data.metadata.domainType== 'AGGREGATE'">Event based data source</span>
+    <span *ngIf="dataElementInfo.data.metadata.domainType !== 'AGGREGATE'">Event based data source</span>
      with following sources
      <ul *ngIf="dataElementInfo.data.metadata.domainType== 'AGGREGATE'">
        <li *ngFor="let dataSetElement of dataElementInfo.data.metadata.dataSetElements">
@@ -146,7 +146,9 @@
     <strong>{{dataElementInfo.data.metadata.created  | date}}</strong> 
     by <strong>{{dataElementInfo.data.metadata.user.name}}</strong>
     and last updated on <strong>{{dataElementInfo.data.metadata.lastUpdated | date}}</strong>
-    by <strong>{{dataElementInfo.data.metadata.lastUpdatedBy.name}}</strong>.
+    <span *ngIf="dataElementInfo.data.metadata.lastUpdatedBy">
+        by <strong>{{dataElementInfo.data.metadata.lastUpdatedBy.name}}</strong>
+    </span>.
   </p>
   
   <p style="float: right;">Dictionary generated on <strong>{{getTodayDate() | date}}</strong></p>

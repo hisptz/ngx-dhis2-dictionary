@@ -26,4 +26,9 @@ export class DataElementGroupComponent implements OnInit {
     })
     return _.uniqBy(dataSets, 'id');
   }
+
+  getTodayDate() {
+    const now = new Date();
+    return now;
+  }
 }

@@ -112,8 +112,7 @@ export class DictionaryEffects {
                   this.getProgramIndicatorInfo(programIndicatorUrl, metadata.id);
                 } else if (
                 metadata.href &&
-                metadata.href.indexOf('dataElement') !== -1 &&
-                metadata.href.indexOf('dataElementGroups') == -1
+                metadata.href.indexOf('dataElements/') !== -1
                 ) {
                   this.store.dispatch(
                     new UpdateDictionaryMetadataAction(metadata.id, {
@@ -150,7 +149,7 @@ export class DictionaryEffects {
                   const dataElementGroupUrl =
                       'dataElementGroups/' +
                       metadata.id +
-                      '.json?fields=:all,description,dataElements[id,name,dataSetElements[id,name,dataSet[id,name,periodType,timelyDays,formType,created,expiryDays,categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataElements[id,name]]]],user[id,name]';
+                      '.json?fields=:all,description,user[id,name],lastUpdatedBy[id,name],dataElements[id,name,dataSetElements[id,name,dataSet[id,name,periodType,timelyDays,formType,created,expiryDays,categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataElements[id,name]]]],user[id,name]';
                   this.getDataElementGroupInfo(dataElementGroupUrl, metadata.id);
                   } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
                   this.store.dispatch(
@@ -245,12 +244,12 @@ export class DictionaryEffects {
   getDataElementGroupInfo(dataElementGroupUrl, groupId) {
     let metadataInfoLoaded = {
       type: 'dataElementGroup',
-      metadata: {}
+      metadata: {},
+      dataElements: []
     }
     this.httpClient
       .get(`${dataElementGroupUrl}`, true)
       .subscribe((dataElementGroup: any) => {
-        console.log(dataElementGroup)
         metadataInfoLoaded = {...metadataInfoLoaded, metadata: dataElementGroup};
         let dataElementDescription = ''
         this.store.dispatch(
@@ -258,12 +257,36 @@ export class DictionaryEffects {
             description: dataElementDescription,
             data: metadataInfoLoaded,
             progress: {
-              loading: false,
+              loading: true,
               loadingSucceeded: true,
               loadingFailed: false
             }
           })
         );
+
+        /**
+         * Data elements informnation
+         */
+        let dataElementsArr = [];
+        dataElementGroup['dataElements'].forEach((element) => {
+          dataElementsArr.push(element.id);
+        });
+        forkJoin(
+           this.httpClient.get('dataElements.json?fields=id,name,code,zeroIsSignificant,user[id,name],dataSetElements[dataSet[id,name]],categoryCombo[id,name,dataDimensionType,categories[id,name]],shortName,valueType,aggregationType,dataElementGroups[id,name]&filter=id:in:[' + dataElementsArr.join(',') + ']', true)
+         ).subscribe((dataElements) => {
+           metadataInfoLoaded = {...metadataInfoLoaded, dataElements: dataElements[0]['dataElements']};
+           this.store.dispatch(
+            new UpdateDictionaryMetadataAction(groupId, {
+              description: dataElementDescription,
+              data: metadataInfoLoaded,
+              progress: {
+                loading: false,
+                loadingSucceeded: true,
+                loadingFailed: false
+              }
+            })
+          );
+         })
       })
   }
 

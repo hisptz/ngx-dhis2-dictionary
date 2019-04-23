@@ -22,10 +22,66 @@
     {{programName}} submitting records on every event(case or individual) -->
 </div>
 <div>
-    <h4 style="color: #464646;">Data element group Facts</h4>
-    <ul>
-      <li>It has <strong>{{dataElementGroupInfo.data.metadata.dataElements.length}}</strong> data Elements</li>
-      <li>It’s data elements belongs to <strong>{{getDistinctDataSetsCount(dataElementGroupInfo.data.metadata.dataElements).length}}</strong> dataset source of data</li>
-      <!-- <li>It’s data elements belongs to {{indicatorCount}} indicators using it as numerator/denominator</li> -->
-    </ul>    
+  <h4 style="color: #464646;">Data element group Facts</h4>
+  <ul>
+    <li>It has <strong>{{dataElementGroupInfo.data.metadata.dataElements.length}}</strong> data Elements</li>
+    <li>It’s data elements belongs to <strong>{{getDistinctDataSetsCount(dataElementGroupInfo.data.metadata.dataElements).length}}</strong> dataset source of data</li>
+    <!-- <li>It’s data elements belongs to {{indicatorCount}} indicators using it as numerator/denominator</li> -->
+  </ul>    
+</div>
+<div *ngIf="dataElementGroupInfo.data.dataElements">
+  <h4 style="color: #464646;">Related Data elements</h4>
+  <p>The following is the summary of the data elements used in the group:- </p>
+  <div style="width: 100%; overflow: auto; max-height: 300px; margin-bottom: 15px;">
+    <table class="table table-bordered">
+      <thead>
+        <tr style="background-color: #f5f5f5; color: #555;">
+          <th style="padding: 0.45em;">Data Element</th>
+          <th style="padding: 0.45em;">Aggregation</th>
+          <th style="padding: 0.45em;">Value Type</th>
+          <th style="padding: 0.45em;">Zero Significance</th>
+          <th style="padding: 0.45em;">Categories</th>
+          <th style="padding: 0.45em;">Datasets/ Programs</th>
+          <th style="padding: 0.45em;">Groups</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dataElement of dataElementGroupInfo.data.dataElements">
+          <td style="padding: 0.45em;">{{dataElement.name}}</td>
+          <td style="padding: 0.45em;">{{dataElement.aggregationType}}</td> 
+          <td style="padding: 0.45em;">{{dataElement.valueType}}</td>
+          <td style="padding: 0.45em;">{{dataElement.zeroIsSignificant}}</td>
+          <td style="padding: 0.45em;">
+            <ul>
+              <li *ngFor="let category of dataElement.categoryCombo.categories">
+                {{category.name}}
+              </li>
+            </ul>
+          </td>
+          <td style="padding: 0.45em;">
+            <ul>
+              <li *ngFor="let dataSetElement of dataElement.dataSetElements">
+                {{dataSetElement.dataSet.name}}
+              </li>
+            </ul>
+          </td>
+          <td style="padding: 0.45em;">
+            <ul>
+              <li *ngFor="let dataElementGroup of dataElement.dataElementGroups">
+                {{dataElementGroup.name}}
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div>
+  <h4 style="color: #464646;">Accessibility & Sharing settings</h4>
+  <p>This data element group was first created on {{dataElementGroupInfo.data.metadata.created | date}} by {{dataElementGroupInfo.data.metadata.user.name}}
+    <span *ngIf="dataElementGroupInfo.data.metadata.lastUpdated">and last updated on {{dataElementGroupInfo.data.metadata.lastUpdated | date}} </span>
+    <span *ngIf="dataElementGroupInfo.data.metadata.lastUpdatedBy"> by {{dataElementGroupInfo.data.metadata.lastUpdatedBy.name}}.</span>
+  </p>
+  <p style="float: right;">Dictionary generated on <strong>{{getTodayDate() | date}}</strong></p>
 </div>
