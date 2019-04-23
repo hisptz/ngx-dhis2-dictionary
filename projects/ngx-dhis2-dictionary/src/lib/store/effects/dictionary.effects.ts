@@ -574,7 +574,7 @@ export class DictionaryEffects {
                 description: indicatorDescription,
                 data: metadataInfoLoaded,
                 progress: {
-                  loading: false,
+                  loading: true,
                   loadingSucceeded: true,
                   loadingFailed: false
                 }
@@ -602,7 +602,7 @@ export class DictionaryEffects {
                 description: indicatorDescription,
                 data: metadataInfoLoaded,
                 progress: {
-                  loading: true,
+                  loading: false,
                   loadingSucceeded: true,
                   loadingFailed: false
                 }
