@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-data-set',
@@ -13,4 +14,7 @@ export class DataSetComponent implements OnInit {
   ngOnInit() {
   }
 
+  sortLegends(legends) {
+    return _.reverse(_.sortBy(legends, ['startValue']))
+  }
 }

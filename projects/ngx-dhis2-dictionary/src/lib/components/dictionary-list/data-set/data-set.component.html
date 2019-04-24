@@ -34,3 +34,30 @@
     </tbody>
   </table>
 </div>
+<div *ngIf="dataSetInfo.data && dataSetInfo.data.legendSetsInformation" style="width: 100%; overflow: auto;">
+    <h4 style="color: #464646;">Legend for analysis</h4>
+    <p>Uses <strong>{{dataSetInfo.data.legendSetsInformation.length}} </strong>legend for analysis, spread accross multiple cut-off points of interest, existing legends are:</p>
+    <div *ngFor="let legendSetInformation of dataSetInfo.data.legendSetsInformation">
+        <div *ngFor="let legendSet of legendSetInformation.legendSets">
+          {{legendSet.name}}
+          <table class="table table-bordered">
+              <thead>
+                <tr style="background-color: #f5f5f5; color: #555;">
+                  <th style="padding: 0.45em;">Class</th>
+                  <th style="padding: 0.45em;">Lower</th>
+                  <th style="padding: 0.45em;">Upper</th>
+                  <th style="padding: 0.45em;">Color</th>
+                </tr>
+              </thead>
+              <tbody class="legends-list">
+                <tr *ngFor="let legend of sortLegends(legendSet.legends)">
+                  <td style="padding: 0.45em;"> {{legend.name}}  </td>
+                  <td style="padding: 0.45em;">  {{legend.startValue}} </td> 
+                  <td style="padding: 0.45em;"> {{legend.endValue}} </td>
+                  <td style="padding: 0.45em;" [ngStyle]="{'background-color': legend.color}"><span>{{legend.color}}</span></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+    </div>
+</div>

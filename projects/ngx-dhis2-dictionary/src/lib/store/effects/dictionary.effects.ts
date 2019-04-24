@@ -166,8 +166,8 @@ export class DictionaryEffects {
                 const dataSetUrl =
                     'dataSets/' +
                     metadata.id +
-                    '.json?fields=:all,user[:all],id,name,periodType,shortName,' +
-                    'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
+                    '.json?fields=id,name,created,code,user[id,name],sections[id,name],lastUpdated,lastUpdatedBy[id,name],legendSets,formType,periodType,timelyDays,shortName,validCompleteOnly,dataSetElements[dataElement[id,name]],compulsoryFieldsCompleteOnly,userGroupAccesses[*],compulsoryDataElementOperands[id,name,dataElement]' +
+                    ',categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
                 this.getDataSetInfo(dataSetUrl, metadata.id);
                 }
             } else {
@@ -222,7 +222,8 @@ export class DictionaryEffects {
   getDataSetInfo(dataSetUrl: string, dataSetId: string) {
     let metadataInfoLoaded = {
       type: 'dataSet',
-      metadata: {}
+      metadata: {},
+      legendSetsInformation: []
     }
     let dataSetDescription = ''
     this.httpClient.get(`${dataSetUrl}`, true).subscribe((dataSet: any) => {
@@ -238,6 +239,36 @@ export class DictionaryEffects {
           }
         })
       );
+
+       /**
+         * Legend set
+         */
+        let legendSetsIds = [];
+        if (dataSet.legendSets) {
+          dataSet.legendSets.forEach((legendSet) => {
+            legendSetsIds.push(legendSet.id);
+          })
+        }
+        forkJoin(
+          this.httpClient.get('legendSets.json?fields=id,name,legends[id,name,startValue,endValue,color]&paging=false&filter=id:in:[' + legendSetsIds.join(',') +']')
+        ).subscribe((legendSetsInformation) => {
+          if (legendSetsInformation && legendSetsInformation[0].legendSets[0]) {
+            metadataInfoLoaded = {...metadataInfoLoaded, legendSetsInformation:legendSetsInformation};
+          }
+
+          console.log('metadataInfoLoaded',metadataInfoLoaded)
+          this.store.dispatch(
+            new UpdateDictionaryMetadataAction(dataSetId, {
+              description: dataSetDescription,
+              data: metadataInfoLoaded,
+              progress: {
+                loading: false,
+                loadingSucceeded: true,
+                loadingFailed: false
+              }
+            })
+          );
+        });
     });
   }
 
