@@ -15,7 +15,7 @@ export class DataElementGroupComponent implements OnInit {
   ngOnInit() {
   }
 
-  setActiveItem(metaDataId) {
+  setActiveItem(e, metaDataId) {
     this.selectedMetadataId.emit(metaDataId);
   }
 

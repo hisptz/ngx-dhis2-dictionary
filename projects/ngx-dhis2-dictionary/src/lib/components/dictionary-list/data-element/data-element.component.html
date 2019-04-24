@@ -118,12 +118,12 @@
                 <td style="padding: 0.45em;">{{dataElementGroup.dataElements.length}}</td>
                 <td>
                   <ol style="max-height: 120px; overflow: auto">
-                    <li *ngFor="let indicator of getOtherMetadata(dataElementGroup.dataElements, listAllMetadataInGroup)">
+                    <li *ngFor="let dataElement of getOtherMetadata(dataElementGroup.dataElements, listAllMetadataInGroup)">
                       <span 
-                      id={{indicator.id}} 
-                      (click)="setActiveItem($event, indicator.id)" 
+                      id={{dataElement.id}} 
+                      (click)="setActiveItem($event, dataElement.id)" 
                       style="color: #325E80; cursor: pointer;text-decoration: underline">
-                      {{indicator.name}}
+                      {{dataElement.name}}
                       </span>
                     </li>
                     <a
@@ -157,11 +157,13 @@
     <li *ngIf="dataElementInfo.data.metadata.categoryCombo">It uses category combination <strong>{{dataElementInfo.data.metadata.categoryCombo.name}}</strong> with cross-tabulation between {{dataElementInfo.data.metadata.categoryCombo.categories.length}} categories with the following details
         <ul>
           <li *ngFor="let category of dataElementInfo.data.metadata.categoryCombo.categories">
-            Category <strong>{{category.name}}</strong> which has <strong>{{category.categoryOptions.length}}</strong> <span style="color: #325E80; cursor: pointer;" (click)="showOptionsList()">options</span>
-            Options
-            <ol class="list-of-options" *ngIf="showOptions">
-              <li *ngFor="let option of category.categoryOptions">{{option.name}}</li>
-            </ol>
+            Category <strong>{{category.name}}</strong> which has <strong>{{category.categoryOptions.length}}</strong> <span style="color: #325E80; cursor: pointer;" (click)="showOptionsList()"> option<span *ngIf="category.categoryOptions.length > 1">s</span></span>
+            <div *ngIf="showOptions">
+              List of option<span *ngIf="category.categoryOptions.length > 1">s</span>
+              <ol class="list-of-options">
+                <li *ngFor="let option of category.categoryOptions">{{option.name}}</li>
+              </ol>
+            </div>
           </li>
         </ul>
     </li>

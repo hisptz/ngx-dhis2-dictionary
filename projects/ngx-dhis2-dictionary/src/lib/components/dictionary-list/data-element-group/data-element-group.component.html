@@ -16,9 +16,14 @@
     <h4 style="color: #464646;">Data sources (Datasets/Programs)</h4>
     <p>Data elements in this group are captured from routine data collection with following sources</p>
     <ul>
-      <li *ngFor="let dataSet of getDistinctDataSetsCount(dataElementGroupInfo.data.metadata.dataElements)"><strong>{{dataSet.name}}</strong> submitting <strong>{{dataSet.periodType}}</strong> after every <strong>{{dataSet.timelyDays}}</strong> for timely submission</li>
+      <li *ngFor="let dataSet of getDistinctDataSetsCount(dataElementGroupInfo.data.metadata.dataElements)">
+        <span 
+            (click)="setActiveItem($event, dataSet.id)"
+            style="color: #325E80; cursor: pointer;text-decoration: underline"
+            >{{dataSet.name}} </span>  
+        submitting <strong>{{dataSet.periodType}}</strong> after every <strong>{{dataSet.timelyDays}}</strong> days for timely submission</li>
     </ul>
-    <!-- {{datasetName}} submitting {{periodType}} after every {{days for timely submission}}
+    <!-- 
     {{programName}} submitting records on every event(case or individual) -->
 </div>
 <div>
@@ -47,7 +52,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let dataElement of dataElementGroupInfo.data.dataElements">
-          <td style="padding: 0.45em;">{{dataElement.name}}</td>
+          <td style="padding: 0.45em;">
+            <span 
+            (click)="setActiveItem($event, dataElement.id)"
+            style="color: #325E80; cursor: pointer;text-decoration: underline"
+            >{{dataElement.name}}</span>  
+          </td>
           <td style="padding: 0.45em;">{{dataElement.aggregationType}}</td> 
           <td style="padding: 0.45em;">{{dataElement.valueType}}</td>
           <td style="padding: 0.45em;">{{dataElement.zeroIsSignificant}}</td>
@@ -61,14 +71,25 @@
           <td style="padding: 0.45em;">
             <ul>
               <li *ngFor="let dataSetElement of dataElement.dataSetElements">
-                {{dataSetElement.dataSet.name}}
+                  <span 
+                  (click)="setActiveItem($event, dataSetElement.dataSet.id)"
+                  style="color: #325E80; cursor: pointer;text-decoration: underline"
+                  >{{dataSetElement.dataSet.name}}</span>
               </li>
             </ul>
           </td>
           <td style="padding: 0.45em;">
             <ul>
               <li *ngFor="let dataElementGroup of dataElement.dataElementGroups">
-                {{dataElementGroup.name}}
+                <span
+                  *ngIf="dataElementGroup.id !== dataElementGroupInfo.data.metadata.id"
+                  (click)="setActiveItem($event, dataElementGroup.id)"
+                  style="color: #325E80; cursor: pointer;text-decoration: underline"
+                  >{{dataElementGroup.name}}</span>
+                <span 
+                  *ngIf="dataElementGroup.id == dataElementGroupInfo.data.metadata.id"
+                  style="color: #325E80;"
+                  >{{dataElementGroup.name}}</span>
               </li>
             </ul>
           </td>
