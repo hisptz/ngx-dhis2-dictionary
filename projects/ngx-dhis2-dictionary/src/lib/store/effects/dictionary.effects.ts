@@ -166,7 +166,7 @@ export class DictionaryEffects {
                 const dataSetUrl =
                     'dataSets/' +
                     metadata.id +
-                    '.json?fields=id,name,created,code,user[id,name],sections[id,name],lastUpdated,lastUpdatedBy[id,name],legendSets,formType,periodType,timelyDays,shortName,validCompleteOnly,dataSetElements[dataElement[id,name]],compulsoryFieldsCompleteOnly,userGroupAccesses[*],compulsoryDataElementOperands[id,name,dataElement]' +
+                    '.json?fields=id,name,created,periodType,code,user[id,name],sections[id,name],lastUpdated,lastUpdatedBy[id,name],legendSets,formType,periodType,timelyDays,shortName,validCompleteOnly,dataSetElements[dataElement[id,name]],compulsoryFieldsCompleteOnly,userGroupAccesses[*],userAccesses[*],compulsoryDataElementOperands[id,name,dataElement]' +
                     ',categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
                 this.getDataSetInfo(dataSetUrl, metadata.id);
                 }
@@ -223,7 +223,8 @@ export class DictionaryEffects {
     let metadataInfoLoaded = {
       type: 'dataSet',
       metadata: {},
-      legendSetsInformation: []
+      legendSetsInformation: [],
+      dataElements: []
     }
     let dataSetDescription = ''
     this.httpClient.get(`${dataSetUrl}`, true).subscribe((dataSet: any) => {
@@ -233,12 +234,34 @@ export class DictionaryEffects {
           description: dataSetDescription,
           data: metadataInfoLoaded,
           progress: {
-            loading: false,
+            loading: true,
             loadingSucceeded: true,
             loadingFailed: false
           }
         })
       );
+          /**
+         * Data elements informnation
+         */
+        let dataElementsArr = [];
+        dataSet['dataSetElements'].forEach((element) => {
+          dataElementsArr.push(element.dataElement.id);
+        });
+        forkJoin(
+           this.httpClient.get('dataElements.json?fields=id,name,code,zeroIsSignificant,user[id,name],dataSetElements[dataSet[id,name]],categoryCombo[id,name,dataDimensionType,categories[id,name]],shortName,valueType,aggregationType,dataElementGroups[id,name]&filter=id:in:[' + dataElementsArr.join(',') + ']', true)
+         ).subscribe((dataElements) => {
+           metadataInfoLoaded = {...metadataInfoLoaded, dataElements: dataElements[0]['dataElements']};
+           this.store.dispatch(
+            new UpdateDictionaryMetadataAction(dataSetId, {
+              description: dataSetDescription,
+              data: metadataInfoLoaded,
+              progress: {
+                loading: true,
+                loadingSucceeded: true,
+                loadingFailed: false
+              }
+            })
+          );
 
        /**
          * Legend set
@@ -255,8 +278,6 @@ export class DictionaryEffects {
           if (legendSetsInformation && legendSetsInformation[0].legendSets[0]) {
             metadataInfoLoaded = {...metadataInfoLoaded, legendSetsInformation:legendSetsInformation};
           }
-
-          console.log('metadataInfoLoaded',metadataInfoLoaded)
           this.store.dispatch(
             new UpdateDictionaryMetadataAction(dataSetId, {
               description: dataSetDescription,
@@ -268,7 +289,8 @@ export class DictionaryEffects {
               }
             })
           );
-        });
+         })
+      });
     });
   }
 

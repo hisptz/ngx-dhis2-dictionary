@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash';
+import { element } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-data-set',
@@ -9,12 +10,39 @@ import * as _ from 'lodash';
 export class DataSetComponent implements OnInit {
 
   @Input() dataSetInfo: any;
+  @Output() selectedMetadataId = new EventEmitter<string>();
   constructor() { }
 
   ngOnInit() {
   }
 
+  setActiveItem(e, metaDataId) {
+    this.selectedMetadataId.emit(metaDataId);
+  }
+
   sortLegends(legends) {
     return _.reverse(_.sortBy(legends, ['startValue']))
+  }
+
+  getTodayDate() {
+    const now = new Date();
+    return now;
+  }
+
+  formatTextToSentenceFormat(text) {
+    text.split('_').map(function(stringSection) {
+      return stringSection.slice(0,1).toUpperCase() + stringSection.slice(1).toLowerCase();
+    }).join(' ')
+    return text.split('_').join(' ').slice(0,1).toUpperCase() + text.split('_').join(' ').slice(1).toLowerCase();
+  }
+
+  getDataElement(elementId, allElements) {
+    let metadataName = ''
+    _.map(allElements, (element: any) => {
+      if (element.id == elementId) {
+        metadataName = element.name;
+      }
+    })
+    return metadataName;
   }
 }
