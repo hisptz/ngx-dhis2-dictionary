@@ -100,9 +100,9 @@
 </div>
 <div>
   <h4 style="color: #464646;">Accessibility & Sharing settings</h4>
-  <p>This data element group was first created on {{dataElementGroupInfo.data.metadata.created | date}} by {{dataElementGroupInfo.data.metadata.user.name}}
-    <span *ngIf="dataElementGroupInfo.data.metadata.lastUpdated">and last updated on {{dataElementGroupInfo.data.metadata.lastUpdated | date}} </span>
-    <span *ngIf="dataElementGroupInfo.data.metadata.lastUpdatedBy"> by {{dataElementGroupInfo.data.metadata.lastUpdatedBy.name}}.</span>
+  <p>This data element group was first created on <strong>{{dataElementGroupInfo.data.metadata.created | date}}</strong> by <strong>{{dataElementGroupInfo.data.metadata.user.name}}</strong>
+    <span *ngIf="dataElementGroupInfo.data.metadata.lastUpdated">and last updated on <strong>{{dataElementGroupInfo.data.metadata.lastUpdated | date}}</strong> </span>
+    <span *ngIf="dataElementGroupInfo.data.metadata.lastUpdatedBy"> by <strong>{{dataElementGroupInfo.data.metadata.lastUpdatedBy.name}}.</strong></span>
   </p>
   <p style="float: right;">Dictionary generated on <strong>{{getTodayDate() | date}}</strong></p>
 </div>
