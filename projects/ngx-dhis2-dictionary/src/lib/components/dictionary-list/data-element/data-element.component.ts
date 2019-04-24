@@ -10,12 +10,14 @@ export class DataElementComponent implements OnInit {
 
   @Input() dataElementInfo: any;
   @Output() selectedMetadataId = new EventEmitter<string>();
+  listAllMetadataInGroup: boolean = false;
+  showOptions: boolean = false;
   constructor() { }
 
   ngOnInit() {
   }
 
-  setActiveItem(metaDataId) {
+  setActiveItem(e, metaDataId) {
     this.selectedMetadataId.emit(metaDataId);
   }
 
@@ -30,5 +32,23 @@ export class DataElementComponent implements OnInit {
   getTodayDate() {
     const now = new Date();
     return now;
+  }
+
+  getOtherMetadata(allMedatada, listAllMetadataInGroup) {
+    let newSlicedList = [];
+    _.map(allMedatada, (metadata) => {
+      if (metadata.id !== this.dataElementInfo.data.metadata.id) {
+        newSlicedList.push(metadata);
+      }
+    })
+    if (!listAllMetadataInGroup) {
+      return newSlicedList.slice(0,3)
+    } else {
+      return newSlicedList;
+    }
+  }
+
+  showOptionsList() {
+    this.showOptions = !this.showOptions;
   }
 }

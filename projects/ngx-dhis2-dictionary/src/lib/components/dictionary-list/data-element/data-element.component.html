@@ -18,7 +18,7 @@
      with following sources
      <ul *ngIf="dataElementInfo.data.metadata.domainType== 'AGGREGATE'">
        <li *ngFor="let dataSetElement of dataElementInfo.data.metadata.dataSetElements">
-          <span style="cursor: pointer;color: #325E80;text-decoration: underline;" (click)="setActiveItem(dataSetElement.dataSet.id)">
+          <span style="cursor: pointer;color: #325E80;text-decoration: underline;" (click)="setActiveItem($event, dataSetElement.dataSet.id)">
             {{dataSetElement.dataSet.name}}
           </span>
           submitting
@@ -105,16 +105,39 @@
               <tr style="background-color: #f5f5f5; color: #555;">
                 <th style="padding: 0.45em;">Data element group</th>
                 <th style="padding: 0.45em;">Data elements</th>
+                <th style="padding: 0.45em;">Data elements list</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let dataElementGroup of dataElementInfo.data.dataElementGroups">
                 <td style="padding: 0.45em;">
-                    <span style="cursor: pointer;color: #325E80;text-decoration: underline;" (click)="setActiveItem(dataElementGroup.id)">
+                    <span style="cursor: pointer;color: #325E80;text-decoration: underline;" (click)="setActiveItem($event, dataElementGroup.id)">
                       {{dataElementGroup.name}}
                     </span>
                 </td>
                 <td style="padding: 0.45em;">{{dataElementGroup.dataElements.length}}</td>
+                <td>
+                  <ol style="max-height: 120px; overflow: auto">
+                    <li *ngFor="let indicator of getOtherMetadata(dataElementGroup.dataElements, listAllMetadataInGroup)">
+                      <span 
+                      id={{indicator.id}} 
+                      (click)="setActiveItem($event, indicator.id)" 
+                      style="color: #325E80; cursor: pointer;text-decoration: underline">
+                      {{indicator.name}}
+                      </span>
+                    </li>
+                    <a
+                    style="text-decoration: underline; color:#007bff; font-size: 0.7em;" 
+                    *ngIf="dataElementGroup.dataElements.length > 3 && !listAllMetadataInGroup"
+                    (click)="getOtherMetadata(dataElementGroup.dataElements, listAllMetadataInGroup = true)"
+                    >more</a>
+                </ol>
+                <a 
+                style="text-decoration: underline; color:#007bff; font-size: 0.7em;"
+                *ngIf="listAllMetadataInGroup"
+                (click)="getOtherMetadata(dataElementGroup.dataElements, listAllMetadataInGroup = false)"
+                >less</a>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -134,7 +157,11 @@
     <li *ngIf="dataElementInfo.data.metadata.categoryCombo">It uses category combination <strong>{{dataElementInfo.data.metadata.categoryCombo.name}}</strong> with cross-tabulation between {{dataElementInfo.data.metadata.categoryCombo.categories.length}} categories with the following details
         <ul>
           <li *ngFor="let category of dataElementInfo.data.metadata.categoryCombo.categories">
-            Category <strong>{{category.name}}</strong> which has <strong>{{category.categoryOptions.length}}</strong> options
+            Category <strong>{{category.name}}</strong> which has <strong>{{category.categoryOptions.length}}</strong> <span style="color: #325E80; cursor: pointer;" (click)="showOptionsList()">options</span>
+            Options
+            <ol class="list-of-options" *ngIf="showOptions">
+              <li *ngFor="let option of category.categoryOptions">{{option.name}}</li>
+            </ol>
           </li>
         </ul>
     </li>
