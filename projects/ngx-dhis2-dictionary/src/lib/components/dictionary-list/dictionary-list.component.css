@@ -114,6 +114,28 @@ span {
   margin: 3px;
 }
 
+.export-btn{
+  background-color: #ffffff;
+  margin-right: 5px;
+  color: #222;
+  font-size: 1em;
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: none;
+  cursor: pointer;
+  padding: .1em .5em;
+  border-radius: 15px;
+  line-height: 1.5;
+  margin: 3px;
+}
+
 p {
   margin-top: 0;
   margin-bottom: 1rem !important;

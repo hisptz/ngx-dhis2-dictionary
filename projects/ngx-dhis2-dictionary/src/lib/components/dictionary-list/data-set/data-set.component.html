@@ -2,7 +2,7 @@
 <div class="introduction"><h3 style="color: #464646;">Introduction</h3></div>
 <div class="description">
   <p class="dataset">
-    <span style="color: #325E80;">
+    Data set <span style="color: #325E80;">
       {{dataSetInfo.data.metadata.name}}
     </span> of the  
     <span style="font-weight: 600">
@@ -167,8 +167,8 @@
     <h4 style="color: #464646;">Accessibility & Sharing settings</h4>
     <p>This indicator was first created on <strong>{{dataSetInfo.data.metadata.created | date}}</strong> by 
       <strong>{{dataSetInfo.data.metadata.user.name}}</strong> 
-      <span *ngIf="dataSetInfo.data.metadata.lastUpdated">and last updated on <strong>{{dataSetInfo.data.metadata.lastUpdated}}</strong></span> 
-      <span *ngIf="dataSetInfo.data.metadata.lastUpdatedBy"> by {{dataSetInfo.data.metadata.lastUpdatedBy.name}}.</span>
+      <span *ngIf="dataSetInfo.data.metadata.lastUpdated">and last updated on <strong>{{dataSetInfo.data.metadata.lastUpdated | date}}</strong></span> 
+      <span *ngIf="dataSetInfo.data.metadata.lastUpdatedBy"> by <strong>{{dataSetInfo.data.metadata.lastUpdatedBy.name}}</strong>.</span>
     </p>
     <div *ngIf="dataSetInfo.data.metadata.userAccesses.length > 0 || dataSetInfo.data.metadata.userGroupAccesses.length > 0">
       <p>Indicator will be visible for users with the following access:</p>

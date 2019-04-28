@@ -1,11 +1,12 @@
 <div class="indicator-name"><h3 style="color: #355E7F; margin-bottom: 1.5rem">{{dataElementInfo.data.metadata.name}}</h3></div>
 <div class="introduction"><h3 style="color: #464646;">Introduction</h3></div>
 <div class="description">
-  <p>{{dataElementInfo.data.metadata.name}}
-    <span *ngIf="dataElementInfo.data.metadata.description">can be described as {{dataElementInfo.data.metadata.description}}</span>
+  <p>
+    Data element <span style="color: #325E80;">{{dataElementInfo.data.metadata.name}}</span>
+    <span *ngIf="dataElementInfo.data.metadata.description">can be described as <span style="color: #325E80;">{{dataElementInfo.data.metadata.description}}</span></span>
   </p>
   <p>
-    It’s labelled in short as {{dataElementInfo.data.metadata.shortName}} and has a code of {{dataElementInfo.data.metadata.code}}.
+    It’s labelled in short as <span style="color: #325E80;">{{dataElementInfo.data.metadata.shortName}}</span> <span *ngIf="dataElementInfo.data.metadata.code">and has a code of <strong>{{dataElementInfo.data.metadata.code}}</strong></span>.
     <span *ngIf="dataElementInfo.data.metadata.formName">In data entry form, it’s named “{{dataElementInfo.data.metadata.formName}}” </span>   
   </p>
   <p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/dataElements/{{dataElementInfo.data.metadata.id}}.json">{{dataElementInfo.data.metadata.id}} </a></i></p> 

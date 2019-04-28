@@ -312,9 +312,13 @@ export class DictionaryListComponent implements OnInit {
   getToCapitalLetters(color) {
     return _.upperCase(color);
   }
-  
+
   getTodayDate() {
     const now = new Date();
     return now;
+  }
+
+  printPDF() {
+    window.print();
   }
 }

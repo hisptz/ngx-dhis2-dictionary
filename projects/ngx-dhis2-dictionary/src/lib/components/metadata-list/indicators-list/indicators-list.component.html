@@ -108,7 +108,12 @@
         </div>
         <div style="margin-top: 30px;" *ngIf="allIndicators$">
           <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
-          <button class="export-to-csv" (click)="dwndToCSV(allIndicators$)">Export to csv</button>
+          <button class="export-to-csv" (click)="dwndToCSV(allIndicators$)">
+              <img 
+              height="30" width="30"
+              title="Export to csv"
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAU2SURBVGhD7Vr7U1NHFLbtb/03+pd0Bu3YaX9pyzjgjLYkgI9in4JF1AqVQbBCW61SI1ADoilPQQiPlAiEBJA4pRQRwiNCQu3wKOUZCDndc7j3epMsEWjujW09zDdh9/vu3fNl9+wmF3a9iBcRobC6O3OtLtuwErC5bN8DwMvCUMqG1W0rsbk7IdzonOyiV/ZGXVfFjFJGxudGoOf3HvpdFTNKGZlccML0kls9M0oamVt5op4ZnhGT82eodtwJQt2IkXiLq4PLI5BDjWhENTM8I8bRBijpLw1C+WAl8W0TFi6PQA41ciOqmOEZuTfeCo1jzUEwOVs2EnHZuDwCOdQEGhHN2JUyo3SNqGaGZ8T8uJWWVyCax0zEd7isXB6BHGo2M4JQxIxaNRIIuRn2CSBdSGfnwTPSwmqhxlEbBONII/H4rvN4hDgjQzMD4JxzhIRjdoC0mIOQzs5DqRrZDsJipPSXKmNxTzlEEpiDkM7OI7UqZ/SALhkiCcxBSGfn8b8w8rnhPCT/lA0fFJzg8odunIFztVcgo+Yy03wh9X9Ykg6f3c6CpJIMP/0ntzKpH6+T9ytmBAcbnZpg2/tGLK964FqrwU9T0F5O/WJMzc9CWmUecYbuOupzTrslvaYwFdbWvdT/dUOB1I9QxMhBXYpk4teJQbAM2cG7vg7rvnU4WZFLmhNlF6jtZYlV2puge7SX9OMzk8SjDsPn80HijdPUhzOH4fGugrbwpDQeQhEjqeUXaUDnlItMYV/rYDf13bTVUPuquZTafa5BasexZfXX8gIsrCzB0eKzdN3s4hxpcow60oiz1Ds+QG05FDGS11REA7Y+6pb6Mmuvwu2uOsiqy6d2+p3LpFlZ88AlU7Gkk8M80EmaKnsztR84+6mtt1YHaRUxUtReQQOa+q1+gwVCnCWMoSdj0jsv4ttmPXG/uRw0Qwsri9TGDUSuQ0TUCCaXb74F7j//IL2P/RRZKiQeawNrCGctTagZ1MrvIUIRI+LSMj/qejoQqxtcQqeEXSm+KA0O689AHNuJcGvGZYex5FmG968/3ar73Q7qbxGWWWNfu8TJoYgRsdgfuoelPjGRsvvGjfZDG7WrH5iojWbESGJniHidWOBr3jV6za73X34iFDGCwO0Xl0pzfwfc7TWDZ22VkjkurG88BzBwp9J3VENDXxu155bm/e4jvikYeObgDMp5SaeUkcADcZ4VKhavXIPnB54vYix6luBiY6GfBjG9MEu8ne1agZwIxYyIQEPHDdl+614O/AiSy5I/X3eNaoanwetPV30DH90859cfnfExvJl4iPD24SOeqFjtfUKMRiektr0IZURJvHMqCXbHajnQtAmpbS/+M0Yi9cUq5UoOx8Q/MBKpr7rZxfkcE2E2Eo6HD6jl8Xhv5FUxEo7HQajl8Xhv5NWZkcf34O5wfRAaRpuIxwfVPB4hPsRGLY/HeyOvihE1oIqRcDzERq3Yp7cY4IIhn5BXpoNLFT/CscyvOCYYYuKG9sRqE+TYvV/7npDu5qFGjRTa9fDu0c3OjdBgp703Kkb7hpDu5sEzEo4/9KBW3l9gKYG9BxO5yYaGJllINXSoWSO6+lLYsz+ek+ymMLAUX9rI9BmhdrGn//AdL+FgxGh630pIeFVI89mhthHrhA2OnP2Sn7wA9gl45vV98a8JKW4t1DaCMA+3wb5jn/JNbLW4A8Oq4L9whEJZV+343gOJviAjMdoUIbV/T7AdKZolLzez9eJ+3oKZySIT2y3u5y2io6NfiYrVlIYu7l27/garExwiO0GNpAAAAABJRU5ErkJggg==">
+          </button>
         </div>
     </div>
 
