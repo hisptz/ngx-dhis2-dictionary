@@ -8,8 +8,10 @@
     <span *ngIf="programIndicatorInfo.data.metadata.description"> described as {{programIndicatorInfo.data.metadata.description}} and</span>
     whose expression is
     <span style="color: #325E80;">
-      {{programIndicatorInfo.data.programIndicatorDescriptionExpression}} <b>where by</b>
+      {{programIndicatorInfo.data.programIndicatorDescriptionExpression}}
+      <span *ngIf="programIndicatorInfo.data.filter"><b>where by</b>
       {{programIndicatorInfo.data.filter}}
+    </span>
     </span>
   </p>
   <p>
