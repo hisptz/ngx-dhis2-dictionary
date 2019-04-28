@@ -17,7 +17,7 @@
     <span *ngIf="programIndicatorInfo.data.metadata.code">and has a code of {{programIndicatorInfo.data.metadata.code}}</span>
       <!-- In analytics it displays up to {{decimal In Data Output}} decimals. {{It’s set to display in form}} -->
   </p>
-  <p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/identifiableObjects/{{programIndicatorInfo.data.metadata.id}}.json">{{programIndicatorInfo.data.metadata.id}} </a></i></p> 
+  <p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/programIndicators/{{programIndicatorInfo.data.metadata.id}}.json">{{programIndicatorInfo.data.metadata.id}} </a></i></p> 
 </div>
 <div>
   <h3 style="color: #464646;"> Data sources (Datasets/Programs)</h3>
@@ -143,4 +143,44 @@
       </table>
     </div>
   </div>
+</div>
+<div>
+  <h4 style="color: #464646;">Accessibility & Sharing settings</h4>
+  <p>This indicator was first created on 
+    <strong>{{programIndicatorInfo.data.metadata.created | date}} </strong>
+    by <strong>{{programIndicatorInfo.data.metadata.user.name}} </strong>
+    <span *ngIf="programIndicatorInfo.data.metadata.lastUpdated"> and last updated on <strong>{{programIndicatorInfo.data.metadata.lastUpdated | date}}</strong> </span>
+    <span *ngIf="programIndicatorInfo.data.metadata.lastUpdatedBy">by <strong>{{programIndicatorInfo.data.metadata.lastUpdatedBy.name}}</strong></span>
+  </p>
+  <div *ngIf="programIndicatorInfo.data.metadata.userAccesses.length > 0 || programIndicatorInfo.data.metadata.userGroupAccesses.length > 0">
+      <h6>Indicator will be visible for users with the following access:</h6>
+      <div style="width: 100%; overflow: auto;">
+        <table class="table table-bordered">
+          <thead>
+            <tr style="background-color: #f5f5f5; color: #555;">
+              <th style="padding: 0.45em;"></th>
+              <th style="padding: 0.45em;">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="programIndicatorInfo.data.metadata.userAccesses.length > 0">
+              <td style="padding: 0.45em;background-color: #f5f5f5; color: #555;">User Access</td>
+              <td>
+                <ul>
+                  <li *ngFor="let userAccess of programIndicatorInfo.data.metadata.userAccesses">{{formatTextToSentenceFormat(userAccess.displayName)}}({{userAccess.access}})</li>
+                </ul>
+              </td>
+            <tr *ngIf="programIndicatorInfo.data.metadata.userGroupAccesses.length > 0">
+              <td style="padding: 0.45em;background-color: #f5f5f5; color: #555;">User Group Access</td>
+              <td>
+                <ul>
+                  <li *ngFor="let userGroupAccess of programIndicatorInfo.data.metadata.userGroupAccesses">{{formatTextToSentenceFormat(userGroupAccess.displayName)}} ({{userGroupAccess.access}})</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <p style="float: right;">Dictionary generated on <strong>{{getTodayDate() | date}}</strong></p>
 </div>

@@ -70,7 +70,7 @@
           Its described as {{dictionaryItem.data.metadata.description}}
           </p>
         </div>
-        <div><p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/identifiableObjects/{{dictionaryItem.data.metadata.id}}.json">{{dictionaryItem.data.metadata.id}} </a></i></p></div>
+        <div><p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/indicators/{{dictionaryItem.data.metadata.id}}.json">{{dictionaryItem.data.metadata.id}} </a></i></p></div>
         <div>
           <p *ngIf="dictionaryItem.data.metadata.annualized">
           It’s figure is annualized to support analysis in less than year period (monthly,quarterly,semi-annually)
@@ -316,26 +316,48 @@
                 </table>
               </div>
         </div>
-        <!-- User -->
-        <div *ngIf="dictionaryItem.data.metadata.user">
-          <div style="float: right"><p style="font-size: 0.8em;"><i>Created in the system on
-            <strong>
-              {{dictionaryItem.data.metadata.created | date}}
-            </strong> by 
-            <strong>
-              <span *ngIf="dictionaryItem.data.metadata.user.phoneNumber"  title="Phone: ' + dictionaryItem.data.metadata.user.phoneNumber + ', Email: ' + dictionaryItem.data.metadata.user.email +'">
-                {{dictionaryItem.data.metadata.user.name}}
-              </span>
-           </strong>
-          <span *ngIf="dictionaryItem.data.metadata.lastUpdatedBy">
-              and last updated on <strong>
-              {{dictionaryItem.data.metadata.lastUpdated | date}}
-              </strong> by 
-              <span *ngIf="dictionaryItem.data.metadata.lastUpdatedBy.phoneNumber" title="Phone: ' + dictionaryItem.data.metadata.lastUpdatedBy.phoneNumber + ', Email: ' + dictionaryItem.data.metadata.lastUpdatedBy.email +'">
-              <strong>{{dictionaryItem.data.metadata.lastUpdatedBy.name}}</strong>
-            </span>
-          </span></i></p></div>
+        <!-- Accessibility & Sharing settings -->
+        <div>
+          <h4 style="color: #464646;">Accessibility & Sharing settings</h4>
+          <p>This indicator was first created on 
+            <strong>{{dictionaryItem.data.metadata.created | date}} </strong>
+            by <strong>{{dictionaryItem.data.metadata.user.name}} </strong>
+            <span *ngIf="dictionaryItem.data.metadata.lastUpdated"> and last updated on <strong>{{dictionaryItem.data.metadata.lastUpdated | date}}</strong> </span>
+            <span *ngIf="dictionaryItem.data.metadata.lastUpdatedBy">by <strong>{{dictionaryItem.data.metadata.lastUpdatedBy.name}}</strong></span>
+          </p>
+  
+        <div *ngIf="dictionaryItem.data.metadata.userAccesses.length > 0 || dictionaryItem.data.metadata.userGroupAccesses.length > 0">
+          <h6>Indicator will be visible for users with the following access:</h6>
+          <div style="width: 100%; overflow: auto;">
+            <table class="table table-bordered">
+              <thead>
+                <tr style="background-color: #f5f5f5; color: #555;">
+                  <th style="padding: 0.45em;"></th>
+                  <th style="padding: 0.45em;">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="dictionaryItem.data.metadata.userAccesses.length > 0">
+                  <td style="padding: 0.45em;background-color: #f5f5f5; color: #555;">User Access</td>
+                  <td>
+                    <ul>
+                      <li *ngFor="let userAccess of dictionaryItem.data.metadata.userAccesses">{{formatTextToSentenceFormat(userAccess.displayName)}}({{userAccess.access}})</li>
+                    </ul>
+                  </td>
+                <tr *ngIf="dictionaryItem.data.metadata.userGroupAccesses.length > 0">
+                  <td style="padding: 0.45em;background-color: #f5f5f5; color: #555;">User Group Access</td>
+                  <td>
+                    <ul>
+                      <li *ngFor="let userGroupAccess of dictionaryItem.data.metadata.userGroupAccesses">{{formatTextToSentenceFormat(userGroupAccess.displayName)}} ({{userGroupAccess.access}})</li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+        </div>
+      <p style="float: right;">Dictionary generated on <strong>{{getTodayDate() | date}}</strong></p>
       </div>
 
       <!-- program indicator -->

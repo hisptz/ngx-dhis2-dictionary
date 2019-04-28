@@ -20,7 +20,6 @@ export class ProgramIndicatorComponent implements OnInit {
   }
 
   getProgramName(metaDataInfo) {
-    console.log(metaDataInfo)
     return metaDataInfo.metadata.program.name;
   }
 
@@ -33,5 +32,10 @@ export class ProgramIndicatorComponent implements OnInit {
 
   sortLegends(legends) {
     return _.reverse(_.sortBy(legends, ['startValue']))
+  }
+
+  getTodayDate() {
+    const now = new Date();
+    return now;
   }
 }

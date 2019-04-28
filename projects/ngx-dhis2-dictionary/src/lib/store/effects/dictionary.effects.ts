@@ -90,7 +90,7 @@ export class DictionaryEffects {
                       'indicators/' +
                       metadata.id +
                       '.json?fields=:all,user[name,email,phoneNumber],displayName,lastUpdatedBy[id,name,phoneNumber,email],id,name,numeratorDescription,' +
-                      'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],' +
+                      'denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],userGroupAccesses[*],userAccesses[*],' +
                       'attributeValues[value,attribute[name]],indicatorGroups[id,name,code,indicators[id,name]],legendSet[name,symbolizer,' +
                       'legends~size],dataSets[name]';
                   this.getIndicatorInfo(indicatorUrl, metadata.id);
@@ -107,7 +107,7 @@ export class DictionaryEffects {
                         }
                     })
                     );
-                  const programIndicatorUrl = 'programIndicators/' + metadata.id + '.json?fields=id,name,shortName,lastUpdated,analyticsPeriodBoundaries,created,aggregationType,expression,filter,expiryDays' +
+                  const programIndicatorUrl = 'programIndicators/' + metadata.id + '.json?fields=id,name,shortName,lastUpdated,analyticsPeriodBoundaries,created,userGroupAccesses[*],userAccesses[*],aggregationType,expression,filter,expiryDays' +
                   ',user[id,name,phoneNumber],lastUpdatedBy[id,name,phoneNumber],program[id,name,programIndicators[id,name]]';
                   this.getProgramIndicatorInfo(programIndicatorUrl, metadata.id);
                 } else if (
@@ -128,7 +128,7 @@ export class DictionaryEffects {
                 const dataElementUrl =
                     'dataElements/' +
                     metadata.id +
-                    '.json?fields=:all,id,name,aggregationType,user[id,name],lastUpdatedBy[id,name],displayName,legendSets,optionSetValue,aggregationLevels,dataElementGroups[id],' +
+                    '.json?fields=:all,id,name,aggregationType,user[id,name],lastUpdatedBy[id,name],displayName,legendSets,userGroupAccesses[*],userAccesses[*],optionSetValue,aggregationLevels,dataElementGroups[id],' +
                     'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSetElements[dataSet[id,name,formType,periodType,timelyDays,expiryDays,legendSet]]';
                 this.getDataElementInfo(dataElementUrl, metadata.id);
                 } else if (
@@ -149,7 +149,7 @@ export class DictionaryEffects {
                   const dataElementGroupUrl =
                       'dataElementGroups/' +
                       metadata.id +
-                      '.json?fields=:all,description,user[id,name],lastUpdatedBy[id,name],dataElements[id,name,dataSetElements[id,name,dataSet[id,name,periodType,timelyDays,formType,created,expiryDays,categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataElements[id,name]]]],user[id,name]';
+                      '.json?fields=:all,description,user[id,name],lastUpdatedBy[id,name],dataElements[id,name,dataSetElements[id,name,dataSet[id,name,periodType,timelyDays,formType,created,userGroupAccesses[*],userAccesses[*],expiryDays,categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataElements[id,name]]]],user[id,name]';
                   this.getDataElementGroupInfo(dataElementGroupUrl, metadata.id);
                   } else if (metadata.href && metadata.href.indexOf('dataSet') !== -1) {
                   this.store.dispatch(

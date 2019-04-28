@@ -10,7 +10,7 @@
     It’s labelled in short as {{dataElementGroupInfo.data.metadata.shortName}} 
     <span *ngIf="dataElementGroupInfo.data.metadata.code">and has a code of {{dataElementGroupInfo.data.metadata.code}}.</span>  
   </p>
-  <p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/identifiableObjects/{{dataElementGroupInfo.data.metadata.id}}.json">{{dataElementGroupInfo.data.metadata.id}} </a></i></p> 
+  <p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/dataElementGroups/{{dataElementGroupInfo.data.metadata.id}}.json">{{dataElementGroupInfo.data.metadata.id}} </a></i></p> 
 </div>
 <div>
     <h4 style="color: #464646;">Data sources (Datasets/Programs)</h4>
@@ -104,5 +104,36 @@
     <span *ngIf="dataElementGroupInfo.data.metadata.lastUpdated">and last updated on <strong>{{dataElementGroupInfo.data.metadata.lastUpdated | date}}</strong> </span>
     <span *ngIf="dataElementGroupInfo.data.metadata.lastUpdatedBy"> by <strong>{{dataElementGroupInfo.data.metadata.lastUpdatedBy.name}}.</strong></span>
   </p>
+
+  <div *ngIf="dataElementGroupInfo.data.metadata.userAccesses.length > 0 || dataElementGroupInfo.data.metadata.userGroupAccesses.length > 0">
+      <p>Data element group will be visible for users with the following access:</p>
+      <div style="width: 100%; overflow: auto;">
+        <table class="table table-bordered">
+          <thead>
+            <tr style="background-color: #f5f5f5; color: #555;">
+              <th style="padding: 0.45em;"></th>
+              <th style="padding: 0.45em;">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="dataElementGroupInfo.data.metadata.userAccesses.length > 0">
+              <td style="padding: 0.45em;background-color: #f5f5f5; color: #555;">User Access</td>
+              <td>
+                <ul>
+                  <li *ngFor="let userAccess of dataElementGroupInfo.data.metadata.userAccesses">{{formatTextToSentenceFormat(userAccess.displayName)}}({{userAccess.access}})</li>
+                </ul>
+              </td>
+            <tr *ngIf="dataElementGroupInfo.data.metadata.userGroupAccesses.length > 0">
+              <td style="padding: 0.45em;background-color: #f5f5f5; color: #555;">User Group Access</td>
+              <td>
+                <ul>
+                  <li *ngFor="let userGroupAccess of dataElementGroupInfo.data.metadata.userGroupAccesses">{{formatTextToSentenceFormat(userGroupAccess.displayName)}} ({{userGroupAccess.access}})</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
   <p style="float: right;">Dictionary generated on <strong>{{getTodayDate() | date}}</strong></p>
 </div>

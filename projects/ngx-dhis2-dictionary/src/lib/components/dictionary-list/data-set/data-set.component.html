@@ -15,6 +15,7 @@
         {{dataSetInfo.data.metadata.user.name}}
       </span>
   </p>
+  <p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/dataSets/{{dataSetInfo.data.metadata.id}}.json">{{dataSetInfo.data.metadata.id}} </a></i></p> 
 </div>
 <div>
   <h4 style="color: #464646;">Dataset facts</h4>
@@ -170,7 +171,7 @@
       <span *ngIf="dataSetInfo.data.metadata.lastUpdatedBy">by {{dataSetInfo.data.metadata.lastUpdatedBy.name}}.</span>
     </p>
     <div *ngIf="dataSetInfo.data.metadata.userAccesses.length > 0 || dataSetInfo.data.metadata.userGroupAccesses.length > 0">
-      <h6>Indicator will be visible for users with the following access:</h6>
+      <p>Indicator will be visible for users with the following access:</p>
       <div style="width: 100%; overflow: auto;">
         <table class="table table-bordered">
           <thead>
