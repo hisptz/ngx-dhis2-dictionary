@@ -323,7 +323,7 @@
             <strong>{{dictionaryItem.data.metadata.created | date}} </strong>
             by <strong>{{dictionaryItem.data.metadata.user.name}} </strong>
             <span *ngIf="dictionaryItem.data.metadata.lastUpdated"> and last updated on <strong>{{dictionaryItem.data.metadata.lastUpdated | date}}</strong> </span>
-            <span *ngIf="dictionaryItem.data.metadata.lastUpdatedBy">by <strong>{{dictionaryItem.data.metadata.lastUpdatedBy.name}}</strong></span>
+            <span *ngIf="dictionaryItem.data.metadata.lastUpdatedBy"> by <strong>{{dictionaryItem.data.metadata.lastUpdatedBy.name}}</strong></span>
           </p>
   
         <div *ngIf="dictionaryItem.data.metadata.userAccesses.length > 0 || dictionaryItem.data.metadata.userGroupAccesses.length > 0">

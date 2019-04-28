@@ -168,7 +168,7 @@
     <p>This indicator was first created on <strong>{{dataSetInfo.data.metadata.created | date}}</strong> by 
       <strong>{{dataSetInfo.data.metadata.user.name}}</strong> 
       <span *ngIf="dataSetInfo.data.metadata.lastUpdated">and last updated on <strong>{{dataSetInfo.data.metadata.lastUpdated}}</strong></span> 
-      <span *ngIf="dataSetInfo.data.metadata.lastUpdatedBy">by {{dataSetInfo.data.metadata.lastUpdatedBy.name}}.</span>
+      <span *ngIf="dataSetInfo.data.metadata.lastUpdatedBy"> by {{dataSetInfo.data.metadata.lastUpdatedBy.name}}.</span>
     </p>
     <div *ngIf="dataSetInfo.data.metadata.userAccesses.length > 0 || dataSetInfo.data.metadata.userGroupAccesses.length > 0">
       <p>Indicator will be visible for users with the following access:</p>

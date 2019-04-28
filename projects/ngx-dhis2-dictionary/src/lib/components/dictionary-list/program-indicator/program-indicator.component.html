@@ -150,7 +150,7 @@
     <strong>{{programIndicatorInfo.data.metadata.created | date}} </strong>
     by <strong>{{programIndicatorInfo.data.metadata.user.name}} </strong>
     <span *ngIf="programIndicatorInfo.data.metadata.lastUpdated"> and last updated on <strong>{{programIndicatorInfo.data.metadata.lastUpdated | date}}</strong> </span>
-    <span *ngIf="programIndicatorInfo.data.metadata.lastUpdatedBy">by <strong>{{programIndicatorInfo.data.metadata.lastUpdatedBy.name}}</strong></span>
+    <span *ngIf="programIndicatorInfo.data.metadata.lastUpdatedBy"> by <strong>{{programIndicatorInfo.data.metadata.lastUpdatedBy.name}}</strong></span>
   </p>
   <div *ngIf="programIndicatorInfo.data.metadata.userAccesses.length > 0 || programIndicatorInfo.data.metadata.userGroupAccesses.length > 0">
       <h6>Indicator will be visible for users with the following access:</h6>
