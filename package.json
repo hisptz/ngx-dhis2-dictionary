@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "^7.2.9",
     "@angular/router": "^7.2.9",
     "@hisptz/ngx-dhis2-http-client": "^1.0.2",
+    "@iapps/ngx-dhis2-http-client": "^2.0.2",
     "@ngrx/effects": "^7.3.0",
     "@ngrx/entity": "^7.3.0",
     "@ngrx/store": "^7.3.0",

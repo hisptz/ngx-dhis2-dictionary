@@ -1,0 +1,24 @@
+{
+    "version": "1.0.0-beta.4",
+    "name": "Indicator Dictionary",
+    "description": "Indicators dictionary",
+    "launch_path": "index.html",
+    "appType": "APP",
+    "icons": {
+        "16": "assets/img/indicator_search.png",
+        "48": "assets/img/indicator_search.png",
+        "128": "assets/img/indicator_search.png"
+    },
+    "developer": {
+        "name": "HISPTZ",
+        "url": "https://hisptanzania.org"
+    },
+    "default_locale": "en",
+    "activities": {
+        "dhis": {
+             "href": "../../../"
+        }
+    }
+}
+
+
