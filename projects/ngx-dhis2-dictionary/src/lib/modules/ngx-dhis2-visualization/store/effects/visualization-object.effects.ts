@@ -48,7 +48,7 @@ import {
   VisualizationState
 } from '../reducers';
 import { getCombinedVisualizationObjectById } from '../selectors';
-import { generateUid } from 'projects/ngx-dhis2-dictionary/src/lib/helpers/generate-uid.helper';
+import { generateUid } from '../../../../helpers/generate-uid.helper';
 
 @Injectable()
 export class VisualizationObjectEffects {

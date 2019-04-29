@@ -10,7 +10,6 @@ export class UserService {
 
   /**
    * Load current user information
-   * @returns {Observable<any>}
    */
   loadCurrentUser(): Observable<any> {
     return this.httpClient
