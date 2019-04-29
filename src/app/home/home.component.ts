@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   selectedItem: string;
   metadataIdentifiers: any;
   systemSettings: any;
-  metadataIdentifiersArr: any[] = ['BfMAe6Itzgt', 'ulgL07PF8rq','sB79w2hiLp8','vDdRoZYybP2', 'Kswd1r4qWLh', 'O8Kuzjsx2Zm','fbfJHSPpUD','xsRrGKBoLCm'];
+  metadataIdentifiersArr: any[] = ['Bcy5tKA08ar.U6iBxWNlWyx','W92vvsUDVfx.FmGzPdBtHaJ', 'BfMAe6Itzgt', 'ulgL07PF8rq','sB79w2hiLp8','vDdRoZYybP2', 'Kswd1r4qWLh', 'O8Kuzjsx2Zm','fbfJHSPpUD','xsRrGKBoLCm'];
   constructor(private router: Router, private route: ActivatedRoute, private httpClient: NgxDhis2HttpClientService) {}
 
   ngOnInit() {

@@ -382,6 +382,10 @@
       <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='dataSet'">
         <app-data-set (selectedMetadataId)="selectedMetadataId($event)" [dataSetInfo]="dictionaryItem"></app-data-set>
       </div>
+      <!-- Functions -->
+      <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='functions'">
+        <app-functions (selectedMetadataId)="selectedMetadataId($event)" [functionsDetails]="dictionaryItem"></app-functions>
+      </div>
       <div *ngIf="dictionaryItem.progress.loading">
         <app-dictionary-progress></app-dictionary-progress>
       </div>

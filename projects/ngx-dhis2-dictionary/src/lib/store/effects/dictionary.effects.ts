@@ -181,20 +181,22 @@ export class DictionaryEffects {
                   functionIdentifier = metadata;
                 }
                 
-                this.httpClient.get('dataStore/functions/' + functionIdentifier + '.json?').pipe(catchError((err) => of(functionIdentifier))).subscribe((functionInfo) => {
-                    if (functionInfo.id) {
-                        this.store.dispatch(
-                            new UpdateDictionaryMetadataAction(metadata, {
-                                name: functionInfo.name,
-                                category: 'fn',
-                                progress: {
-                                loading: true,
-                                loadingSucceeded: true,
-                                loadingFailed: false
-                                }
-                            })
-                        );
-                        this.displayFunctionsInfo(functionInfo, ruleId, metadata);
+                this.httpClient.get('dataStore/functions/' + functionIdentifier +'/metaData').pipe(catchError((err) => of(functionIdentifier))).subscribe((functionInfo) => {
+                    if (functionInfo.key) {
+                      let functionInfos = this.formatFunctionsObject(functionInfo)
+                      this.store.dispatch(
+                        new UpdateDictionaryMetadataAction(metadata, {
+                            name: functionInfos.name,
+                            category: 'fn',
+                            progress: {
+                            loading: true,
+                            loadingSucceeded: true,
+                            loadingFailed: false
+                            }
+                        })
+                      );
+                      console.log('functionInfos', functionInfos)
+                      this.displayFunctionsInfo(functionInfos, ruleId, metadata);
                     } else {
                         this.store.dispatch(
                             new UpdateDictionaryMetadataAction(functionInfo, {
@@ -827,73 +829,166 @@ export class DictionaryEffects {
   }
 
   displayFunctionsInfo(functionInfo, ruleId, metadataId) {
-    let indicatorDescription = '<h3 style="color: #355E7F; margin-bottom: 1.5rem">' + functionInfo.name + '</h3>';
-    indicatorDescription += '<h4 style="color: #464646;">Introduction</h4><p><strong>' + functionInfo.name + '</strong> is a function for calculating ';
-    indicatorDescription += '<strong>' + functionInfo.description + '</strong>';
-    indicatorDescription += '</p>';
-    indicatorDescription += '<h4 style="color: #464646;">Function`s rules</h6>';
-    if (ruleId !='') {
-      indicatorDescription += '<span style="background-color: #c1f2ec; height: 30px; width: 30px; margin-right: 40%; float: right;"></span><span style="font-size: 1em;float: right;">Used rule</span>';
+    let metadataInfoLoaded = {
+      type: 'functions',
+      metadata: {},
+      metadataWithinFunctionDetails: []
     }
-    indicatorDescription +=
-    '<div style="width: 60%; overflow: auto;">' +
-    '<table class="table table-bordered">' +
-      '<thead>'+
-        '<tr style="background-color: #d6d6d6; color: #464646;">'+
-          '<th style="padding: 0.45em;">Name</th>'+
-          '<th style="padding: 0.45em;">Description</th>'+
-        '</tr>' +
-       '</thead><tbody>';
-
-       if (functionInfo.rules) {
-           let rulesHtml = '';
-           functionInfo.rules.forEach((rule) => {
-             if (rule.id == ruleId) {
-               rulesHtml += '<tr><td style="background-color: #c1f2ec;">' + rule.name + '</td><td style="background-color: #c1f2ec;">' + rule.description + '</td></tr>';
-             } else {
-              rulesHtml += '<tr><td>' + rule.name + '</td><td>' + rule.description + '</td></tr>';
-             }
-           });
-           indicatorDescription += rulesHtml;
-       }
-
-        indicatorDescription += '</tbody></table></div>';
-        this.store.dispatch(
-            new UpdateDictionaryMetadataAction(metadataId, {
-              description: indicatorDescription,
-              progress: {
-                loading: false,
-                loadingSucceeded: true,
-                loadingFailed: false
-              }
-            })
-          );
-      /**
-       * get user info
-      **/
-     forkJoin(
-       this.httpClient.get('users/' + functionInfo.user.id + '.json?fields=id,name,phoneNumber,email',true)
-     ).subscribe((userInfo) => {
-       if (functionInfo.created) {
-          indicatorDescription += '<br><div style="float: right;"><p style="font-size: 0.8em;"><i> Created by ' + this.displayUserInfo(userInfo[0]) +' on <strong>' + this.datePipe.transform(functionInfo.created) + '</strong>';
+    let functionDescription = '';
+    metadataInfoLoaded = {...metadataInfoLoaded, metadata: functionInfo};
+    this.store.dispatch(
+      new UpdateDictionaryMetadataAction(metadataId, {
+        description: functionDescription,
+        data: metadataInfoLoaded,
+        progress: {
+          loading: true,
+          loadingSucceeded: true,
+          loadingFailed: false
         }
+      })
+    );
 
-        if (functionInfo.lastUpdated) {
-            indicatorDescription += ' and last upated on <strong>' + this.datePipe.transform(functionInfo.lastUpdated) + '</strong>';
-        }
-
-      indicatorDescription += '</i></p></div>';
-      this.store.dispatch(
-        new UpdateDictionaryMetadataAction(metadataId, {
-          description: indicatorDescription,
-          progress: {
-            loading: false,
-            loadingSucceeded: true,
-            loadingFailed: false
-          }
+    /**
+     * Identifiables from rules
+     */
+    let metadataInFunctions = [];
+    functionInfo.rules.forEach((rule) => {
+      if (JSON.parse(rule.json).data && JSON.parse(rule.json).data.length === 11) {
+        metadataInFunctions.push(this.getItemsFromRule(rule.json))
+      } else {
+        let identifiedUids = this.getItemsFromRule(rule.json);
+        identifiedUids.split(',').forEach((uid) => {
+          metadataInFunctions.push(uid)
         })
-      );
-     });
+      }
+    })
+    console.log('metadataInFunctions', metadataInFunctions)
+    let metadataWithinFunctionDetails = [];
+    _.uniq(metadataInFunctions).forEach((identifier) => {
+      this.httpClient.get('identifiableObjects/' + identifier + '.json').subscribe((metadata) => {
+        if (metadata.href.indexOf('dataSets/') > -1) {
+          this.httpClient.get('dataSets/' + metadata.id + '.json?fields=id,name,description,shortName,code,formType,timelyDays,periodType')
+          .subscribe((dataSet) => {
+            let metadataInfo = {
+              type: 'dataSet',
+              info: dataSet
+            }
+            metadataWithinFunctionDetails = [...metadataWithinFunctionDetails, metadataInfo];
+            metadataInfoLoaded = {...metadataInfoLoaded, metadataWithinFunctionDetails: metadataWithinFunctionDetails};
+
+            metadataInfoLoaded = {...metadataInfoLoaded, metadataWithinFunctionDetails: metadataWithinFunctionDetails};
+            this.store.dispatch(
+              new UpdateDictionaryMetadataAction(metadataId, {
+                description: functionDescription,
+                data: metadataInfoLoaded,
+                progress: {
+                  loading: false,
+                  loadingSucceeded: true,
+                  loadingFailed: false
+                }
+              })
+            );
+          })
+        } else if (metadata.href.indexOf('indicators/') > -1) {
+          this.httpClient.get('indicators/' + metadata.id + '.json?fields=id,name,description,shortName,code,indicatorGroups[id,name],numerator,denominator')
+          .subscribe((indicator) => {
+            let metadataInfo = {
+              type: 'indicator',
+              info: indicator
+            }
+            metadataWithinFunctionDetails = [...metadataWithinFunctionDetails, metadataInfo];
+            metadataInfoLoaded = {...metadataInfoLoaded, metadataWithinFunctionDetails: metadataWithinFunctionDetails};
+
+            metadataInfoLoaded = {...metadataInfoLoaded, metadataWithinFunctionDetails: metadataWithinFunctionDetails};
+            this.store.dispatch(
+              new UpdateDictionaryMetadataAction(metadataId, {
+                description: functionDescription,
+                data: metadataInfoLoaded,
+                progress: {
+                  loading: false,
+                  loadingSucceeded: true,
+                  loadingFailed: false
+                }
+              })
+            );
+          })
+        } else if (metadata.href.indexOf('dataElements/') > -1) {
+          this.httpClient.get('dataElements/' + metadata.id + '.json?fields=id,name,description,shortName,code,dataElementGroups[id,name],dataSetElements[id,name,dataSet]')
+          .subscribe((dataElement) => {
+            let metadataInfo = {
+              type: 'dataElement',
+              info: dataElement
+            }
+            metadataWithinFunctionDetails = [...metadataWithinFunctionDetails, metadataInfo];
+            metadataInfoLoaded = {...metadataInfoLoaded, metadataWithinFunctionDetails: metadataWithinFunctionDetails};
+
+            metadataInfoLoaded = {...metadataInfoLoaded, metadataWithinFunctionDetails: metadataWithinFunctionDetails};
+            this.store.dispatch(
+              new UpdateDictionaryMetadataAction(metadataId, {
+                description: functionDescription,
+                data: metadataInfoLoaded,
+                progress: {
+                  loading: false,
+                  loadingSucceeded: true,
+                  loadingFailed: false
+                }
+              })
+            );
+          })
+        } else if (metadata.href.indexOf('categoryOptionCombos/') > -1) {
+          this.httpClient.get('categoryOptionCombos/' + metadata.id + '.json?fields=id,name,description,shortName,code,categoryOptions')
+          .subscribe((categoryOptionCombo) => {
+            let metadataInfo = {
+              type: 'category option combination',
+              info: categoryOptionCombo
+            }
+            metadataWithinFunctionDetails = [...metadataWithinFunctionDetails, metadataInfo];
+            metadataInfoLoaded = {...metadataInfoLoaded, metadataWithinFunctionDetails: metadataWithinFunctionDetails};
+
+            metadataInfoLoaded = {...metadataInfoLoaded, metadataWithinFunctionDetails: metadataWithinFunctionDetails};
+            this.store.dispatch(
+              new UpdateDictionaryMetadataAction(metadataId, {
+                description: functionDescription,
+                data: metadataInfoLoaded,
+                progress: {
+                  loading: false,
+                  loadingSucceeded: true,
+                  loadingFailed: false
+                }
+              })
+            );
+          })
+        }
+        console.log('metadataInfoLoaded', metadataInfoLoaded)
+      })
+    })
+  }
+
+  getItemsFromRule(ruleDefinition) {
+    if (JSON.parse(ruleDefinition).data && JSON.parse(ruleDefinition).data.length === 11){
+      return JSON.parse(ruleDefinition).data
+    } else {
+      console.log('JSON.parse(ruleDefinition).data',JSON.parse(ruleDefinition).data.split(';').join('.').split('.').join(','))
+      return JSON.parse(ruleDefinition).data.split(';').join('.').split('.').join(',')
+    }
+  }
+
+  formatFunctionsObject(functionInfo) {
+    let newMetadataTemplate = {
+      created: functionInfo.created,
+      lastUpdated: functionInfo.lastUpdated,
+      lastUpdatedBy: functionInfo.lastUpdatedBy,
+      user: functionInfo.user,
+      id: functionInfo.key,
+      name: JSON.parse(functionInfo.value).name,
+      description: JSON.parse(functionInfo.value).description,
+      rules: JSON.parse(functionInfo.value).rules,
+      publicAccess: functionInfo.publicAccess,
+      externalAccess: functionInfo.externalAccess,
+      function: JSON.parse(functionInfo.value).function
+    }
+
+    return newMetadataTemplate
   }
 
   displayUserInfo(userInfo) {
