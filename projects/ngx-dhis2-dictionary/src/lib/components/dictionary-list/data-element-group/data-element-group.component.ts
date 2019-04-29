@@ -31,4 +31,11 @@ export class DataElementGroupComponent implements OnInit {
     const now = new Date();
     return now;
   }
+
+  formatTextToSentenceFormat(text) {
+    text.split('_').map(function(stringSection) {
+      return stringSection.slice(0,1).toUpperCase() + stringSection.slice(1).toLowerCase();
+    }).join(' ')
+    return text.split('_').join(' ').slice(0,1).toUpperCase() + text.split('_').join(' ').slice(1).toLowerCase();
+  }
 }

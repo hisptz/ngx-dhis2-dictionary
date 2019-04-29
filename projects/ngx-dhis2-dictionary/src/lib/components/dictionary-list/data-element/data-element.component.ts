@@ -51,4 +51,11 @@ export class DataElementComponent implements OnInit {
   showOptionsList() {
     this.showOptions = !this.showOptions;
   }
+
+  formatTextToSentenceFormat(text) {
+    text.split('_').map(function(stringSection) {
+      return stringSection.slice(0,1).toUpperCase() + stringSection.slice(1).toLowerCase();
+    }).join(' ')
+    return text.split('_').join(' ').slice(0,1).toUpperCase() + text.split('_').join(' ').slice(1).toLowerCase();
+  }
 }
