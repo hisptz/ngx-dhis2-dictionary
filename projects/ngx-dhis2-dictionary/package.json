@@ -8,6 +8,7 @@
     "@ngrx/entity": "^6.0.1 || ^7.3.0",
     "@ngrx/store": "^6.0.1 || ^7.3.0",
     "@hisptz/ngx-dhis2-http-client": "^1.0.2",
+    "@iapps/ngx-dhis2-org-unit-filter": "^1.0.14",
     "ngx-pagination": "^3.2.1"
   },
   "dependencies": {}
