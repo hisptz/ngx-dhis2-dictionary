@@ -195,7 +195,6 @@ export class DictionaryEffects {
                             }
                         })
                       );
-                      console.log('functionInfos', functionInfos)
                       this.displayFunctionsInfo(functionInfos, ruleId, metadata);
                     } else {
                         this.store.dispatch(
@@ -866,7 +865,7 @@ export class DictionaryEffects {
     _.uniq(metadataInFunctions).forEach((identifier) => {
       this.httpClient.get('identifiableObjects/' + identifier + '.json').subscribe((metadata) => {
         if (metadata.href.indexOf('dataSets/') > -1) {
-          this.httpClient.get('dataSets/' + metadata.id + '.json?fields=id,name,description,shortName,code,formType,timelyDays,periodType,lastUpdated')
+          this.httpClient.get('dataSets/' + metadata.id + '.json?fields=id,name,description,href,shortName,code,formType,timelyDays,periodType,lastUpdated')
           .subscribe((dataSet) => {
             let metadataInfo = {
               type: 'dataSet',
@@ -889,7 +888,7 @@ export class DictionaryEffects {
             );
           })
         } else if (metadata.href.indexOf('indicators/') > -1) {
-          this.httpClient.get('indicators/' + metadata.id + '.json?fields=id,name,description,shortName,code,indicatorGroups[id,name],numerator,denominator,lastUpdated')
+          this.httpClient.get('indicators/' + metadata.id + '.json?fields=id,name,href,description,shortName,code,indicatorGroups[id,name],numerator,denominator,lastUpdated')
           .subscribe((indicator) => {
             let metadataInfo = {
               type: 'indicator',
@@ -912,7 +911,7 @@ export class DictionaryEffects {
             );
           })
         } else if (metadata.href.indexOf('dataElements/') > -1) {
-          this.httpClient.get('dataElements/' + metadata.id + '.json?fields=*,id,name,description,shortName,code,valueType,dataElementGroups[id,name],dataSetElements[id,name,dataSet],lastUpdated')
+          this.httpClient.get('dataElements/' + metadata.id + '.json?fields=*,id,name,href,description,shortName,code,valueType,dataElementGroups[id,name],dataSetElements[id,name,dataSet],lastUpdated')
           .subscribe((dataElement) => {
             let metadataInfo = {
               type: 'dataElement',
@@ -935,7 +934,7 @@ export class DictionaryEffects {
             );
           })
         } else if (metadata.href.indexOf('categoryOptionCombos/') > -1) {
-          this.httpClient.get('categoryOptionCombos/' + metadata.id + '.json?fields=id,name,description,shortName,code,categoryOptions[id,name,code],lastUpdated')
+          this.httpClient.get('categoryOptionCombos/' + metadata.id + '.json?fields=id,name,href,description,shortName,code,categoryOptions[id,name,code],lastUpdated')
           .subscribe((categoryOptionCombo) => {
             let metadataInfo = {
               type: 'category option combination',
@@ -958,7 +957,6 @@ export class DictionaryEffects {
             );
           })
         }
-        console.log('metadataInfoLoaded', metadataInfoLoaded)
       })
     })
   }
@@ -967,7 +965,6 @@ export class DictionaryEffects {
     if (JSON.parse(ruleDefinition).data && JSON.parse(ruleDefinition).data.length === 11){
       return JSON.parse(ruleDefinition).data
     } else {
-      console.log('JSON.parse(ruleDefinition).data',JSON.parse(ruleDefinition).data.split(';').join('.').split('.').join(','))
       return JSON.parse(ruleDefinition).data.split(';').join('.').split('.').join(',')
     }
   }

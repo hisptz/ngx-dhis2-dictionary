@@ -17,6 +17,30 @@
   </p>
   <p style="color: #464646; font-size: 0.7em; margin-top: -15px;"><i>Identifed by: <a target="_blank" href="../../../api/dataStore/functions/{{functionsDetails.data.metadata.id}}/metaData">{{functionsDetails.data.metadata.id}} </a></i></p> 
 </div>
+
+<div>
+    <h4 style="color: #464646;">Function Facts</h4>
+    <ul>
+      <li>It is approximately <strong>{{getSizeOfTheFunction(functionsDetails.data.metadata.function)}}</strong> 
+        <span *ngIf="functionsDetails.data.metadata.function.length < 1000"> bytes </span>
+         <span *ngIf="functionsDetails.data.metadata.function.length >= 1000 && functionsDetails.data.metadata.function.length < 1000000"> kilobytes </span>
+         <span *ngIf="functionsDetails.data.metadata.function.length >= 1000000"> megabytes </span>
+         in size
+      </li>
+      <li>It has <strong>{{ functionsDetails.data.metadata.rules.length}}</strong> associated rules</li>
+      <li *ngIf="functionsDetails.data.metadata.function.indexOf('Fn.') > -1">It’s using <span style="color: #325E80;">function analytics</span> library</li>
+      <li *ngIf="functionsDetails.data.metadata.function.indexOf('$.') > -1">It’s using jquery api library</li>
+      <li *ngIf="functionsDetails.data.metadata.function.indexOf('$.ajax') > -1">Performs ajax promises</li>
+      <li *ngIf="functionsDetails.data.metadata.function.indexOf('../../../api/') > -1">Fetches from DHIS2 API without <span style="color: #325E80;">function analytics</span></li>
+    </ul>
+      <!-- It has {{ rules count}} associated rules
+      It’s using function analytics library {{If function string contains “Fn.” as substring}}
+      It’s using jquery api library {{ If function string contains “$.” as substring}}
+      Performs ajax promises {{If function string contains “$.ajax” as substring}}
+      Fetches from DHIS2 API without function analytics {{ If function string contains “../../../api/” as substring}}
+      Running on API version: {{dhis2 version from system info }} -->
+      
+  </div>
 <div *ngIf="functionsDetails.data.metadataWithinFunctionDetails" style="margin-bottom: 20px;">
   <h4 style="color: #464646;">Data sources</h4>
   <p>Function have rules calculating from multiple data sources. Here are few data sources observed</p>
@@ -36,14 +60,25 @@
         </tr>
       </thead>
       <tbody>
+        <tr *ngIf="functionsDetails.data.metadataWithinFunctionDetails.length == 0">
+          <td colspan="7"><app-dictionary-progress></app-dictionary-progress></td>
+        </tr>
         <tr *ngFor="let detailsInFunction of functionsDetails.data.metadataWithinFunctionDetails">
-          <td>{{detailsInFunction.info.id}}</td>
-          <td>{{detailsInFunction.info.name}}</td>
+          <td>
+              <a target="_blank" href="{{detailsInFunction.info.href}}.json">
+                <i>{{detailsInFunction.info.id}} </i></a>
+            </td>
+          <td>
+              <span 
+              (click)="setActiveItem($event, detailsInFunction.info.id)"
+              style="color: #325E80; cursor: pointer;text-decoration: underline"
+              >{{detailsInFunction.info.name}}</span>
+            </td>
           <td>
             <span *ngIf="detailsInFunction.info.description">{{detailsInFunction.info.description}}</span>
           </td>
           <td><span *ngIf="detailsInFunction.info.code">{{detailsInFunction.info.code}}</span></td>
-          <td>{{detailsInFunction.type}}</td>
+          <td>{{formatToUppercase(detailsInFunction.type)}}</td>
           <td>
             <span *ngIf="detailsInFunction.type == 'dataSet'">
               It is <strong>{{detailsInFunction.info.formType}}</strong> form reported <strong>{{detailsInFunction.info.periodType}}</strong>
@@ -96,29 +131,6 @@
         </tbody>
       </table>
     </div>
-</div>
-<div>
-  <h4 style="color: #464646;">Function Facts</h4>
-  <ul>
-    <li>It is approximately <strong>{{getSizeOfTheFunction(functionsDetails.data.metadata.function)}}</strong> 
-      <span *ngIf="functionsDetails.data.metadata.function.length < 1000"> bytes </span>
-       <span *ngIf="functionsDetails.data.metadata.function.length >= 1000 && functionsDetails.data.metadata.function.length < 1000000"> kilobytes </span>
-       <span *ngIf="functionsDetails.data.metadata.function.length >= 1000000"> megabytes </span>
-       in size
-    </li>
-    <li>It has <strong>{{ functionsDetails.data.metadata.rules.length}}</strong> associated rules</li>
-    <li *ngIf="functionsDetails.data.metadata.function.indexOf('Fn.') > -1">It’s using <span style="color: #325E80;">function analytics</span> library</li>
-    <li *ngIf="functionsDetails.data.metadata.function.indexOf('$.') > -1">It’s using jquery api library</li>
-    <li *ngIf="functionsDetails.data.metadata.function.indexOf('$.ajax') > -1">Performs ajax promises</li>
-    <li *ngIf="functionsDetails.data.metadata.function.indexOf('../../../api/') > -1">Fetches from DHIS2 API without <span style="color: #325E80;">function analytics</span></li>
-  </ul>
-    <!-- It has {{ rules count}} associated rules
-    It’s using function analytics library {{If function string contains “Fn.” as substring}}
-    It’s using jquery api library {{ If function string contains “$.” as substring}}
-    Performs ajax promises {{If function string contains “$.ajax” as substring}}
-    Fetches from DHIS2 API without function analytics {{ If function string contains “../../../api/” as substring}}
-    Running on API version: {{dhis2 version from system info }} -->
-    
 </div>
 <div *ngIf="functionsDetails.data.metadata">
   <h4 style="color: #464646;">Accessibility & Sharing settings</h4>

@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-functions',
@@ -8,9 +9,14 @@ import { Component, OnInit, Input } from '@angular/core';
 export class FunctionsComponent implements OnInit {
 
   @Input() functionsDetails: any;
+  @Output() selectedMetadataId = new EventEmitter<string>();
   constructor() { }
 
   ngOnInit() {
+  }
+
+  setActiveItem(e, metaDataId) {
+    this.selectedMetadataId.emit(metaDataId);
   }
 
   getTodayDate() {
@@ -27,5 +33,9 @@ export class FunctionsComponent implements OnInit {
     } else {
       return (functionSize/1000000).toFixed(2);
     }
+  }
+
+  formatToUppercase(str) {
+    return _.upperCase(str)
   }
 }
