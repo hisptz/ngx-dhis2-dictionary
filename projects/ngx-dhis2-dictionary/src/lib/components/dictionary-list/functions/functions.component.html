@@ -44,8 +44,26 @@
           </td>
           <td><span *ngIf="detailsInFunction.info.code">{{detailsInFunction.info.code}}</span></td>
           <td>{{detailsInFunction.type}}</td>
-          <td></td>
-          <td></td>
+          <td>
+            <span *ngIf="detailsInFunction.type == 'dataSet'">
+              It is <strong>{{detailsInFunction.info.formType}}</strong> form reported <strong>{{detailsInFunction.info.periodType}}</strong>
+            </span>
+            <span *ngIf="detailsInFunction.type == 'category option combination'">
+              It has the following category options
+              <ul>
+                <li *ngFor="let option of detailsInFunction.info.categoryOptions">{{option.name}}</li>
+              </ul>
+            </span>
+            <span *ngIf="detailsInFunction.type == 'dataElement'">
+                It has <strong>{{detailsInFunction.info.aggregationType}}</strong> aggregation
+                 and accepts only {{detailsInFunction.info.valueType}} to enforce validation.
+              </span>
+          </td>
+          <td>
+            <span *ngIf="detailsInFunction.lastUpdated">
+              {{detailsInFunction.lastUpdated | date}}
+            </span>
+          </td>
       </tbody>
     </table>
   </div>
@@ -102,34 +120,36 @@
     Running on API version: {{dhis2 version from system info }} -->
     
 </div>
-<div *ngIf="functionsDetails.data.metadata && functionsDetails.data.metadata.user">
-    <h4 style="color: #464646;">Accessibility & Sharing settings</h4>
-    <p>This function was first created on <strong>{{functionsDetails.data.metadata.created | date}}</strong> by 
+<div *ngIf="functionsDetails.data.metadata">
+  <h4 style="color: #464646;">Accessibility & Sharing settings</h4>
+  <p>This function was first created on <strong>{{functionsDetails.data.metadata.created | date}}</strong>
+    <span *ngIf="functionsDetails.data.metadata.user"> by 
       <strong>{{functionsDetails.data.metadata.user.name}}</strong> 
-      <span *ngIf="functionsDetails.data.metadata.lastUpdated">and last updated on <strong>{{functionsDetails.data.metadata.lastUpdated | date}}</strong></span> 
-      <span *ngIf="functionsDetails.data.metadata.lastUpdatedBy"> by <strong>{{functionsDetails.data.metadata.lastUpdatedBy.name}}</strong>.</span>
-    </p>
-    <div *ngIf="functionsDetails.data.metadata.publicAccess">
-        <p>Function accessible with the following accesses:</p>
-        <div style="width: 100%; overflow: auto;">
-          <table class="table table-bordered">
-            <thead>
-              <tr style="background-color: #f5f5f5; color: #555;">
-                <th style="padding: 0.45em;"></th>
-                <th style="padding: 0.45em;">Accesses</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="padding: 0.45em;background-color: #f5f5f5; color: #555;">Public Access</td>
-                <td>
-                  <ul>
-                    <li>{{functionsDetails.data.metadata.publicAccess}}</li>
-                  </ul>
-                </td>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    <p style="float: right;">Dictionary generated on <strong>{{getTodayDate() | date}}</strong></p>
+    </span>
+    <span *ngIf="functionsDetails.data.metadata.lastUpdated">and last updated on <strong>{{functionsDetails.data.metadata.lastUpdated | date}}</strong></span> 
+    <span *ngIf="functionsDetails.data.metadata.lastUpdatedBy"> by <strong>{{functionsDetails.data.metadata.lastUpdatedBy.name}}</strong>.</span>
+  </p>
+  <div *ngIf="functionsDetails.data.metadata.publicAccess">
+    <p>Function accessible with the following accesses:</p>
+    <div style="width: 100%; overflow: auto;">
+      <table class="table table-bordered">
+        <thead>
+          <tr style="background-color: #f5f5f5; color: #555;">
+            <th style="padding: 0.45em;"></th>
+            <th style="padding: 0.45em;">Accesses</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 0.45em;background-color: #f5f5f5; color: #555;">Public Access</td>
+            <td>
+              <ul>
+                <li>{{functionsDetails.data.metadata.publicAccess}}</li>
+              </ul>
+            </td>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
+<p style="float: right;">Dictionary generated on <strong>{{getTodayDate() | date}}</strong></p>

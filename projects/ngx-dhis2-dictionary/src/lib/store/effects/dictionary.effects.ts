@@ -853,8 +853,8 @@ export class DictionaryEffects {
      */
     let metadataInFunctions = [];
     functionInfo.rules.forEach((rule) => {
-      if (JSON.parse(rule.json).data && JSON.parse(rule.json).data.length === 11) {
-        metadataInFunctions.push(this.getItemsFromRule(rule.json))
+      if (rule.json.data && rule.json.data.length === 11) {
+        metadataInFunctions.push(rule.json.data)
       } else {
         let identifiedUids = this.getItemsFromRule(rule.json);
         identifiedUids.split(',').forEach((uid) => {
@@ -862,12 +862,11 @@ export class DictionaryEffects {
         })
       }
     })
-    console.log('metadataInFunctions', metadataInFunctions)
     let metadataWithinFunctionDetails = [];
     _.uniq(metadataInFunctions).forEach((identifier) => {
       this.httpClient.get('identifiableObjects/' + identifier + '.json').subscribe((metadata) => {
         if (metadata.href.indexOf('dataSets/') > -1) {
-          this.httpClient.get('dataSets/' + metadata.id + '.json?fields=id,name,description,shortName,code,formType,timelyDays,periodType')
+          this.httpClient.get('dataSets/' + metadata.id + '.json?fields=id,name,description,shortName,code,formType,timelyDays,periodType,lastUpdated')
           .subscribe((dataSet) => {
             let metadataInfo = {
               type: 'dataSet',
@@ -890,7 +889,7 @@ export class DictionaryEffects {
             );
           })
         } else if (metadata.href.indexOf('indicators/') > -1) {
-          this.httpClient.get('indicators/' + metadata.id + '.json?fields=id,name,description,shortName,code,indicatorGroups[id,name],numerator,denominator')
+          this.httpClient.get('indicators/' + metadata.id + '.json?fields=id,name,description,shortName,code,indicatorGroups[id,name],numerator,denominator,lastUpdated')
           .subscribe((indicator) => {
             let metadataInfo = {
               type: 'indicator',
@@ -913,7 +912,7 @@ export class DictionaryEffects {
             );
           })
         } else if (metadata.href.indexOf('dataElements/') > -1) {
-          this.httpClient.get('dataElements/' + metadata.id + '.json?fields=id,name,description,shortName,code,dataElementGroups[id,name],dataSetElements[id,name,dataSet]')
+          this.httpClient.get('dataElements/' + metadata.id + '.json?fields=*,id,name,description,shortName,code,valueType,dataElementGroups[id,name],dataSetElements[id,name,dataSet],lastUpdated')
           .subscribe((dataElement) => {
             let metadataInfo = {
               type: 'dataElement',
@@ -936,7 +935,7 @@ export class DictionaryEffects {
             );
           })
         } else if (metadata.href.indexOf('categoryOptionCombos/') > -1) {
-          this.httpClient.get('categoryOptionCombos/' + metadata.id + '.json?fields=id,name,description,shortName,code,categoryOptions')
+          this.httpClient.get('categoryOptionCombos/' + metadata.id + '.json?fields=id,name,description,shortName,code,categoryOptions[id,name,code],lastUpdated')
           .subscribe((categoryOptionCombo) => {
             let metadataInfo = {
               type: 'category option combination',

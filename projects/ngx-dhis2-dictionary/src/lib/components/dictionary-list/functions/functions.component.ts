@@ -23,9 +23,9 @@ export class FunctionsComponent implements OnInit {
     if (functionSize < 1000) {
       return functionSize;
     } else if (functionSize >= 1000 && functionSize < 1000000) {
-      return functionSize/1000;
+      return (functionSize/1000).toFixed(2);
     } else {
-      return functionSize/1000000;
+      return (functionSize/1000000).toFixed(2);
     }
   }
 }
