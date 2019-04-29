@@ -10,13 +10,13 @@ import {
   getFunctions
 } from '../../../ngx-dhis2-data-selection-filter/modules/data-filter/store/selectors/function.selectors';
 import {
+  checkIfVisualizationIsNonVisualizable,
   getMergedDataSelections,
   getSanitizedAnalytics,
   getStandardizedAnalyticsObject,
-  checkIfVisualizationIsNonVisualizable,
   prepareVisualizationLayersForAnalytics
 } from '../../helpers';
-import { VisualizationDataSelection, VisualizationLayer } from '../../models';
+import { VisualizationLayer } from '../../models';
 import { AnalyticsService } from '../../services/analytics.service';
 import {
   LoadVisualizationAnalyticsAction,
@@ -27,7 +27,6 @@ import {
 import { UpdateVisualizationObjectAction } from '../actions/visualization-object.actions';
 import { VisualizationState } from '../reducers';
 import { getCombinedVisualizationObjectById } from '../selectors';
-import { Action } from 'rxjs/internal/scheduler/Action';
 
 @Injectable()
 export class VisualizationLayerEffects {

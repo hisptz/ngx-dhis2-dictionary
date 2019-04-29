@@ -36,6 +36,7 @@ import {
   programIndicatorsListReducer
 } from './store/reducers/indicators.reducers';
 import { NgxDhis2SelectionFiltersModule } from './modules/ngx-dhis2-data-selection-filter/ngx-dhis2-selection-filters.module';
+import { VisualizationContainerComponent } from './components/visualization-container/visualization-container.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -73,7 +74,8 @@ import { NgxDhis2SelectionFiltersModule } from './modules/ngx-dhis2-data-selecti
     DataElementComponent,
     ProgramIndicatorComponent,
     DataElementGroupComponent,
-    FunctionsComponent
+    FunctionsComponent,
+    VisualizationContainerComponent
   ],
   exports: [DictionaryListComponent],
   providers: [DatePipe, IndicatorsService, ExportService]
