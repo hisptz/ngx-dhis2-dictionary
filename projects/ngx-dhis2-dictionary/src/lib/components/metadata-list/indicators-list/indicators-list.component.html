@@ -108,8 +108,8 @@
         </div>
         <div style="margin-top: 30px;" *ngIf="allIndicators$">
           <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
-          <span *ngIf="completedPercent > 10">Items count</span>
-          <select *ngIf="completedPercent > 10"
+          <span *ngIf="completedPercent > 10 && listingIsSet">Items count</span>
+          <select *ngIf="completedPercent > 10 && listingIsSet"
             class="form-control" #t (change)="setItemsPerPage(t.value)" 
             style="width: 70px; display: inline; margin-left: 10px;">
             <option *ngFor="let item of pageItemsConfiguration" [value]="item.value">{{item.symbol}}</option>
