@@ -41,7 +41,7 @@ export class IndicatorsListComponent implements OnInit {
   indicatorGroups: any[] = [];
   activeMetadataType: string = 'indicator';
   dataToDownload: any = [];
-  pageItemsConfiguration = [{value: 5, symbol: '5'},{value: 10, symbol: '10'},{value: 25, symbol: '25'},{value: 50, symbol: '50'},{value: 100, symbol: '100'},{value: 200, symbol: '200'},{value: 'all', symbol: 'all'}];
+  pageItemsConfiguration = [{value: 10, symbol: '10'},{value: 25, symbol: '25'},{value: 50, symbol: '50'},{value: 100, symbol: '100'},{value: 200, symbol: '200'},{value: 'all', symbol: 'all'}];
   constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>, private datePipe: DatePipe) {
     this.searchText = '';
     this.searchingTextForIndicatorGroup = '';
