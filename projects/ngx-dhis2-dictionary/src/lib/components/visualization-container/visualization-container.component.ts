@@ -64,12 +64,12 @@ export class VisualizationContainerComponent implements OnInit {
                 layout: 'rows',
                 items: [
                   {
-                    id: 'LAST_YEAR',
-                    name: 'LAST_YEAR'
+                    id: 'LAST_4_QUARTERS',
+                    name: 'LAST_4_QUARTERS'
                   },
                   {
-                    id: 'THIS_YEAR',
-                    name: 'THIS_YEAR'
+                    id: 'THIS_QUARTER',
+                    name: 'THIS_QUARTER'
                   }
                 ]
               },
@@ -88,7 +88,6 @@ export class VisualizationContainerComponent implements OnInit {
           }
         ]
       };
-      console.log(this.visualizationInput)
     }
   }
 }

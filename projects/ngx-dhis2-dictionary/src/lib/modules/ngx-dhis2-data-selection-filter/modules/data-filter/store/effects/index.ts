@@ -8,6 +8,5 @@ export const effects: any[] = [
   DataFilterEffects,
   FunctionEffects,
   FunctionRuleEffects,
-  IndicatorEffects,
   IndicatorGroupEffects
 ];
