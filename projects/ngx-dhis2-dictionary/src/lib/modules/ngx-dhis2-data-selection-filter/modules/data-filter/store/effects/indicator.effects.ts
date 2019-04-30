@@ -4,54 +4,44 @@ import { Observable } from 'rxjs';
 import { withLatestFrom, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
-import * as fromIndicatorReducer from '../reducers/indicator.reducer';
-
-import * as fromIndicatorActions from '../actions/indicator.actions';
-import * as fromIndicatorSelectors from '../selectors/indicator.selectors';
-import * as fromHelpers from '../../helpers';
-import * as fromServices from '../../services';
+import { State } from '../reducers/indicator.reducer';
+import { IndicatorService } from '../../services/indicator.service';
+import { getStandardizedIndicators } from '../../helpers/get-standardized-indicators.helper';
+import {
+  IndicatorActionTypes,
+  LoadIndicators,
+  LoadIndicatorsInitiated,
+  AddIndicators,
+  LoadIndicatorsFail
+} from '../actions/indicator.actions';
+import { getIndicatorsInitiatedStatus } from '../selectors/indicator.selectors';
 
 @Injectable()
 export class IndicatorEffects {
-  @Effect({ dispatch: false })
+  @Effect()
   loadIndicators$: Observable<any> = this.actions$.pipe(
-    ofType(fromIndicatorActions.IndicatorActionTypes.LoadIndicators),
-    withLatestFrom(
-      this.indicatorStore.select(
-        fromIndicatorSelectors.getIndicatorsInitiatedStatus
-      )
-    ),
-    tap(
-      ([action, indicatorInitiated]: [
-        fromIndicatorActions.LoadIndicators,
-        boolean
-      ]) => {
-        if (!indicatorInitiated) {
-          this.indicatorStore.dispatch(
-            new fromIndicatorActions.LoadIndicatorsInitiated()
-          );
-          this.indicatorService.loadAll().subscribe(
-            (indicators: any[]) => {
-              this.indicatorStore.dispatch(
-                new fromIndicatorActions.AddIndicators(
-                  fromHelpers.getStandardizedIndicators(indicators)
-                )
-              );
-            },
-            (error: any) => {
-              this.indicatorStore.dispatch(
-                new fromIndicatorActions.LoadIndicatorsFail(error)
-              );
-            }
-          );
-        }
+    ofType(IndicatorActionTypes.LoadIndicators),
+    withLatestFrom(this.indicatorStore.select(getIndicatorsInitiatedStatus)),
+    tap(([action, indicatorInitiated]: [LoadIndicators, boolean]) => {
+      if (!indicatorInitiated) {
+        this.indicatorStore.dispatch(new LoadIndicatorsInitiated());
+        this.indicatorService.loadAll().subscribe(
+          (indicators: any[]) => {
+            this.indicatorStore.dispatch(
+              new AddIndicators(getStandardizedIndicators(indicators))
+            );
+          },
+          (error: any) => {
+            this.indicatorStore.dispatch(new LoadIndicatorsFail(error));
+          }
+        );
       }
-    )
+    })
   );
 
   constructor(
     private actions$: Actions,
-    private indicatorService: fromServices.IndicatorService,
-    private indicatorStore: Store<fromIndicatorReducer.State>
+    private indicatorService: IndicatorService,
+    private indicatorStore: Store<State>
   ) {}
 }

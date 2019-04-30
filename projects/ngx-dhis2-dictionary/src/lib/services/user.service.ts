@@ -7,11 +7,6 @@ export class UserService {
   userGroups;
   user;
   constructor(private httpClient: NgxDhis2HttpClientService) {}
-
-  /**
-   * Load current user information
-   * @returns {Observable<any>}
-   */
   loadCurrentUser(): Observable<any> {
     return this.httpClient
       .get(`me.json?fields=id,name,displayName,created,lastUpdated,email,
@@ -51,7 +46,7 @@ export class UserService {
             observable.complete();
           },
           error => {
-            observable.error(error.json());
+            observable.error(error);
             observable.complete();
           }
         );
