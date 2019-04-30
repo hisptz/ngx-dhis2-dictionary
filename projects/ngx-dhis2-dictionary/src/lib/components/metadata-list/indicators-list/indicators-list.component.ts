@@ -21,6 +21,7 @@ export class IndicatorsListComponent implements OnInit {
   error: boolean = false;
   loading: boolean = true;
   hoverState = 'notHovered';
+  itemsPerPageCount = 10;
   selectedIndicator: any = null;
   searchText: string;
   currentPage: number = 1;
@@ -40,6 +41,7 @@ export class IndicatorsListComponent implements OnInit {
   indicatorGroups: any[] = [];
   activeMetadataType: string = 'indicator';
   dataToDownload: any = [];
+  pageItemsConfiguration = [{value: 5, symbol: '5'},{value: 10, symbol: '10'},{value: 25, symbol: '25'},{value: 50, symbol: '50'},{value: 100, symbol: '100'},{value: 200, symbol: '200'},{value: 'all', symbol: 'all'}];
   constructor(private store: Store<DictionaryState>, private indicatorsStore: Store<AppState>, private datePipe: DatePipe) {
     this.searchText = '';
     this.searchingTextForIndicatorGroup = '';
@@ -52,6 +54,10 @@ export class IndicatorsListComponent implements OnInit {
 
   ngOnInit() {
     this.loadAllIndicators();
+  }
+
+  setItemsPerPage(value){
+    this.itemsPerPageCount =value;
   }
 
   toggleListingOfItems() {

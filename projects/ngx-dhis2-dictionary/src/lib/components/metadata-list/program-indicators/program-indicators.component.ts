@@ -22,6 +22,7 @@ export class ProgramIndicatorsComponent implements OnInit {
   error: boolean = false;
   loading: boolean = true;
   hoverState = 'notHovered';
+  itemsPerPageCount = 10;
   selectedIndicator: any = null;
   searchText: string;
   currentPage: number = 1;
@@ -39,6 +40,7 @@ export class ProgramIndicatorsComponent implements OnInit {
   totalAvailableProgramIndicators = 0;
   indicatorGroups: any[] = [];
   dataToDownload: any = [];
+  pageItemsConfiguration = [{value: 5, symbol: '5'},{value: 10, symbol: '10'},{value: 25, symbol: '25'},{value: 50, symbol: '50'},{value: 100, symbol: '100'},{value: 200, symbol: '200'},{value: 'all', symbol: 'all'}];
   constructor(private metadataStore: Store<AppState>, private datePipe: DatePipe) {
     this.searchText = '';
     this.searchingTextForIndicatorGroup = '';
@@ -51,6 +53,10 @@ export class ProgramIndicatorsComponent implements OnInit {
 
   ngOnInit() {
     this.loadAllProgramIndicators();
+  }
+
+  setItemsPerPage(value){
+    this.itemsPerPageCount =value;
   }
 
   toggleListingOfItems() {
