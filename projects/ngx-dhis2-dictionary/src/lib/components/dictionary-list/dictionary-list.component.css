@@ -7,6 +7,9 @@
   .dictionary-header, .export-btn, .exports {
     display: none;
   }
+  .ordered-list-in-table {
+    max-height: 9000px !important
+  }
 }
 .dictionary-item-container {
   /* border-bottom: solid thin #ececec; */
@@ -148,4 +151,8 @@ ol, ul, dl {
 
 span {
   content: "\2715";
+}
+
+.ordered-list-in-table {
+  max-height: 100px; overflow: auto
 }

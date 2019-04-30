@@ -109,7 +109,7 @@
                     </td>
                   <td>{{(indicatorGroup.indicators.length)}}</td>
                   <td>
-                      <ol style="max-height: 100px; overflow: auto">
+                      <ol class="ordered-list-in-table">
                           <li *ngFor="let indicator of getOtherMetadata(indicatorGroup.indicators, listAllMetadataInGroup)">
                             <span 
                             id={{indicator.id}} 
@@ -314,7 +314,9 @@
                       <td>
                         <ul style="padding-left: 10px">
                           <li *ngFor="let dataElementGroup of getDataElementsGroups(element.dataElementGroups)">
-                            {{dataElementGroup.name}} (with other <strong> {{(dataElementGroup.dataElements - 1)}} </strong>) data elements 
+                              <span 
+                              style="cursor: pointer;color: #325E80;text-decoration: underline;" 
+                              (click)="setActiveItem($event, dataElementGroup.id)">{{dataElementGroup.name}}</span> (with other <strong> {{(dataElementGroup.dataElements - 1)}} </strong>) data elements 
                           </li>
                         </ul>
                       </td>
@@ -369,23 +371,23 @@
 
       <!-- program indicator -->
       <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='programIndicator'">
-        <app-program-indicator (selectedMetadataId)="selectedMetadataId($event)" [programIndicatorInfo]="dictionaryItem"></app-program-indicator>
+        <app-program-indicator [isprintSet]="isprintSet" (selectedMetadataId)="selectedMetadataId($event)" [programIndicatorInfo]="dictionaryItem"></app-program-indicator>
       </div>
       <!-- Data element -->
       <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='dataElement'">
-        <app-data-element (selectedMetadataId)="selectedMetadataId($event)" [dataElementInfo]="dictionaryItem"></app-data-element>
+        <app-data-element [isprintSet]="isprintSet" (selectedMetadataId)="selectedMetadataId($event)" [dataElementInfo]="dictionaryItem"></app-data-element>
       </div>
       <!-- Data element group -->
       <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='dataElementGroup'">
-        <app-data-element-group (selectedMetadataId)="selectedMetadataId($event)" [dataElementGroupInfo]="dictionaryItem"></app-data-element-group>
+        <app-data-element-group [isprintSet]="isprintSet" (selectedMetadataId)="selectedMetadataId($event)" [dataElementGroupInfo]="dictionaryItem"></app-data-element-group>
       </div>
       <!-- Data set -->
       <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='dataSet'">
-        <app-data-set (selectedMetadataId)="selectedMetadataId($event)" [dataSetInfo]="dictionaryItem"></app-data-set>
+        <app-data-set [isprintSet]="isprintSet" (selectedMetadataId)="selectedMetadataId($event)" [dataSetInfo]="dictionaryItem"></app-data-set>
       </div>
       <!-- Functions -->
       <div *ngIf="dictionaryItem && dictionaryItem.data && dictionaryItem.data.type=='functions'">
-        <app-functions (selectedMetadataId)="selectedMetadataId($event)" [functionsDetails]="dictionaryItem"></app-functions>
+        <app-functions [isprintSet]="isprintSet" (selectedMetadataId)="selectedMetadataId($event)" [functionsDetails]="dictionaryItem"></app-functions>
       </div>
       <div *ngIf="dictionaryItem.progress.loading">
         <app-dictionary-progress></app-dictionary-progress>

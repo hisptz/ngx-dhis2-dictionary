@@ -10,6 +10,7 @@ export class DataElementComponent implements OnInit {
 
   @Input() dataElementInfo: any;
   @Output() selectedMetadataId = new EventEmitter<string>();
+  @Input()  isprintSet: boolean;
   listAllMetadataInGroup: boolean = false;
   showOptions: boolean = false;
   constructor() { }
@@ -36,15 +37,15 @@ export class DataElementComponent implements OnInit {
 
   getOtherMetadata(allMedatada, listAllMetadataInGroup) {
     let newSlicedList = [];
-    _.map(allMedatada, (metadata) => {
-      if (metadata.id !== this.dataElementInfo.data.metadata.id) {
-        newSlicedList.push(metadata);
-      }
-    })
-    if (!listAllMetadataInGroup) {
-      return newSlicedList.slice(0,3)
+    // _.map(allMedatada, (metadata) => {
+    //   if (metadata.id !== this.dataElementInfo.data.metadata.id) {
+    //     newSlicedList.push(metadata);
+    //   }
+    // })
+    if (!listAllMetadataInGroup && !this.isprintSet) {
+      return allMedatada.slice(0,3)
     } else {
-      return newSlicedList;
+      return allMedatada;
     }
   }
 

@@ -45,7 +45,12 @@
 <div *ngIf="dataElementGroupInfo.data.dataElements">
   <h4 style="color: #464646;">Related Data elements</h4>
   <p>The following is the summary of the data elements used in the group:- </p>
-  <div style="width: 100%; overflow: auto; max-height: 300px; margin-bottom: 15px;">
+  <div 
+  [ngClass]="{
+    'ordered-list-in-table-print': isprintSet,
+    'ordered-list-in-table': !isprintSet
+  }"
+  style="width: 100%; margin-bottom: 15px;">
     <table class="table table-bordered">
       <thead>
         <tr style="background-color: #f5f5f5; color: #555;">

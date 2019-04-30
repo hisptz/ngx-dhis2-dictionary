@@ -10,6 +10,7 @@ export class FunctionsComponent implements OnInit {
 
   @Input() functionsDetails: any;
   @Output() selectedMetadataId = new EventEmitter<string>();
+  @Input()  isprintSet: any;
   constructor() { }
 
   ngOnInit() {

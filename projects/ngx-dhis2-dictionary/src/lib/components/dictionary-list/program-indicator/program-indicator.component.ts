@@ -10,6 +10,7 @@ export class ProgramIndicatorComponent implements OnInit {
 
   @Input() programIndicatorInfo: any;
   @Output() selectedMetadataId = new EventEmitter<string>();
+  @Input()  isprintSet: any;
   constructor() { }
 
   ngOnInit() {
