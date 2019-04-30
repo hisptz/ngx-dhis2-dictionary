@@ -853,8 +853,8 @@ export class DictionaryEffects {
      */
     let metadataInFunctions = [];
     functionInfo.rules.forEach((rule) => {
-      if (JSON.parse(rule.json).data && JSON.parse(rule.json).data.length === 11) {
-        metadataInFunctions.push(this.getItemsFromRule(rule.json))
+      if (rule.json.data && rule.json.data.length === 11) {
+        metadataInFunctions.push(rule.json.data)
       } else {
         let identifiedUids = this.getItemsFromRule(rule.json);
         identifiedUids.split(',').forEach((uid) => {
