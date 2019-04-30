@@ -10,9 +10,11 @@ export class ProgramIndicatorComponent implements OnInit {
 
   @Input() programIndicatorInfo: any;
   @Output() selectedMetadataId = new EventEmitter<string>();
+  @Input()  isprintSet: any;
   constructor() { }
 
   ngOnInit() {
+    console.log(this.programIndicatorInfo)
   }
 
   setActiveItem(metaDataId) {
@@ -37,5 +39,27 @@ export class ProgramIndicatorComponent implements OnInit {
   getTodayDate() {
     const now = new Date();
     return now;
+  }
+
+  formatFilter(filter) {
+    this.programIndicatorInfo.data.dataElements.forEach((element) => {
+      if (filter.indexOf(element.id) > -1) {
+        filter = filter.split(element.id).join(element.name)
+      }
+    })
+    this.programIndicatorInfo.data.programStages.forEach((element) => {
+      if (filter.indexOf(element.id) > -1) {
+        filter = filter.split(element.id).join(element.name)
+      }
+    })
+    this.programIndicatorInfo.data.trackedEntityAttributes.forEach((element) => {
+      if (filter.indexOf('A' +element.id) > -1) {
+        filter = filter.split('A' + element.id).join(element.name)
+      }
+      if (filter.indexOf(element.id) > -1) {
+        filter = filter.split(element.id).join(element.name)
+      }
+    })
+    return filter;
   }
 }

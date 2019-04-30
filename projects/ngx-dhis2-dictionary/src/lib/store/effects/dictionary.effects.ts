@@ -195,7 +195,6 @@ export class DictionaryEffects {
                             }
                         })
                       );
-                      console.log('functionInfos', functionInfos)
                       this.displayFunctionsInfo(functionInfos, ruleId, metadata);
                     } else {
                         this.store.dispatch(
@@ -586,29 +585,39 @@ export class DictionaryEffects {
     let metadataInfoLoaded = {
       type: 'programIndicator',
       metadata: {},
-      programStages: {},
-      dataElements: {},
+      programStages: [],
+      dataElements: [],
+      indicators: [],
       filter: {},
       programIndicatorDescriptionExpression: {},
-      legendSetsInformation: []
+      legendSetsInformation: [],
+      trackedEntityAttributes: []
     }
     this.httpClient.get(`${programIndicatorUrl}`, true).subscribe((programIndicator: any) => {
         let indicatorDescription = ''; let filterDescription = '';
         // get expression and filter then describe it
         let programIndicatorDescriptionExpression = programIndicator.expression;
         let allDataElements = []; let programStages = [];
+        let dataElementsAvailable = []; let associatedMetadata = []
+        let indicatorsAvailable = []; let programStagesAvailable = []; let trackedEntityAttributesAvailable = [];
         if (programIndicator.filter) {
           filterDescription = programIndicator.filter;
-          const filterDataElements = this.getAvailableDataElements(programIndicator.filter, 'programStage');
-          filterDataElements.split(',').forEach((element) => {
+          const filterElements = this.getAvailableDataElements(programIndicator.filter, 'programStage');
+          filterElements.split(',').forEach((element) => {
             if (element.length ==11) {
               allDataElements.push(element)
+              associatedMetadata.push(element)
             }
+          });
+
+          filterElements.split(',').forEach((elementId) => {
+            associatedMetadata.push(elementId)
           });
           const programStagesList = this.getAvailableDataElements(programIndicator.filter);
           programStagesList.split(',').forEach((programStage) => {
             if (programStage.length == 11) {
               programStages.push(programStage);
+              associatedMetadata.push(programStage)
             }
           })
         }
@@ -616,20 +625,93 @@ export class DictionaryEffects {
         expressionDataElements.split(',').forEach((element) => {
           if (element.length ==11) {
             allDataElements.push(element)
+            associatedMetadata.push(element)
           }
         });
         const programStagesList = this.getAvailableDataElements(programIndicator.expression);
         programStagesList.split(',').forEach((programStage) => {
           if (programStage.length == 11) {
             programStages.push(programStage);
+            associatedMetadata.push(programStage)
           }
         })
-
+        _.uniq(associatedMetadata).forEach((elementId) => {
+          this.httpClient.get('identifiableObjects/' + elementId + '.json').subscribe((identifiableElement) => {
+            if (identifiableElement.href.indexOf('trackedEntityAttributes/') > -1) {
+              this.httpClient.get('trackedEntityAttributes/' + identifiableElement.id + '.json?fields=*').subscribe((trackedEntityAttributeResult) => {
+                trackedEntityAttributesAvailable = [...trackedEntityAttributesAvailable, trackedEntityAttributeResult];
+                metadataInfoLoaded = {...metadataInfoLoaded, trackedEntityAttributes: trackedEntityAttributesAvailable};
+                this.store.dispatch(
+                  new UpdateDictionaryMetadataAction(programIndicatorId, {
+                    description: indicatorDescription,
+                    data: metadataInfoLoaded,
+                    progress: {
+                      loading: false,
+                      loadingSucceeded: true,
+                      loadingFailed: false
+                    }
+                  })
+                );
+              })
+            } else if (identifiableElement.href.indexOf('indicators/') > -1) {
+              this.httpClient.get('indicators/' + identifiableElement.id + '.json?fields=id,name,href,description,shortName,code,indicatorGroups[id,name],numerator,denominator,lastUpdated')
+              .subscribe((indicator) => {
+                indicatorsAvailable = [...dataElementsAvailable, indicator];
+                metadataInfoLoaded = {...metadataInfoLoaded, indicators: indicatorsAvailable};
+                this.store.dispatch(
+                  new UpdateDictionaryMetadataAction(programIndicatorId, {
+                    description: indicatorDescription,
+                    data: metadataInfoLoaded,
+                    progress: {
+                      loading: false,
+                      loadingSucceeded: true,
+                      loadingFailed: false
+                    }
+                  })
+                );
+              })
+            } else if (identifiableElement.href.indexOf('dataElements/') > -1) {
+              this.httpClient.get('dataElements/' + identifiableElement.id + '.json?fields=*,id,name,href,description,shortName,code,valueType,dataElementGroups[id,name],dataSetElements[id,name,dataSet],lastUpdated')
+              .subscribe((dataElement) => {
+                dataElementsAvailable = [...dataElementsAvailable, dataElement];
+                metadataInfoLoaded = {...metadataInfoLoaded, dataElements: dataElementsAvailable};
+                this.store.dispatch(
+                  new UpdateDictionaryMetadataAction(programIndicatorId, {
+                    description: indicatorDescription,
+                    data: metadataInfoLoaded,
+                    progress: {
+                      loading: false,
+                      loadingSucceeded: true,
+                      loadingFailed: false
+                    }
+                  })
+                );
+              })
+            } else if (identifiableElement.href.indexOf('programStages/') > -1) {
+              this.httpClient.get('programStages/' + identifiableElement.id + '.json?fields=*,id,name,user,created,description,formType,programStageDataElements~size')
+              .subscribe((programStages) => {
+                programStagesAvailable = [...dataElementsAvailable, programStages];
+                metadataInfoLoaded = {...metadataInfoLoaded, programStages: programStagesAvailable};
+                this.store.dispatch(
+                  new UpdateDictionaryMetadataAction(programIndicatorId, {
+                    description: indicatorDescription,
+                    data: metadataInfoLoaded,
+                    progress: {
+                      loading: false,
+                      loadingSucceeded: true,
+                      loadingFailed: false
+                    }
+                  })
+                );
+              })
+            }
+          })
+        })
         forkJoin(
           this.httpClient.get('programStages.json?filter=id:in:[' + programStages.join(',') + ']&fields=id,name,user,created,description,formType,programStageDataElements~size', true),
           this.httpClient.get('dataElements.json?filter=id:in:[' + allDataElements.join(',') +']&paging=false&fields=id,name,valueType,aggregationType,domainType',true)
         ).subscribe((results: any) => {
-          metadataInfoLoaded = {...metadataInfoLoaded, programStages: results[0]['programStages']};
+          // metadataInfoLoaded = {...metadataInfoLoaded, programStages: results[0]['programStages']};
           results[0]['programStages'].forEach((stage) => {
             programIndicatorDescriptionExpression = programIndicatorDescriptionExpression.split(stage.id + '.').join(stage.name);
             if (programIndicatorDescriptionExpression.indexOf(stage.name) < 0) {
@@ -638,7 +720,7 @@ export class DictionaryEffects {
             filterDescription = filterDescription.split(stage.id + '.').join(' ')
         })
 
-          metadataInfoLoaded = {...metadataInfoLoaded, dataElements: results[1]['dataElements']};
+          // metadataInfoLoaded = {...metadataInfoLoaded, dataElements: results[1]['dataElements']};
           results[1]['dataElements'].forEach((dataElement) => {
             programIndicatorDescriptionExpression = programIndicatorDescriptionExpression.split(dataElement.id).join(dataElement.name);
             filterDescription = filterDescription.split(dataElement.id).join(' ' + dataElement.name)
@@ -697,20 +779,24 @@ export class DictionaryEffects {
     .join('').split("'").join('').split(",").join('')
     .split('d2:daysBetween').join('')
     .split('d2:zing(x)').join('').split('d2:oizp(x)').join('');
-    const separators = [' ', '\\+', '-', '\\(', '\\)', '\\*', '/', ':', '\\?','\\>='];
+    const separators = [' ','A{', '}==', '\\+', '-', '\\(', '\\)', '\\*', '/', ':', '\\?','\\>='];
     const metadataElements = data.split(
       new RegExp(separators.join('|'), 'g')
     );
     if (!condition) {
       metadataElements.forEach(dataElement => {
         if (dataElement != "") {
-          dataElementUids.push(this.dataElementWithCategoryOptionCheck(dataElement)[0]);
+          if(this.dataElementWithCategoryOptionCheck(dataElement)[0].length == 11) {
+            dataElementUids.push(this.dataElementWithCategoryOptionCheck(dataElement)[0]);
+          }
         }
       });
     } else {
       metadataElements.forEach(dataElement => {
         if (dataElement != "") {
-          dataElementUids.push(this.dataElementWithCategoryOptionCheck(dataElement, 'comboOrStage')[0]);
+          if(this.dataElementWithCategoryOptionCheck(dataElement, 'comboOrStage')[0].length == 11) {
+            dataElementUids.push(this.dataElementWithCategoryOptionCheck(dataElement, 'comboOrStage')[0]);
+          }
         }
       });
     }
@@ -862,12 +948,11 @@ export class DictionaryEffects {
         })
       }
     })
-    console.log('metadataInFunctions', metadataInFunctions)
     let metadataWithinFunctionDetails = [];
     _.uniq(metadataInFunctions).forEach((identifier) => {
       this.httpClient.get('identifiableObjects/' + identifier + '.json').subscribe((metadata) => {
         if (metadata.href.indexOf('dataSets/') > -1) {
-          this.httpClient.get('dataSets/' + metadata.id + '.json?fields=id,name,description,shortName,code,formType,timelyDays,periodType')
+          this.httpClient.get('dataSets/' + metadata.id + '.json?fields=id,name,description,href,shortName,code,formType,timelyDays,periodType,lastUpdated')
           .subscribe((dataSet) => {
             let metadataInfo = {
               type: 'dataSet',
@@ -890,7 +975,7 @@ export class DictionaryEffects {
             );
           })
         } else if (metadata.href.indexOf('indicators/') > -1) {
-          this.httpClient.get('indicators/' + metadata.id + '.json?fields=id,name,description,shortName,code,indicatorGroups[id,name],numerator,denominator')
+          this.httpClient.get('indicators/' + metadata.id + '.json?fields=id,name,href,description,shortName,code,indicatorGroups[id,name],numerator,denominator,lastUpdated')
           .subscribe((indicator) => {
             let metadataInfo = {
               type: 'indicator',
@@ -913,7 +998,7 @@ export class DictionaryEffects {
             );
           })
         } else if (metadata.href.indexOf('dataElements/') > -1) {
-          this.httpClient.get('dataElements/' + metadata.id + '.json?fields=id,name,description,shortName,code,dataElementGroups[id,name],dataSetElements[id,name,dataSet]')
+          this.httpClient.get('dataElements/' + metadata.id + '.json?fields=*,id,name,href,description,shortName,code,valueType,dataElementGroups[id,name],dataSetElements[id,name,dataSet],lastUpdated')
           .subscribe((dataElement) => {
             let metadataInfo = {
               type: 'dataElement',
@@ -936,7 +1021,7 @@ export class DictionaryEffects {
             );
           })
         } else if (metadata.href.indexOf('categoryOptionCombos/') > -1) {
-          this.httpClient.get('categoryOptionCombos/' + metadata.id + '.json?fields=id,name,description,shortName,code,categoryOptions')
+          this.httpClient.get('categoryOptionCombos/' + metadata.id + '.json?fields=id,name,href,description,shortName,code,categoryOptions[id,name,code],lastUpdated')
           .subscribe((categoryOptionCombo) => {
             let metadataInfo = {
               type: 'category option combination',
@@ -959,7 +1044,6 @@ export class DictionaryEffects {
             );
           })
         }
-        console.log('metadataInfoLoaded', metadataInfoLoaded)
       })
     })
   }
@@ -968,7 +1052,6 @@ export class DictionaryEffects {
     if (JSON.parse(ruleDefinition).data && JSON.parse(ruleDefinition).data.length === 11){
       return JSON.parse(ruleDefinition).data
     } else {
-      console.log('JSON.parse(ruleDefinition).data',JSON.parse(ruleDefinition).data.split(';').join('.').split('.').join(','))
       return JSON.parse(ruleDefinition).data.split(';').join('.').split('.').join(',')
     }
   }

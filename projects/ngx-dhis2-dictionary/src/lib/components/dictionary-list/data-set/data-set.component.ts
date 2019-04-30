@@ -11,6 +11,7 @@ export class DataSetComponent implements OnInit {
 
   @Input() dataSetInfo: any;
   @Output() selectedMetadataId = new EventEmitter<string>();
+  @Input()  isprintSet: any;
   constructor() { }
 
   ngOnInit() {

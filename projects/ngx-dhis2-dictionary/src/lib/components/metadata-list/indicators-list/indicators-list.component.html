@@ -98,7 +98,7 @@
           </div>
         </div>
         <div *ngIf="listingIsSet">
-          <div *ngFor="let indicator of allIndicators$ | async | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching | paginate: {itemsPerPage: 7, currentPage: currentPage}">
+          <div *ngFor="let indicator of allIndicators$ | async | filterBySearchInput: searchText | filterIndicatorsByGroupId: indicatorGroupsForSearching | paginate: {itemsPerPage: itemsPerPageCount, currentPage: currentPage}">
               <app-indicator-properties 
               [metadataIdentifiers]="metadataIdentifiers" 
               [indicator]="indicator" 
@@ -108,7 +108,14 @@
         </div>
         <div style="margin-top: 30px;" *ngIf="allIndicators$">
           <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
-          <button class="export-to-csv" (click)="dwndToCSV(allIndicators$)">
+          <span *ngIf="completedPercent > 10 && listingIsSet">Items count</span>
+          <select *ngIf="completedPercent > 10 && listingIsSet"
+            class="form-control" #t (change)="setItemsPerPage(t.value)" 
+            style="width: 70px; display: inline; margin-left: 10px;">
+            <option *ngFor="let item of pageItemsConfiguration" [value]="item.value">{{item.symbol}}</option>
+          </select>
+          <button 
+          class="export-to-csv" (click)="dwndToCSV(allIndicators$)">
               <img 
               height="30" width="30"
               title="Export to csv"

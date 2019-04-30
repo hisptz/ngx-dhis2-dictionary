@@ -58,6 +58,7 @@ export class DictionaryListComponent implements OnInit {
   loading: boolean;
   listAllMetadataInGroup: boolean = false;
   html: any;
+  isprintSet: boolean = false;
 
   constructor(
     private store: Store<DictionaryState>,
@@ -340,15 +341,15 @@ export class DictionaryListComponent implements OnInit {
 
   getOtherMetadata(allMedatada, listAllMetadataInGroup) {
     let newSlicedList = [];
-    _.map(allMedatada, metadata => {
-      if (metadata.id !== this.selectedIndicator) {
-        newSlicedList.push(metadata);
-      }
-    });
+    // _.map(allMedatada, (metadata) => {
+    //   if (metadata.id !== this.selectedIndicator) {
+    //     newSlicedList.push(metadata);
+    //   }
+    // })
     if (!listAllMetadataInGroup) {
-      return newSlicedList.slice(0, 3);
+      return allMedatada.slice(0,3)
     } else {
-      return newSlicedList;
+      return allMedatada;
     }
   }
 
@@ -380,6 +381,11 @@ export class DictionaryListComponent implements OnInit {
   }
 
   printPDF() {
-    window.print();
+    this.listAllMetadataInGroup = true;
+    this.isprintSet = true;
+    if (this.isprintSet) {
+      setTimeout(function(){this.isprintSet = false;window.print();}, 500);
+      setTimeout(function(){this.isprintSet = false; }, 1000);
+    }
   }
 }

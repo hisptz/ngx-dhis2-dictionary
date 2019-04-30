@@ -1,15 +1,16 @@
 
-<div class="indicator-name"><h3 style="color: #355E7F; margin-bottom: 1.5rem">{{dataElementGroupInfo.data.metadata.name}}</h3></div>
+<div class="indicator-name"><h3 style="color: #355E7F; margin-bottom: 1.5rem">{{dataElementGroupInfo.data.metadata.name}}
+    <a title="View this data element group in maintanance"  target="_blank" href="../../../dhis-web-maintenance/#/edit/dataElementSection/dataElementGroup/{{dataElementGroupInfo.data.metadata.id}}">
+      <svg class="" viewBox="0 0 24 24" 
+      style="display: inline-block; color: rgba(0, 0, 0, 0.87); fill: rgb(117, 117, 117); height: 16px; width: 16px; user-select: none; transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms; margin-left: -3px; margin-top: -10px; cursor: pointer;">
+      <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path>
+      </svg>
+    </a>
+  </h3></div>
 <div class="introduction"><h3 style="color: #464646;">Introduction</h3></div>
 <div class="description">
   <p>
     Data element group <span style="color: #325E80;">{{dataElementGroupInfo.data.metadata.name}}
-      <a title="View this data element group in maintanance"  target="_blank" href="../../../dhis-web-maintenance/#/edit/dataElementSection/dataElementGroup/{{dataElementGroupInfo.data.metadata.id}}">
-        <svg class="" viewBox="0 0 24 24" 
-        style="display: inline-block; color: rgba(0, 0, 0, 0.87); fill: rgb(117, 117, 117); height: 16px; width: 16px; user-select: none; transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms; margin-left: -3px; margin-top: -10px; cursor: pointer;">
-        <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path>
-        </svg>
-      </a>
     </span>
     <span *ngIf="dataElementGroupInfo.data.metadata.description">can be described as <strong>{{dataElementGroupInfo.data.metadata.description}}</strong>.</span>
   </p>
@@ -44,7 +45,12 @@
 <div *ngIf="dataElementGroupInfo.data.dataElements">
   <h4 style="color: #464646;">Related Data elements</h4>
   <p>The following is the summary of the data elements used in the group:- </p>
-  <div style="width: 100%; overflow: auto; max-height: 300px; margin-bottom: 15px;">
+  <div 
+  [ngClass]="{
+    'ordered-list-in-table-print': isprintSet,
+    'ordered-list-in-table': !isprintSet
+  }"
+  style="width: 100%; margin-bottom: 15px;">
     <table class="table table-bordered">
       <thead>
         <tr style="background-color: #f5f5f5; color: #555;">

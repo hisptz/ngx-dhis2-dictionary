@@ -15,7 +15,6 @@ export class VisualizationContainerComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    console.log(this.reportType);
     const dataSets = _.uniqBy(
       [...this.numeratorDataSets, ...this.denominatorDataSets],
       'id'
@@ -89,6 +88,7 @@ export class VisualizationContainerComponent implements OnInit {
           }
         ]
       };
+      console.log(this.visualizationInput)
     }
   }
 }
