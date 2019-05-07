@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { filterByName } from '../helpers';
+import { filterByName } from '../helpers/filter-by-name.helper';
 
 @Pipe({
   name: 'filterByName'

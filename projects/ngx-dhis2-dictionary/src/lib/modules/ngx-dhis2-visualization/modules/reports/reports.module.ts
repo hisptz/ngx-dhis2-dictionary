@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { components } from './components/index';
-import { containers } from './containers/index';
+import { ReportItemComponent } from './components/report-item/report-item.component';
+import { ReportListComponent } from './containers/report-list/report-list.component';
+import { ReportComponent } from './containers/report/report.component';
 
 @NgModule({
-  declarations: [...components, ...containers],
-  exports: [...components, ...containers],
+  declarations: [ReportItemComponent, ReportListComponent, ReportComponent],
+  exports: [ReportItemComponent, ReportListComponent, ReportComponent],
   imports: [CommonModule]
 })
 export class ReportsModule {}

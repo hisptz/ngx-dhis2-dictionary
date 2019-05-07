@@ -25,7 +25,7 @@ import {
   VisualizationLayerActionTypes
 } from '../actions/visualization-layer.actions';
 import { UpdateVisualizationObjectAction } from '../actions/visualization-object.actions';
-import { VisualizationState } from '../reducers';
+import { VisualizationState } from '../reducers/visualization.reducer';
 import { getCombinedVisualizationObjectById } from '../selectors';
 
 @Injectable()

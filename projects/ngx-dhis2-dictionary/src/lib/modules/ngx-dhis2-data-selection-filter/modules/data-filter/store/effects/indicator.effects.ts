@@ -18,7 +18,7 @@ import { getIndicatorsInitiatedStatus } from '../selectors/indicator.selectors';
 
 @Injectable()
 export class IndicatorEffects {
-  @Effect()
+  @Effect({ dispatch: false })
   loadIndicators$: Observable<any> = this.actions$.pipe(
     ofType(IndicatorActionTypes.LoadIndicators),
     withLatestFrom(this.indicatorStore.select(getIndicatorsInitiatedStatus)),

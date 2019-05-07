@@ -3,7 +3,7 @@ import { TableConfiguration } from '../../models/table-configuration';
 
 import { drawTable } from '../../helpers/index';
 import { LegendSet } from '../../models/legend-set.model';
-import { VisualizationExportService } from '../../../../services';
+import { VisualizationExportService } from '../../../../services/visualization-export.service';
 
 @Component({
   // tslint:disable-next-line:component-selector

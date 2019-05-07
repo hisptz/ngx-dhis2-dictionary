@@ -1,4 +1,4 @@
-import { getVisualizationConfigurationEntities } from '../reducers';
+import { getVisualizationConfigurationEntities } from '../reducers/visualization.reducer';
 import { createSelector, MemoizedSelector } from '@ngrx/store';
 import {
   Visualization,

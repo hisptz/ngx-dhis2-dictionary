@@ -8,16 +8,25 @@ import { DragulaModule } from 'ng2-dragula';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxPaginationModule } from 'ngx-pagination';
 
-import { components } from './components/index';
-import { containers } from './containers/index';
-import { directives } from './directives/index';
-import { pipes } from './pipes/index';
-import * as fromDataGroupEffects from './store/effects/index';
-import * as fromDataFilterReducer from './store/reducers/data-filter.reducer';
-import * as fromFunctionRuleReducer from './store/reducers/function-rule.reducer';
-import * as fromFunctionReducer from './store/reducers/function.reducer';
-import * as fromIndicatorGroupReducer from './store/reducers/indicator-group.reducer';
-import * as fromIndicatorReducer from './store/reducers/indicator.reducer';
+import { DataFilterClickOutsideDirective } from './directives/click-outside.directive';
+import { DataFilterGroupMemberComponent } from './components/data-filter-group-member/data-filter-group-member.component';
+import { DataFilterGroupsComponent } from './components/data-filter-groups/data-filter-groups.component';
+import { DataGroupItemComponent } from './components/data-group-item/data-group-item.component';
+import { DataFilterComponent } from './containers/data-filter/data-filter.component';
+import { AddUnderscorePipe } from './pipes/add-underscore.pipe';
+import { FilterByNamePipe } from './pipes/filter-by-name.pipe';
+import { OrderPipe } from './pipes/order-by.pipe';
+import { RemoveSelectedItemsPipe } from './pipes/remove-selected-items.pipe';
+import { DataFilterEffects } from './store/effects/data-filter.effects';
+import { FunctionRuleEffects } from './store/effects/function-rule.effects';
+import { FunctionEffects } from './store/effects/function.effects';
+import { IndicatorGroupEffects } from './store/effects/indicator-group.effects';
+import { IndicatorEffects } from './store/effects/indicator.effects';
+import { reducer as dataFilterReducer } from './store/reducers/data-filter.reducer';
+import { reducer as functionRuleReducer } from './store/reducers/function-rule.reducer';
+import { reducer as functionReducer } from './store/reducers/function.reducer';
+import { reducer as indicatorGroupReducer } from './store/reducers/indicator-group.reducer';
+import { reducer as indicatorReducer } from './store/reducers/indicator.reducer';
 
 @NgModule({
   imports: [
@@ -27,15 +36,31 @@ import * as fromIndicatorReducer from './store/reducers/indicator.reducer';
     DragulaModule,
     ColorPickerModule,
     NgxPaginationModule,
-    StoreModule.forFeature('dataFilter', fromDataFilterReducer.reducer),
-    StoreModule.forFeature('function', fromFunctionReducer.reducer),
-    StoreModule.forFeature('functionRule', fromFunctionRuleReducer.reducer),
-    StoreModule.forFeature('indicatorGroup', fromIndicatorGroupReducer.reducer),
-    StoreModule.forFeature('indicator', fromIndicatorReducer.reducer),
-    EffectsModule.forFeature(fromDataGroupEffects.effects)
+    StoreModule.forFeature('dataFilter', dataFilterReducer),
+    StoreModule.forFeature('function', functionReducer),
+    StoreModule.forFeature('functionRule', functionRuleReducer),
+    StoreModule.forFeature('indicatorGroup', indicatorGroupReducer),
+    StoreModule.forFeature('indicator', indicatorReducer),
+    EffectsModule.forFeature([
+      DataFilterEffects,
+      FunctionEffects,
+      FunctionRuleEffects,
+      IndicatorEffects,
+      IndicatorGroupEffects
+    ])
   ],
-  declarations: [...directives, ...pipes, ...containers, ...components],
-  exports: [...containers],
+  declarations: [
+    DataFilterClickOutsideDirective,
+    AddUnderscorePipe,
+    FilterByNamePipe,
+    OrderPipe,
+    RemoveSelectedItemsPipe,
+    DataFilterComponent,
+    DataFilterGroupsComponent,
+    DataGroupItemComponent,
+    DataFilterGroupMemberComponent
+  ],
+  exports: [DataFilterComponent],
   providers: []
 })
 export class DataFilterModule {}

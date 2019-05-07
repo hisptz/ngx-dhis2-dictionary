@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SystemInfoService } from '@hisptz/ngx-dhis2-http-client';
+import { SystemInfoService } from '@iapps/ngx-dhis2-http-client';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
@@ -46,7 +46,7 @@ import {
 import {
   getVisualizationObjectEntities,
   VisualizationState
-} from '../reducers';
+} from '../reducers/visualization.reducer';
 import { getCombinedVisualizationObjectById } from '../selectors';
 import { generateUid } from '../../../../helpers/generate-uid.helper';
 

@@ -12,80 +12,77 @@ import {
   catchError
 } from 'rxjs/operators';
 
-import * as fromFunctionReducer from '../reducers/function.reducer';
-
-import * as fromFunctionActions from '../actions/function.actions';
-import * as fromFuctionSelectors from '../selectors/function.selectors';
-import * as fromHelpers from '../../helpers';
-
 import { FunctionObject } from '../../models/function.model';
 import { FunctionService } from '../../services/function.service';
-import { getStandardizedFunction } from '../../helpers';
 import { getSelectedFunctionRule } from '../../helpers/get-selected-function-rule.helper';
-
+import {
+  FunctionActionTypes,
+  LoadFunctions,
+  LoadFunctionsInitiated,
+  AddFunctions,
+  LoadFunctionsFail,
+  SaveFunction,
+  SaveFunctionSuccess,
+  SaveFunctionFails
+} from '../actions/function.actions';
+import {
+  getFunctionInitiatedStatus,
+  getFunctionById
+} from '../selectors/function.selectors';
+import { getStandardizedFunctions } from '../../helpers/get-standardized-functions.helper';
+import { getStandardizedFunctionRulesFromFunctionList } from '../../helpers/get-standardized-function-rule-from-function-list.helpers';
+import { getStandardizedFunction } from '../../helpers/get-standardized-function.helper';
+import { State } from '../reducers/function.reducer';
 @Injectable()
 export class FunctionEffects {
   @Effect({ dispatch: false })
   loadFunctions$: Observable<any> = this.actions$.pipe(
-    ofType(fromFunctionActions.FunctionActionTypes.LoadFunctions),
-    withLatestFrom(
-      this.functionStore.select(fromFuctionSelectors.getFunctionInitiatedStatus)
-    ),
-    tap(
-      ([action, functionInitiated]: [
-        fromFunctionActions.LoadFunctions,
-        boolean
-      ]) => {
-        if (!functionInitiated) {
-          this.functionStore.dispatch(
-            new fromFunctionActions.LoadFunctionsInitiated()
-          );
-          this.functionService.loadAll(action.currentUser).subscribe(
-            (functions: FunctionObject[]) => {
-              const standardizedFunctions = fromHelpers.getStandardizedFunctions(
-                functions,
-                action.routeParams ? action.routeParams.function || '' : ''
-              );
-              const selectedFunction = _.find(standardizedFunctions, [
-                'selected',
-                true
-              ]);
+    ofType(FunctionActionTypes.LoadFunctions),
+    withLatestFrom(this.functionStore.select(getFunctionInitiatedStatus)),
+    tap(([action, functionInitiated]: [LoadFunctions, boolean]) => {
+      if (!functionInitiated) {
+        this.functionStore.dispatch(new LoadFunctionsInitiated());
+        this.functionService.loadAll(action.currentUser).subscribe(
+          (functions: FunctionObject[]) => {
+            const standardizedFunctions = getStandardizedFunctions(
+              functions,
+              action.routeParams ? action.routeParams.function || '' : ''
+            );
+            const selectedFunction = _.find(standardizedFunctions, [
+              'selected',
+              true
+            ]);
 
-              const selectedRuleId = getSelectedFunctionRule(
-                selectedFunction.rules || [],
-                action.routeParams ? action.routeParams.rule || '' : ''
-              );
+            const selectedRuleId = getSelectedFunctionRule(
+              selectedFunction.rules || [],
+              action.routeParams ? action.routeParams.rule || '' : ''
+            );
 
-              this.functionStore.dispatch(
-                new fromFunctionActions.AddFunctions(
-                  standardizedFunctions,
-                  fromHelpers.getStandardizedFunctionRulesFromFunctionList(
-                    functions,
-                    selectedRuleId
-                  )
+            this.functionStore.dispatch(
+              new AddFunctions(
+                standardizedFunctions,
+                getStandardizedFunctionRulesFromFunctionList(
+                  functions,
+                  selectedRuleId
                 )
-              );
-            },
-            (error: any) => {
-              this.functionStore.dispatch(
-                new fromFunctionActions.LoadFunctionsFail(error)
-              );
-            }
-          );
-        }
+              )
+            );
+          },
+          (error: any) => {
+            this.functionStore.dispatch(new LoadFunctionsFail(error));
+          }
+        );
       }
-    )
+    })
   );
 
   @Effect()
   saveFunction$: Observable<any> = this.actions$.pipe(
-    ofType(fromFunctionActions.FunctionActionTypes.SaveFunction),
-    mergeMap((action: fromFunctionActions.SaveFunction) => {
+    ofType(FunctionActionTypes.SaveFunction),
+    mergeMap((action: SaveFunction) => {
       return this.functionStore
         .select(
-          fromFuctionSelectors.getFunctionById(
-            action.functionObject ? action.functionObject.id : ''
-          )
+          getFunctionById(action.functionObject ? action.functionObject.id : '')
         )
         .pipe(
           take(1),
@@ -93,17 +90,12 @@ export class FunctionEffects {
             this.functionService.save(functionObject, action.currentUser).pipe(
               map(
                 (savedFunctionObject: FunctionObject) =>
-                  new fromFunctionActions.SaveFunctionSuccess(
+                  new SaveFunctionSuccess(
                     getStandardizedFunction(savedFunctionObject)
                   )
               ),
               catchError(error =>
-                of(
-                  new fromFunctionActions.SaveFunctionFails(
-                    functionObject,
-                    error
-                  )
-                )
+                of(new SaveFunctionFails(functionObject, error))
               )
             )
           )
@@ -114,6 +106,6 @@ export class FunctionEffects {
   constructor(
     private actions$: Actions,
     private functionService: FunctionService,
-    private functionStore: Store<fromFunctionReducer.State>
+    private functionStore: Store<State>
   ) {}
 }

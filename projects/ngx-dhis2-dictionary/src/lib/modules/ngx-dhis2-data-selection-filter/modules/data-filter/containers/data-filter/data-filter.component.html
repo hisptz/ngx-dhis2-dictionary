@@ -22,8 +22,8 @@
 
     <div
       class="data-filter-group-selection"
-      appClickOutside
-      (clickOutside)="showGroups = false"
+      dataFilterClickOutside
+      (filterClickOutside)="showGroups = false"
     >
       <!--Group selection button-->
       <button
@@ -65,9 +65,9 @@
           <ul class="data-filter-group-list">
             <li
               *ngFor="
-                let dataFilterGroup of (dataFilterGroups$
+                let dataFilterGroup of dataFilterGroups$
                   | async
-                  | filterByName: querystring)
+                  | filterByName: querystring
               "
             >
               <a
@@ -139,7 +139,7 @@
         </li>
         <li
           *ngFor="
-            let dataFilterItem of (dataFilterItems$
+            let dataFilterItem of dataFilterItems$
               | async
               | removeSelectedItems: selectedItems
               | filterByName: dataItemSearchTerm
@@ -148,7 +148,7 @@
                     id: 'available_list',
                     itemsPerPage: 25,
                     currentPage: currentPageForAvailableDataItems
-                  })
+                  }
           "
           title="Click to select item "
           id="{{ dataFilterItem.id | addUnderscore }} "
@@ -157,7 +157,7 @@
             dataFilterItem.name
           }}</a>
         </li>
-        <li *ngIf="(dataFilterLoading$ | async)"><small>Loading...</small></li>
+        <li *ngIf="dataFilterLoading$ | async"><small>Loading...</small></li>
 
         <li
           *ngIf="
@@ -189,13 +189,13 @@
       <ul>
         <li
           *ngFor="
-            let item of (selectedItems
+            let item of selectedItems
               | paginate
                 : {
                     id: 'selected_list',
                     itemsPerPage: 100,
                     currentPage: currentPageForSelectedDataItems
-                  })
+                  }
           "
           title="click to unselect item"
         >

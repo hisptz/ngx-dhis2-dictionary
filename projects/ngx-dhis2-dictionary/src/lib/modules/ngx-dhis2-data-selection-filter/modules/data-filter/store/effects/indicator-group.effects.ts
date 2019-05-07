@@ -3,57 +3,50 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Observable } from 'rxjs';
 import { withLatestFrom, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-
-import * as fromIndicatorGroupReducer from '../reducers/indicator-group.reducer';
-
-import * as fromIndicatorGroupActions from '../actions/indicator-group.actions';
-import * as fromIndicatorGroupSelectors from '../selectors/indicator-group.selectors';
-import * as fromHelpers from '../../helpers';
-import * as fromServices from '../../services';
+import {
+  IndicatorGroupActionTypes,
+  LoadIndicatorGroups,
+  LoadIndicatorGroupsInitiated,
+  AddIndicatorGroups,
+  LoadIndicatorGroupsFail
+} from '../actions/indicator-group.actions';
+import { getIndicatorGroupsInitiatedStatus } from '../selectors/indicator-group.selectors';
+import { getStandardizedIndicatorGroups } from '../../helpers/get-standardized-indicator-groups.helper';
+import { IndicatorGroupService } from '../../services/indicator-group.service';
+import { State } from '../reducers/indicator-group.reducer';
 
 @Injectable()
 export class IndicatorGroupEffects {
   @Effect({ dispatch: false })
   loadIndicatorGroups$: Observable<any> = this.actions$.pipe(
-    ofType(
-      fromIndicatorGroupActions.IndicatorGroupActionTypes.LoadIndicatorGroups
-    ),
+    ofType(IndicatorGroupActionTypes.LoadIndicatorGroups),
     withLatestFrom(
-      this.indicatorGroupStore.select(
-        fromIndicatorGroupSelectors.getIndicatorGroupsInitiatedStatus
-      )
+      this.indicatorGroupStore.select(getIndicatorGroupsInitiatedStatus)
     ),
-    tap(
-      ([action, indicatorGroupInitiated]: [
-        fromIndicatorGroupActions.LoadIndicatorGroups,
-        boolean
-      ]) => {
-        if (!indicatorGroupInitiated) {
-          this.indicatorGroupStore.dispatch(
-            new fromIndicatorGroupActions.LoadIndicatorGroupsInitiated()
-          );
-          this.indicatorGroupService.loadAll().subscribe(
-            (indicatorGroups: any[]) => {
-              this.indicatorGroupStore.dispatch(
-                new fromIndicatorGroupActions.AddIndicatorGroups(
-                  fromHelpers.getStandardizedIndicatorGroups(indicatorGroups)
-                )
-              );
-            },
-            (error: any) => {
-              this.indicatorGroupStore.dispatch(
-                new fromIndicatorGroupActions.LoadIndicatorGroupsFail(error)
-              );
-            }
-          );
-        }
+    tap(([action, indicatorGroupInitiated]: [LoadIndicatorGroups, boolean]) => {
+      if (!indicatorGroupInitiated) {
+        this.indicatorGroupStore.dispatch(new LoadIndicatorGroupsInitiated());
+        this.indicatorGroupService.loadAll().subscribe(
+          (indicatorGroups: any[]) => {
+            this.indicatorGroupStore.dispatch(
+              new AddIndicatorGroups(
+                getStandardizedIndicatorGroups(indicatorGroups)
+              )
+            );
+          },
+          (error: any) => {
+            this.indicatorGroupStore.dispatch(
+              new LoadIndicatorGroupsFail(error)
+            );
+          }
+        );
       }
-    )
+    })
   );
 
   constructor(
     private actions$: Actions,
-    private indicatorGroupService: fromServices.IndicatorGroupService,
-    private indicatorGroupStore: Store<fromIndicatorGroupReducer.State>
+    private indicatorGroupService: IndicatorGroupService,
+    private indicatorGroupStore: Store<State>
   ) {}
 }

@@ -2,11 +2,9 @@ import { createSelector } from '@ngrx/store';
 
 import { Visualization } from '../../models';
 import {
-  getVisualizationObjectEntities,
-  getVisualizationLayerEntities
-} from '../reducers';
-import { getCurrentVisualizationConfig } from './visualization-configuration.selectors';
-import { getCurrentVisualizationObjectLayers } from './visualization-layer.selectors';
+  getVisualizationLayerEntities,
+  getVisualizationObjectEntities
+} from '../reducers/visualization.reducer';
 
 export const getVisualizationObjectById = id =>
   createSelector(

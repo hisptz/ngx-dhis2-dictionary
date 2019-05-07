@@ -1,11 +1,11 @@
+import { createSelector } from '@ngrx/store';
+
+import { getFocusedVisualizationState } from '../reducers/visualization-ui-configuration.reducer';
 import {
-  getVisualizationObjectEntities,
   getVisualizationUiConfigurationEntities,
   getVisualizationUiConfigurationState
-} from '../reducers';
-import { createSelector, MemoizedSelector } from '@ngrx/store';
-import { Visualization, VisualizationUiConfig } from '../../models';
-import { getFocusedVisualizationState } from '../reducers/visualization-ui-configuration.reducer';
+} from '../reducers/visualization.reducer';
+
 export const getCurrentVisualizationUiConfig = (visualizationId: string) =>
   createSelector(
     getVisualizationUiConfigurationEntities,

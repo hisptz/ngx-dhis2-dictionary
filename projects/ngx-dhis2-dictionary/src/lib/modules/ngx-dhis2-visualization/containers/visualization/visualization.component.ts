@@ -30,7 +30,7 @@ import {
   UpdateVisualizationObjectAction
 } from '../../store/actions/visualization-object.actions';
 import { ShowOrHideVisualizationBodyAction } from '../../store/actions/visualization-ui-configuration.actions';
-import { VisualizationState } from '../../store/reducers';
+import { VisualizationState } from '../../store/reducers/visualization.reducer';
 import { getCurrentVisualizationConfig } from '../../store/selectors/visualization-configuration.selectors';
 import { getCurrentVisualizationObjectLayers } from '../../store/selectors/visualization-layer.selectors';
 import { getVisualizationObjectById } from '../../store/selectors/visualization-object.selectors';

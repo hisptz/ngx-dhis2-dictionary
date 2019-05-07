@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
-import { NgxDhis2HttpClientService } from '@hisptz/ngx-dhis2-http-client';
+import { NgxDhis2HttpClientService } from '@iapps/ngx-dhis2-http-client';
 import * as _ from 'lodash';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 
+import { generateUid } from '../../../../../helpers/generate-uid.helper';
 import {
   COMPLETENESS_FUNCTION,
   EARLY_COMPLETENESS_FUNCTION,
   PREDICTOR_FUNCTION,
   REPORTING_RATE_BY_FILLED_DATA
 } from '../constants';
-import { prepareFunctionForSaving } from '../helpers';
+import { prepareFunctionForSaving } from '../helpers/prepare-function-for-saving.helper';
 import { FunctionObject } from '../models';
-import { generateUid } from '../../../../../helpers/generate-uid.helper';
 
 @Injectable({ providedIn: 'root' })
 export class FunctionService {

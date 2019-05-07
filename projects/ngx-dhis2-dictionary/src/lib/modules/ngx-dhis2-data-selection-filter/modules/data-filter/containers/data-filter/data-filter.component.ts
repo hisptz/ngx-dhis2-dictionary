@@ -10,8 +10,6 @@ import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-
-import * as fromHelpers from '../../helpers';
 import { addMembersToGroups } from '../../helpers/add-members-to-group.helper';
 import { getDataFilterSelectionsBasedOnPreferences } from '../../helpers/get-data-filter-selections-based-on-preferences.helper';
 import { getDataGroupBasedOnDataItem } from '../../helpers/get-data-group-based-on-data-item.helper';
@@ -19,12 +17,13 @@ import { removeAllMembersFromGroups } from '../../helpers/remove-all-members-fro
 import { removeMemberFromGroup } from '../../helpers/remove-member-from-group.helper';
 import { updateDataGroupInList } from '../../helpers/update-data-group-in-list.helper';
 import { ARROW_LEFT_ICON, ARROW_RIGHT_ICON, LIST_ICON } from '../../icons';
-import * as fromModels from '../../models';
 import { DataFilterPreference } from '../../models/data-filter-preference.model';
 import { DataGroup } from '../../models/data-group.model';
 import * as fromDataFilterActions from '../../store/actions/data-filter.actions';
 import * as fromDataFilterReducer from '../../store/reducers/data-filter.reducer';
 import * as fromDataFilterSelectors from '../../store/selectors/data-filter.selectors';
+import { filterByName } from '../../helpers/filter-by-name.helper';
+import { DataFilterSelection } from '../../models';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -67,7 +66,7 @@ export class DataFilterComponent implements OnInit, OnDestroy {
 
   selectedGroupId: string;
 
-  dataFilterSelections: fromModels.DataFilterSelection[];
+  dataFilterSelections: DataFilterSelection[];
   showGroups: boolean;
 
   // icons
@@ -233,7 +232,7 @@ export class DataFilterComponent implements OnInit, OnDestroy {
     this.dataFilterItems$
       .pipe(
         map((dataFilterItems: any[]) =>
-          fromHelpers.filterByName(dataFilterItems, this.dataItemSearchTerm)
+          filterByName(dataFilterItems, this.dataItemSearchTerm)
         ),
         take(1)
       )

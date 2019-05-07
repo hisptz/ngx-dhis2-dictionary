@@ -1,11 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { components } from './components/index';
+import { ChartItemComponent } from './components/chart-item/chart-item.component';
+import { ChartListComponent } from './components/chart-list/chart-list.component';
 
 @NgModule({
   imports: [CommonModule],
-  declarations: [...components],
-  exports: [...components]
+  declarations: [ChartListComponent, ChartItemComponent],
+  exports: [ChartListComponent, ChartItemComponent]
 })
 export class NgxDhis2ChartModule {}
