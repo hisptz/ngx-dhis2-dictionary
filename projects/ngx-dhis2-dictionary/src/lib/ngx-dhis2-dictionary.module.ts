@@ -35,7 +35,6 @@ import {
   indicatorsListReducer,
   programIndicatorsListReducer
 } from './store/reducers/indicators.reducers';
-import { NgxDhis2SelectionFiltersModule } from './modules/ngx-dhis2-data-selection-filter/ngx-dhis2-selection-filters.module';
 import { VisualizationContainerComponent } from './components/visualization-container/visualization-container.component';
 @NgModule({
   imports: [
@@ -44,7 +43,6 @@ import { VisualizationContainerComponent } from './components/visualization-cont
     FormsModule,
     NgxPaginationModule,
     NgxDhis2VisualizationModule,
-    NgxDhis2SelectionFiltersModule,
     StoreModule.forFeature('dictionary', dictionaryReducer),
     StoreModule.forFeature('indicatorsList', indicatorsListReducer),
     StoreModule.forFeature(

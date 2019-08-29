@@ -31,6 +31,8 @@ export class TableItemComponent implements OnInit {
 
   ngOnInit() {
     if (this.analyticsObject && this.tableConfiguration) {
+      console.log(JSON.stringify(this.analyticsObject))
+      console.log(JSON.stringify(this.tableConfiguration))
       this.tableObject = drawTable(
         this.analyticsObject,
         this.tableConfiguration,
