@@ -588,54 +588,6 @@
             </table>
           </div>
         </div>
-
-        <!-- dataset completness -->
-        <div
-          *ngIf="
-            (dictionaryItem.data.denominatorDatasets ||
-              dictionaryItem.data.numeratorDatasets) &&
-            (dictionaryItem.data.denominatorDatasets.length > 0 ||
-              dictionaryItem.data.numeratorDatasets.length > 0)
-          "
-        >
-          <h4>Completeness of data sources</h4>
-          <p>
-            The following visualizations outline completeness of data sources
-            (datasets) for all the data elements used in calculations of the
-            indicator:
-          </p>
-
-          <div>
-            <app-visualization-container
-              [viewId]="dictionaryItem.data.metadata.id + '_completeness'"
-              [reportType]="'REPORTING_RATE'"
-              [numeratorDataSets]="dictionaryItem.data.numeratorDatasets"
-              [denominatorDataSets]="dictionaryItem.data.denominatorDatasets"
-            ></app-visualization-container>
-          </div>
-        </div>
-        <!-- end of dataset completness -->
-
-        <!-- dataset timeliness -->
-        <div style="margin-bottom: 20px;">
-          <h4>Timeliness of data sources</h4>
-          <p>
-            The following visualizations outline timeliness of data sources
-            (datasets) for all the data elements used in calculations of the
-            indicator
-          </p>
-
-          <div>
-            <app-visualization-container
-              [viewId]="dictionaryItem.data.metadata.id + '_timeliness'"
-              [reportType]="'REPORTING_RATE_ON_TIME'"
-              [numeratorDataSets]="dictionaryItem.data.numeratorDatasets"
-              [denominatorDataSets]="dictionaryItem.data.denominatorDatasets"
-            ></app-visualization-container>
-          </div>
-        </div>
-        <!-- end of dataset timeliness -->
-
         <!-- Accessibility & Sharing settings -->
         <div>
           <h4 style="color: #464646;">Accessibility & Sharing settings</h4>
