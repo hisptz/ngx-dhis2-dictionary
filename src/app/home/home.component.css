@@ -1,0 +1,11 @@
+.dictionary-block {
+    border: solid thin #eeeeee;
+    overflow: auto;
+  }
+  
+  #copied-message {
+    display: none;
+    margin-left: 15px;
+    margin-bottom: -15px;
+    font-size: 0.7rem; color: #325E80
+  }

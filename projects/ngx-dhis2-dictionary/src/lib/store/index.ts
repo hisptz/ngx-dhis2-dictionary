@@ -1,2 +1,2 @@
-export * from './reducers';
-export * from './effects';
+export * from './reducers/dictionary.reducer';
+export * from './effects/indicators.effects';
