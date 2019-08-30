@@ -6,35 +6,32 @@ import {
   Output,
   EventEmitter,
   ElementRef
-} from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import * as _ from 'lodash';
-import { Observable, pipe } from 'rxjs';
-import { MetadataDictionary } from '../../models/dictionary';
+} from "@angular/core";
+import { Store, select } from "@ngrx/store";
+import * as _ from "lodash";
+import { Observable, pipe } from "rxjs";
+import { MetadataDictionary } from "../../models/dictionary";
 
-import { DictionaryState } from '../../store/reducers/dictionary.reducer';
-import { getDictionaryList } from '../../store/selectors/dictionary.selectors';
-import { InitializeDictionaryMetadataAction } from '../../store/actions/dictionary.actions';
-import * as indicators from '../../store/actions/indicators.actions';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DictionaryState } from "../../store/reducers/dictionary.reducer";
+import { getDictionaryList } from "../../store/selectors/dictionary.selectors";
+import { InitializeDictionaryMetadataAction } from "../../store/actions/dictionary.actions";
+import * as indicators from "../../store/actions/indicators.actions";
+import { DomSanitizer } from "@angular/platform-browser";
 import {
   getListOfIndicators,
   getAllIndicators,
   getIndicatorGroups
-} from '../../store/selectors/indicators.selectors';
-import { AppState } from '../../store/reducers/indicators.reducers';
-import { Identifiers } from '@angular/compiler';
-import { IndicatorGroupsState } from '../../store/state/indicators.state';
-import { ExportService } from '../../services/export.service';
-import { DatePipe } from '@angular/common';
-import { LoadDataFilters } from '../../modules/ngx-dhis2-data-selection-filter/modules/data-filter/store/actions/data-filter.actions';
-import { UserService } from '../../services/user.service';
+} from "../../store/selectors/indicators.selectors";
+import { AppState } from "../../store/reducers/indicators.reducers";
+import { IndicatorGroupsState } from "../../store/state/indicators.state";
+import { ExportService } from "../../services/export.service";
+import { DatePipe } from "@angular/common";
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'ngx-dhis2-dictionary-list',
-  templateUrl: './dictionary-list.component.html',
-  styleUrls: ['./dictionary-list.component.css'],
+  selector: "ngx-dhis2-dictionary-list",
+  templateUrl: "./dictionary-list.component.html",
+  styleUrls: ["./dictionary-list.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DictionaryListComponent implements OnInit {
@@ -64,20 +61,16 @@ export class DictionaryListComponent implements OnInit {
     private store: Store<DictionaryState>,
     private indicatorsStore: Store<AppState>,
     private exportService: ExportService,
-    private userService: UserService,
     private sanitizer: DomSanitizer,
     private datePipe: DatePipe
   ) {
-    this.searchingText = '';
+    this.searchingText = "";
     this.indicators = [];
     this.loading = true;
     this.error = false;
   }
 
   ngOnInit() {
-    this.userService.getCurrentUser().subscribe(currentUser => {
-      this.indicatorsStore.dispatch(new LoadDataFilters(currentUser));
-    });
     this.listAllMetadataInGroup = false;
     if (this.selectedItem) {
       this.selectedIndicator = this.selectedItem;
@@ -86,7 +79,7 @@ export class DictionaryListComponent implements OnInit {
     }
     if (
       this.metadataIdentifiers.length > 0 &&
-      this.metadataIdentifiers[0] !== ''
+      this.metadataIdentifiers[0] !== ""
     ) {
       this.store.dispatch(
         new InitializeDictionaryMetadataAction(this.metadataIdentifiers)
@@ -95,7 +88,7 @@ export class DictionaryListComponent implements OnInit {
       this.dictionaryList$ = this.store.select(
         getDictionaryList(this.metadataIdentifiers)
       );
-    } else if (this.selectedIndicator == 'all') {
+    } else if (this.selectedIndicator == "all") {
       this.loadAllIndicators();
     } else {
     }
@@ -129,10 +122,10 @@ export class DictionaryListComponent implements OnInit {
     this.selectedIndicator = dictionaryItemId;
     this.metadataIdentifiers.push(dictionaryItemId);
     this.metadataIdentifiers = _.uniq(this.metadataIdentifiers);
-    if (this.selectedIndicator == 'all') {
+    if (this.selectedIndicator == "all") {
       this.loadAllIndicators();
       let objToEmit = {
-        selected: 'all',
+        selected: "all",
         otherSelectedIds: this.metadataIdentifiers
       };
       this.dictionaryItemId.emit(objToEmit);
@@ -159,7 +152,7 @@ export class DictionaryListComponent implements OnInit {
         identifiersInfo.forEach(identifier => {
           if (
             item.id !== identifier.id &&
-            identifier.name.indexOf('not found') < 0
+            identifier.name.indexOf("not found") < 0
           ) {
             identifiers.push(identifier.id);
           }
@@ -168,10 +161,10 @@ export class DictionaryListComponent implements OnInit {
     });
     this.metadataIdentifiers = _.uniq(identifiers);
     if (this.metadataIdentifiers.length == 0) {
-      this.selectedIndicator = 'all';
+      this.selectedIndicator = "all";
       this.loadAllIndicators();
       let objToEmit = {
-        selected: 'all',
+        selected: "all",
         otherSelectedIds: []
       };
       this.dictionaryItemId.emit(objToEmit);
@@ -201,7 +194,7 @@ export class DictionaryListComponent implements OnInit {
     if (this.indicatorsList$) {
       this.indicatorsList$.subscribe(indicatorList => {
         if (indicatorList) {
-          this.totalAvailableIndicators = indicatorList['pager']['total'];
+          this.totalAvailableIndicators = indicatorList["pager"]["total"];
           this.allIndicators$ = this.indicatorsStore.select(
             pipe(getAllIndicators)
           );
@@ -232,14 +225,14 @@ export class DictionaryListComponent implements OnInit {
           if (this.indicatorsList$) {
             this.indicatorsList$.subscribe(indicatorList => {
               if (indicatorList) {
-                this.totalAvailableIndicators = indicatorList['pager']['total'];
+                this.totalAvailableIndicators = indicatorList["pager"]["total"];
                 this.allIndicators$.subscribe(indicatorsLoaded => {
                   if (indicatorsLoaded) {
                     this.indicators = [];
                     _.map(indicatorsLoaded, indicatorsByPage => {
                       this.indicators = [
                         ...this.indicators,
-                        ...indicatorsByPage['indicators']
+                        ...indicatorsByPage["indicators"]
                       ];
                       this.completedPercent =
                         100 *
@@ -262,7 +255,7 @@ export class DictionaryListComponent implements OnInit {
           if (this.indicatorGroups$) {
             this.indicatorGroups$.subscribe(indicatorGroups => {
               if (indicatorGroups) {
-                this.indicatorGroups = indicatorGroups['indicatorGroups'];
+                this.indicatorGroups = indicatorGroups["indicatorGroups"];
               }
             });
           }
@@ -280,19 +273,19 @@ export class DictionaryListComponent implements OnInit {
   }
 
   sortLegends(legends) {
-    return _.reverse(_.sortBy(legends, ['startValue']));
+    return _.reverse(_.sortBy(legends, ["startValue"]));
   }
 
   getCategories(categoryOptionCombos) {
     let categories = [];
     categoryOptionCombos.forEach(categoryCombo => {
-      categoryCombo['categoryOptions'].forEach(option => {
-        _.map(option['categories'], (category: any) => {
+      categoryCombo["categoryOptions"].forEach(option => {
+        _.map(option["categories"], (category: any) => {
           categories.push(category);
         });
       });
     });
-    return _.uniqBy(categories, 'id');
+    return _.uniqBy(categories, "id");
   }
 
   getDataSetFromDataElement(dataSetElements) {
@@ -305,36 +298,36 @@ export class DictionaryListComponent implements OnInit {
 
   formatTextToSentenceFormat(text) {
     text
-      .split('_')
+      .split("_")
       .map(function(stringSection) {
         return (
           stringSection.slice(0, 1).toUpperCase() +
           stringSection.slice(1).toLowerCase()
         );
       })
-      .join(' ');
+      .join(" ");
     return (
       text
-        .split('_')
-        .join(' ')
+        .split("_")
+        .join(" ")
         .slice(0, 1)
         .toUpperCase() +
       text
-        .split('_')
-        .join(' ')
+        .split("_")
+        .join(" ")
         .slice(1)
         .toLowerCase()
     );
   }
 
   exportMetadataInformation(dictionaryItem) {
-    this.html = document.getElementById('template-to-export').outerHTML;
+    this.html = document.getElementById("template-to-export").outerHTML;
     let theDate = new Date();
-    this.datePipe.transform(theDate, 'yyyy-MM-dd');
+    this.datePipe.transform(theDate, "yyyy-MM-dd");
     this.exportService.exportXLS(
       dictionaryItem.name +
-        '_generated_on_' +
-        this.datePipe.transform(theDate, 'yyyy-MM-dd'),
+        "_generated_on_" +
+        this.datePipe.transform(theDate, "yyyy-MM-dd"),
       this.html
     );
   }
@@ -347,7 +340,7 @@ export class DictionaryListComponent implements OnInit {
     //   }
     // })
     if (!listAllMetadataInGroup) {
-      return allMedatada.slice(0,3)
+      return allMedatada.slice(0, 3);
     } else {
       return allMedatada;
     }
@@ -356,18 +349,18 @@ export class DictionaryListComponent implements OnInit {
   getExpressionPart(element, indicator) {
     let expressionPartAvailability = [];
     if (indicator.numerator.indexOf(element.id) > -1) {
-      expressionPartAvailability.push('Numerator');
+      expressionPartAvailability.push("Numerator");
     } else if (indicator.denominator.indexOf(element.id) > -1) {
-      expressionPartAvailability.push('Denominator');
+      expressionPartAvailability.push("Denominator");
     }
     if (expressionPartAvailability.length == 1) {
       return expressionPartAvailability[0];
     } else if (expressionPartAvailability.length == 2) {
       return (
-        expressionPartAvailability[0] + ' and ' + expressionPartAvailability[1]
+        expressionPartAvailability[0] + " and " + expressionPartAvailability[1]
       );
     } else {
-      return 'None';
+      return "None";
     }
   }
 
@@ -384,8 +377,13 @@ export class DictionaryListComponent implements OnInit {
     this.listAllMetadataInGroup = true;
     this.isprintSet = true;
     if (this.isprintSet) {
-      setTimeout(function(){this.isprintSet = false;window.print();}, 500);
-      setTimeout(function(){this.isprintSet = false; }, 1000);
+      setTimeout(function() {
+        this.isprintSet = false;
+        window.print();
+      }, 500);
+      setTimeout(function() {
+        this.isprintSet = false;
+      }, 1000);
     }
   }
 }
