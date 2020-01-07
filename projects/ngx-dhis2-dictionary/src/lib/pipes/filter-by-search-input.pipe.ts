@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
+import * as _ from "lodash";
 
 @Pipe({
   name: "filterBySearchInput",
@@ -12,19 +13,52 @@ export class FilterBySearchInputPipe implements PipeTransform {
         [",", "[", "]", "(", ")", ",", ".", "-", "_"].forEach(char => {
           splittedText = splittedText.split(char).join(" ");
         });
-        return indicators.filter(indicator => {
-          let foundIndicatorMatchingSearchingInput = true;
-          splittedText.split(" ").forEach(partOfSearchingText => {
+        let newIndicators = [];
+
+        splittedText.split(" ").forEach(partOfSearchingText => {
+          _.map(newIndicators, formattedIndicator => {
+            if (
+              formattedIndicator.name
+                .toLowerCase()
+                .indexOf(partOfSearchingText.toLowerCase()) > -1
+            ) {
+              newIndicators[
+                _.findIndex(newIndicators, {
+                  id: formattedIndicator.id
+                })
+              ]["priority"] += 1;
+            }
+          });
+
+          _.map(indicators, indicator => {
             if (
               indicator.name
                 .toLowerCase()
-                .indexOf(partOfSearchingText.toLowerCase()) === -1
+                .indexOf(partOfSearchingText.toLowerCase()) > -1 &&
+              _.findIndex(newIndicators, {
+                id: indicator.id
+              }) == -1
             ) {
-              foundIndicatorMatchingSearchingInput = false;
+              indicator["priority"] = 1;
+              newIndicators.push(indicator);
             }
           });
-          return foundIndicatorMatchingSearchingInput;
         });
+
+        indicators = _.orderBy(newIndicators, ["priority"], ["desc"]);
+        // return indicators.filter(indicator => {
+        //   let foundIndicatorMatchingSearchingInput = true;
+        //   splittedText.split(" ").forEach(partOfSearchingText => {
+        //     if (
+        //       indicator.name
+        //         .toLowerCase()
+        //         .indexOf(partOfSearchingText.toLowerCase()) === -1
+        //     ) {
+        //       foundIndicatorMatchingSearchingInput = false;
+        //     }
+        //   });
+        //   return foundIndicatorMatchingSearchingInput;
+        // });
       }
     }
     return indicators;
