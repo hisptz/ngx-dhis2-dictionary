@@ -40,13 +40,12 @@ export class FilterBySearchInputPipe implements PipeTransform {
                   id: indicator.id
                 }) == -1
               ) {
-                indicator["priority"] = 1;
+                indicator = { ...indicator, priority: 1 };
                 newIndicators.push(indicator);
               }
             });
           }
         });
-
         indicators = _.orderBy(newIndicators, ["priority"], ["desc"]);
       }
     }
