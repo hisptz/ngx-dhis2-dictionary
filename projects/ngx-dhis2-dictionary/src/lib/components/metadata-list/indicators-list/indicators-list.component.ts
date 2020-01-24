@@ -210,6 +210,20 @@ export class IndicatorsListComponent implements OnInit {
     return groupsString;
   }
 
+  filterIndicatorGroups(indicatorGroups, searchingTextForGroups) {
+    const splittedName = searchingTextForGroups
+      ? searchingTextForGroups.split(/[\.\-_,; ]/)
+      : [];
+    return splittedName.length > 0
+      ? indicatorGroups.filter((item: any) =>
+          splittedName.some(
+            (nameString: string) =>
+              item.name.toLowerCase().indexOf(nameString.toLowerCase()) !== -1
+          )
+        )
+      : indicatorGroups;
+  }
+
   dwndToCSV(metadataObject$, indicatorGroups$?) {
     metadataObject$.subscribe(metadataArr => {
       let arr = [];
@@ -225,8 +239,13 @@ export class IndicatorsListComponent implements OnInit {
       arr.push("Created on");
       arr.push("Created by");
       this.dataToDownload.push(arr);
+      let newIndicatorGroups = [];
       indicatorGroups$.subscribe(indicatorGroups => {
-        _.map(indicatorGroups["indicatorGroups"], indicatorGroup => {
+        newIndicatorGroups =
+          this.indicatorGroupsForSearching.length > 0
+            ? this.indicatorGroupsForSearching
+            : indicatorGroups["indicatorGroups"];
+        _.map(newIndicatorGroups, indicatorGroup => {
           _.map(metadataArr, metadata => {
             if (
               _.filter(metadata.indicatorGroups, { id: indicatorGroup.id })
@@ -335,11 +354,7 @@ export class IndicatorsListComponent implements OnInit {
         theDate = this.datePipe.transform(theDate, "yyyy-MM-dd");
         return downloadExcelCsv(
           this.dataToDownload,
-          "List_of_" +
-            this.totalAvailableIndicators +
-            "_indicators_generated_on" +
-            theDate +
-            ".csv"
+          "List_of_indicators_generated_on" + theDate + ".csv"
         );
       }.call(this));
     });
