@@ -1,27 +1,28 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AppState } from '../../../store/reducers/indicators.reducers';
-import { Store } from '@ngrx/store';
-import { Observable, pipe } from 'rxjs';
-import * as _ from 'lodash';
-import { getListOfProgramIndicators, getAllProgramIndicators } from '../../../store/selectors/indicators.selectors';
-import * as indicators from '../../../store/actions/indicators.actions';
-import { DatePipe } from '@angular/common';
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { AppState } from "../../../store/reducers/indicators.reducers";
+import { Store } from "@ngrx/store";
+import { Observable, pipe } from "rxjs";
+import * as _ from "lodash";
+import {
+  getListOfProgramIndicators,
+  getAllProgramIndicators
+} from "../../../store/selectors/indicators.selectors";
+import * as indicators from "../../../store/actions/indicators.actions";
+import { DatePipe } from "@angular/common";
 
 @Component({
-  selector: 'app-program-indicators',
-  templateUrl: './program-indicators.component.html',
-  styleUrls: ['./program-indicators.component.css']
+  selector: "app-program-indicators",
+  templateUrl: "./program-indicators.component.html",
+  styleUrls: ["./program-indicators.component.css"]
 })
 export class ProgramIndicatorsComponent implements OnInit {
-
-
   @Input() metadataIdentifiers: any;
-  @Output() selectedMetadataIdentifier = new EventEmitter<string>()
+  @Output() selectedMetadataIdentifier = new EventEmitter<string>();
   programIndicatorsList$: Observable<any> = null;
   allProgramIndicators$: Observable<any>;
   error: boolean = false;
   loading: boolean = true;
-  hoverState = 'notHovered';
+  hoverState = "notHovered";
   itemsPerPageCount = 10;
   selectedIndicator: any = null;
   searchText: string;
@@ -40,31 +41,41 @@ export class ProgramIndicatorsComponent implements OnInit {
   totalAvailableProgramIndicators = 0;
   indicatorGroups: any[] = [];
   dataToDownload: any = [];
-  pageItemsConfiguration = [{value: 10, symbol: '10'},{value: 25, symbol: '25'},{value: 50, symbol: '50'},{value: 100, symbol: '100'},{value: 200, symbol: '200'},{value: 'all', symbol: 'all'}];
-  constructor(private metadataStore: Store<AppState>, private datePipe: DatePipe) {
-    this.searchText = '';
-    this.searchingTextForIndicatorGroup = '';
+  pageItemsConfiguration = [
+    { value: 10, symbol: "10" },
+    { value: 25, symbol: "25" },
+    { value: 50, symbol: "50" },
+    { value: 100, symbol: "100" },
+    { value: 200, symbol: "200" },
+    { value: "all", symbol: "all" }
+  ];
+  constructor(
+    private metadataStore: Store<AppState>,
+    private datePipe: DatePipe
+  ) {
+    this.searchText = "";
+    this.searchingTextForIndicatorGroup = "";
     this.listingIsSet = true;
     if (this.completedPercentage >= 100) {
       this.loading = false;
       this.error = false;
     }
-   }
+  }
 
   ngOnInit() {
     this.loadAllProgramIndicators();
   }
 
-  setItemsPerPage(value){
-    this.itemsPerPageCount =value;
+  setItemsPerPage(value) {
+    this.itemsPerPageCount = value;
   }
 
   toggleListingOfItems() {
     this.listingIsSet = !this.listingIsSet;
   }
 
-  selectedMetadata(e){
-    this.selectedMetadataIdentifier.emit(e)
+  selectedMetadata(e) {
+    this.selectedMetadataIdentifier.emit(e);
   }
 
   mouseEnter(indicator, hoverState) {
@@ -74,24 +85,31 @@ export class ProgramIndicatorsComponent implements OnInit {
 
   mouseLeave() {
     this.selectedIndicator = null;
-    this.hoverState = 'notHovered';
+    this.hoverState = "notHovered";
   }
 
-  
   showGroups() {
     this.showIndicatorGroups = !this.showIndicatorGroups;
   }
 
   inGroupToFilter(id) {
-    return _.find(this.groupToFilter, {id: id});
+    return _.find(this.groupToFilter, { id: id });
   }
 
   groupNames() {
-    if ( this.indicatorGroupsForSearching.length < 5 ) {
-      return this.indicatorGroupsForSearching.map( g => g.name ).join(', ');
-    }else {
+    if (this.indicatorGroupsForSearching.length < 5) {
+      return this.indicatorGroupsForSearching.map(g => g.name).join(", ");
+    } else {
       const diff = this.indicatorGroupsForSearching.length - 4;
-      return this.indicatorGroupsForSearching.slice(0, 4).map( g => g.name ).join(', ') + ' and ' + diff + ' More';
+      return (
+        this.indicatorGroupsForSearching
+          .slice(0, 4)
+          .map(g => g.name)
+          .join(", ") +
+        " and " +
+        diff +
+        " More"
+      );
     }
   }
 
@@ -100,126 +118,163 @@ export class ProgramIndicatorsComponent implements OnInit {
       this.indicatorGroupsForSearching.push(group);
     } else {
       let index = this.indicatorGroupsForSearching.indexOf(group);
-      this.indicatorGroupsForSearching.splice(index, 1)
+      this.indicatorGroupsForSearching.splice(index, 1);
     }
   }
 
-  loadAllProgramIndicators(){
-    this.programIndicatorsList$ = this.metadataStore.select(pipe(getListOfProgramIndicators));
-    this.allProgramIndicators$ = this.metadataStore.select(pipe(getAllProgramIndicators));
+  loadAllProgramIndicators() {
+    this.programIndicatorsList$ = this.metadataStore.select(
+      pipe(getListOfProgramIndicators)
+    );
+    this.allProgramIndicators$ = this.metadataStore.select(
+      pipe(getAllProgramIndicators)
+    );
     if (this.programIndicatorsList$) {
-      this.programIndicatorsList$.subscribe((list) => {
+      this.programIndicatorsList$.subscribe(list => {
         if (list) {
-          this.totalAvailableProgramIndicators = list['pager']['total']
-                this.allProgramIndicators$.subscribe((indicatorsLoaded) => {
-                  if (indicatorsLoaded) {
-                    this.programIndicators = [];
-                    _.map(indicatorsLoaded, (indicatorsByPage) => {
-                      this.programIndicators = [...this.programIndicators, ...indicatorsByPage];
-                      this.completedPercentage = 100 * (this.programIndicators.length / this.totalAvailableProgramIndicators);
-                      if (this.completedPercentage === 100 ) {
-                        this.loading = false;
-                        this.error = false;
-                      }
-                    })
-                  }
-                })
+          this.totalAvailableProgramIndicators = list["pager"]["total"];
+          this.allProgramIndicators$.subscribe(indicatorsLoaded => {
+            if (indicatorsLoaded) {
+              this.programIndicators = [];
+              _.map(indicatorsLoaded, indicatorsByPage => {
+                this.programIndicators = [
+                  ...this.programIndicators,
+                  ...indicatorsByPage
+                ];
+                this.completedPercentage =
+                  100 *
+                  (this.programIndicators.length /
+                    this.totalAvailableProgramIndicators);
+                if (this.completedPercentage === 100) {
+                  this.loading = false;
+                  this.error = false;
+                }
+              });
+            }
+          });
         } else {
-          this.metadataStore.dispatch(new indicators.loadProgramIndicatorsAction());
-          this.programIndicatorsList$ = this.metadataStore.select(pipe(getListOfProgramIndicators));
-          this.allProgramIndicators$ = this.metadataStore.select(pipe(getAllProgramIndicators));
+          this.metadataStore.dispatch(
+            new indicators.loadProgramIndicatorsAction()
+          );
+          this.programIndicatorsList$ = this.metadataStore.select(
+            pipe(getListOfProgramIndicators)
+          );
+          this.allProgramIndicators$ = this.metadataStore.select(
+            pipe(getAllProgramIndicators)
+          );
           if (this.programIndicatorsList$) {
-            this.programIndicatorsList$.subscribe((list) => {
+            this.programIndicatorsList$.subscribe(list => {
               if (list) {
-                this.totalAvailableProgramIndicators = list['pager']['total']
-                this.allProgramIndicators$.subscribe((indicatorsLoaded) => {
+                this.totalAvailableProgramIndicators = list["pager"]["total"];
+                this.allProgramIndicators$.subscribe(indicatorsLoaded => {
                   if (indicatorsLoaded) {
                     this.programIndicators = [];
-                    _.map(indicatorsLoaded, (indicatorsByPage) => {
-                      this.programIndicators = [...this.programIndicators, ...indicatorsByPage];
-                      this.completedPercentage = 100 * (this.programIndicators.length / this.totalAvailableProgramIndicators);
-                      if (this.completedPercentage === 100 ) {
+                    _.map(indicatorsLoaded, indicatorsByPage => {
+                      this.programIndicators = [
+                        ...this.programIndicators,
+                        ...indicatorsByPage
+                      ];
+                      this.completedPercentage =
+                        100 *
+                        (this.programIndicators.length /
+                          this.totalAvailableProgramIndicators);
+                      if (this.completedPercentage === 100) {
                         this.loading = false;
                         this.error = false;
                       }
-                    })
+                    });
                   }
-                })
+                });
               }
-            })
+            });
           }
         }
-      })
+      });
     }
   }
 
   dwndToCSV(metadataObject$) {
-    metadataObject$.subscribe((metadataArr) => {
+    metadataObject$.subscribe(metadataArr => {
+      console.log("metadataArr ", metadataArr);
       let arr = [];
-      arr.push('UID'); arr.push('Indicator Name'); arr.push('Aggregation type'); arr.push('Description');
-      arr.push('Expression'); arr.push('Filter');
+      arr.push("UID");
+      arr.push("Indicator Name");
+      arr.push("Aggregation type");
+      arr.push("Description");
+      arr.push("Expression");
+      arr.push("Filter");
       this.dataToDownload.push(arr);
-      if (metadataArr) {metadataArr.forEach((metadata) => {
-        let arr = [];
+      if (metadataArr) {
+        metadataArr.forEach(metadata => {
+          let arr = [];
           arr.push(metadata.id);
           arr.push(metadata.name);
           arr.push(metadata.aggregationType);
           if (metadata.description) {
             arr.push(metadata.description);
           } else {
-            arr.push(metadata.name)
+            arr.push(metadata.name);
           }
           arr.push(metadata.expression);
           if (metadata.filter) {
             arr.push(metadata.filter);
           } else {
-            arr.push("None")
+            arr.push("None");
           }
-        this.dataToDownload.push(arr)
-      })}
+          this.dataToDownload.push(arr);
+        });
+      }
       (function() {
         let asUtf16, downloadExcelCsv, makeExcelCsvBlob, toTsv;
         let rows = this.dataToDownload;
-      
+
         asUtf16 = function(str) {
           var buffer, bufferView, i, val, _i, _ref;
           buffer = new ArrayBuffer(str.length * 2);
           bufferView = new Uint16Array(buffer);
           bufferView[0] = 0xfeff;
-          for (i = _i = 0, _ref = str.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+          for (
+            i = _i = 0, _ref = str.length;
+            0 <= _ref ? _i <= _ref : _i >= _ref;
+            i = 0 <= _ref ? ++_i : --_i
+          ) {
             val = str.charCodeAt(i);
             bufferView[i + 1] = val;
           }
           return bufferView;
         };
-      
+
         makeExcelCsvBlob = function(rows) {
           return new Blob([asUtf16(toTsv(rows)).buffer], {
             type: "text/csv;charset=UTF-16"
           });
         };
-      
+
         toTsv = function(rows) {
           var escapeValue;
           escapeValue = function(val) {
-            if (typeof val === 'string') {
+            if (typeof val === "string") {
               return '"' + val.replace(/"/g, '""') + '"';
             } else if (val != null) {
               return val;
             } else {
-              return '';
+              return "";
             }
           };
-          return rows.map(function(row) {
-            return row.map(escapeValue).join(',');
-          }).join('\n') + '\n';
+          return (
+            rows
+              .map(function(row) {
+                return row.map(escapeValue).join(",");
+              })
+              .join("\n") + "\n"
+          );
         };
-      
+
         downloadExcelCsv = function(rows, attachmentFilename) {
           var a, blob;
           blob = makeExcelCsvBlob(rows);
-          a = document.createElement('a');
-          a.style.display = 'none';
+          a = document.createElement("a");
+          a.style.display = "none";
           a.download = attachmentFilename;
           document.body.appendChild(a);
           a.href = URL.createObjectURL(blob);
@@ -227,10 +282,18 @@ export class ProgramIndicatorsComponent implements OnInit {
           URL.revokeObjectURL(a.href);
           a.remove();
         };
-        rows = this.dataToDownload;let theDate = new Date();
-        theDate = this.datePipe.transform(theDate, 'yyyy-MM-dd')
-       return downloadExcelCsv(this.dataToDownload, 'List_of_'  + this.totalAvailableProgramIndicators + '_program_indicators_generated_on' + theDate + '.csv');      
-      }).call(this);
-    })
+        rows = this.dataToDownload;
+        let theDate = new Date();
+        theDate = this.datePipe.transform(theDate, "yyyy-MM-dd");
+        return downloadExcelCsv(
+          this.dataToDownload,
+          "List_of_" +
+            this.totalAvailableProgramIndicators +
+            "_program_indicators_generated_on" +
+            theDate +
+            ".csv"
+        );
+      }.call(this));
+    });
   }
 }

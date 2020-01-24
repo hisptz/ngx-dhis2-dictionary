@@ -1,7 +1,9 @@
 <div class="container-fluid" style="margin-top: 15px;">
   <div class="row">
     <div class="col-md-12">
-      <app-switching-btns (getActiveMetadataType)="getActiveMetadataType($event)"></app-switching-btns>
+      <app-switching-btns
+        (getActiveMetadataType)="getActiveMetadataType($event)"
+      ></app-switching-btns>
     </div>
   </div>
   <!-- Indicators -->
@@ -9,15 +11,18 @@
     <div class="col-md-12">
       <app-indicators-list
         [metadataIdentifiers]="metadataIdentifiers"
-        (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"></app-indicators-list>
+        (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"
+      ></app-indicators-list>
     </div>
   </div>
-<!-- Program indicators -->
+  <!-- Program indicators -->
   <div class="row" *ngIf="activeMetadataType == 'programIndicator'">
     <div class="col-md-12">
       <app-program-indicators
         [metadataIdentifiers]="metadataIdentifiers"
-        (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"></app-program-indicators>
+        (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"
+      ></app-program-indicators>
     </div>
   </div>
 </div>
+<div class="footer" style="height: 30px"></div>
