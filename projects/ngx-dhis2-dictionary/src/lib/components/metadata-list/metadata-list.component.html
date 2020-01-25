@@ -12,6 +12,7 @@
       <app-indicators-list
         [metadataIdentifiers]="metadataIdentifiers"
         (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"
+        (loadedMetadata)="loadedMetadata($event)"
       ></app-indicators-list>
     </div>
   </div>
@@ -21,6 +22,7 @@
       <app-program-indicators
         [metadataIdentifiers]="metadataIdentifiers"
         (selectedMetadataIdentifier)="selectedMetadataIdentifier($event)"
+        (loadedMetadata)="loadedMetadata($event)"
       ></app-program-indicators>
     </div>
   </div>

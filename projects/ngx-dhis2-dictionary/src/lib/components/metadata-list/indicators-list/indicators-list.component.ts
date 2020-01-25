@@ -21,6 +21,7 @@ import { DatePipe } from "@angular/common";
 export class IndicatorsListComponent implements OnInit {
   @Input() metadataIdentifiers: any;
   @Output() selectedMetadataIdentifier = new EventEmitter<string>();
+  @Output() loadedMetadata = new EventEmitter<any>();
   error: boolean = false;
   loading: boolean = true;
   hoverState = "notHovered";
@@ -176,6 +177,10 @@ export class IndicatorsListComponent implements OnInit {
                         ...this.indicators,
                         ...indicatorsByPage
                       ];
+                      this.loadedMetadata.emit({
+                        type: "indicator",
+                        data: this.indicators
+                      });
                       this.completedPercent =
                         100 *
                         (this.indicators.length /

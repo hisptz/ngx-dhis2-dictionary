@@ -1,21 +1,39 @@
 <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <h1 style="font-size: 35px; margin-top: 70px; text-align: left;">Welcome to ngx dhis2 dictionary demo
-          <span (click)="getSharedLink(metadataIdentifiers)"
-            title="get shared link"
-            style="cursor: pointer"
-            class="a-s-Ub-A-c"><svg class="a-s-fa-Ha-pa" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" focusable="false" fill="#000000"><path d="M3.9,12c0-1.7,1.4-3.1,3.1-3.1h4V7H7c-2.8,0-5,2.2-5,5s2.2,5,5,5h4v-1.9H7C5.3,15.1,3.9,13.7,3.9,12z M8,13h8v-2H8V13zM17,7h-4v1.9h4c1.7,0,3.1,1.4,3.1,3.1s-1.4,3.1-3.1,3.1h-4V17h4c2.8,0,5-2.2,5-5S19.8,7,17,7z"></path></svg>
-          </span>
-          <span id="copied-message">Link copied!</span>
-        </h1>
-        <input id="url" value="josephat" style="display: none" />
-        <div class="">
-          <ngx-dhis2-dictionary-list 
-          [metadataIdentifiers]="metadataIdentifiers" 
+  <div class="row">
+    <div class="col-12">
+      <h1 style="font-size: 35px; margin-top: 70px; text-align: left;">
+        Welcome to ngx dhis2 dictionary demo
+        <span
+          (click)="getSharedLink(metadataIdentifiers)"
+          title="get shared link"
+          style="cursor: pointer"
+          class="a-s-Ub-A-c"
+          ><svg
+            class="a-s-fa-Ha-pa"
+            x="0px"
+            y="0px"
+            width="24px"
+            height="24px"
+            viewBox="0 0 24 24"
+            focusable="false"
+            fill="#000000"
+          >
+            <path
+              d="M3.9,12c0-1.7,1.4-3.1,3.1-3.1h4V7H7c-2.8,0-5,2.2-5,5s2.2,5,5,5h4v-1.9H7C5.3,15.1,3.9,13.7,3.9,12z M8,13h8v-2H8V13zM17,7h-4v1.9h4c1.7,0,3.1,1.4,3.1,3.1s-1.4,3.1-3.1,3.1h-4V17h4c2.8,0,5-2.2,5-5S19.8,7,17,7z"
+            ></path>
+          </svg>
+        </span>
+        <span id="copied-message">Link copied!</span>
+      </h1>
+      <input id="url" value="josephat" style="display: none" />
+      <div class="">
+        <ngx-dhis2-dictionary-list
+          [metadataIdentifiers]="metadataIdentifiers"
           [selectedItem]="selectedItem"
-          (dictionaryItemId)="dictionaryItemId($event)"></ngx-dhis2-dictionary-list>
-        </div>
+          (dictionaryItemId)="dictionaryItemId($event)"
+          (metadataInfo)="metadataInfo($event)"
+        ></ngx-dhis2-dictionary-list>
       </div>
     </div>
   </div>
+</div>

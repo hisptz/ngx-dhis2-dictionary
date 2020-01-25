@@ -18,6 +18,7 @@ import { DatePipe } from "@angular/common";
 export class ProgramIndicatorsComponent implements OnInit {
   @Input() metadataIdentifiers: any;
   @Output() selectedMetadataIdentifier = new EventEmitter<string>();
+  @Output() loadedMetadata = new EventEmitter<any>();
   programIndicatorsList$: Observable<any> = null;
   allProgramIndicators$: Observable<any>;
   error: boolean = false;
@@ -141,6 +142,10 @@ export class ProgramIndicatorsComponent implements OnInit {
                   ...this.programIndicators,
                   ...indicatorsByPage
                 ];
+                this.loadedMetadata.emit({
+                  type: "programIndicator",
+                  data: this.programIndicators
+                });
                 this.completedPercentage =
                   100 *
                   (this.programIndicators.length /
