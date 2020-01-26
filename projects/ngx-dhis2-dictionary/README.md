@@ -21,6 +21,7 @@ To use the library, put this in your component
           [selectedItem]="selectedItem"
           (dictionaryItemId)="dictionaryItemId($event)"
           (metadataInfo)="metadataInfo($event)"
+          (metadataGroupsInfo)="metadataGroupsInfo($event)"
         ></ngx-dhis2-dictionary-list>
 </div>
 ```
@@ -41,4 +42,17 @@ metadataInfo is an output object with the format below
 
       for type 'indicator' you get indicator and for type 'programIndicator' you get program indicators
 
+metadataGroupsInfo is an out put for indicator or programIndicator groups.
+
+````[
+        {
+                id: "groupIdentifier",
+                name: "Name",
+                metadataTypeKey: "[{"id": "indentifier"}]"
+        }
+
+  ]```
+  metadataTypeKey can be "indicators" or "programIndicators"
+
 Currently supported ones are indicators, program indicators, data sets, data elements and functions
+````
