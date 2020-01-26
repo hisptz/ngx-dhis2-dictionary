@@ -1,7 +1,6 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import * as _ from "lodash";
-import { Identifiers } from "@angular/compiler";
 import { NgxDhis2HttpClientService } from "@iapps/ngx-dhis2-http-client";
 
 @Component({
@@ -144,6 +143,10 @@ export class HomeComponent implements OnInit {
   }
 
   metadataInfo(metadata) {
-    console.log("metadata", metadata);
+    // console.log("metadata", metadata);
+  }
+
+  metadataGroupsInfo(groups) {
+    console.log("metadataGroupsInfo ", groups);
   }
 }

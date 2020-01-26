@@ -22,6 +22,7 @@ export class IndicatorsListComponent implements OnInit {
   @Input() metadataIdentifiers: any;
   @Output() selectedMetadataIdentifier = new EventEmitter<string>();
   @Output() loadedMetadata = new EventEmitter<any>();
+  @Output() selectedMetadataGroups = new EventEmitter<any>();
   error: boolean = false;
   loading: boolean = true;
   hoverState = "notHovered";
@@ -125,6 +126,8 @@ export class IndicatorsListComponent implements OnInit {
       let index = this.indicatorGroupsForSearching.indexOf(group);
       this.indicatorGroupsForSearching.splice(index, 1);
     }
+    this.indicatorGroups = this.indicatorGroupsForSearching;
+    this.selectedMetadataGroups.emit(this.indicatorGroups);
   }
 
   loadAllIndicators() {
@@ -135,72 +138,71 @@ export class IndicatorsListComponent implements OnInit {
     this.indicatorGroups$ = this.indicatorsStore.pipe(
       select(getIndicatorGroups)
     );
-    if (this.indicatorsList$) {
-      this.indicatorsList$.subscribe(indicatorList => {
-        if (indicatorList) {
-          this.totalAvailableIndicators = indicatorList["pager"]["total"];
-          this.allIndicators$.subscribe(indicatorsLoaded => {
-            if (indicatorsLoaded) {
-              this.indicators = [];
-              _.map(indicatorsLoaded, indicatorsByPage => {
-                this.indicators = [...this.indicators, ...indicatorsByPage];
-                this.completedPercent =
-                  100 *
-                  (this.indicators.length / this.totalAvailableIndicators);
-                if (this.completedPercent === 100) {
-                  this.loading = false;
-                  this.error = false;
+    this.indicatorsList$.subscribe(indicatorList => {
+      if (indicatorList) {
+        this.totalAvailableIndicators = indicatorList["pager"]["total"];
+        this.allIndicators$.subscribe(indicatorsLoaded => {
+          if (indicatorsLoaded) {
+            this.indicators = [];
+            _.map(indicatorsLoaded, indicatorsByPage => {
+              this.indicators = [...this.indicators, ...indicatorsByPage];
+              this.completedPercent =
+                100 * (this.indicators.length / this.totalAvailableIndicators);
+              if (this.completedPercent === 100) {
+                this.loading = false;
+                this.error = false;
+              }
+            });
+          }
+        });
+      } else {
+        this.indicatorsStore.dispatch(new indicators.loadIndicatorsAction());
+        this.indicatorsStore.dispatch(
+          new indicators.LoadIndicatorGroupsAction()
+        );
+        this.indicatorsList$ = this.indicatorsStore.select(
+          pipe(getListOfIndicators)
+        );
+        this.allIndicators$ = this.indicatorsStore.select(
+          pipe(getAllIndicators)
+        );
+        if (this.indicatorsList$) {
+          this.indicatorsList$.subscribe(indicatorList => {
+            if (indicatorList) {
+              this.totalAvailableIndicators = indicatorList["pager"]["total"];
+              this.allIndicators$.subscribe(indicatorsLoaded => {
+                if (indicatorsLoaded) {
+                  this.indicators = [];
+                  _.map(indicatorsLoaded, indicatorsByPage => {
+                    this.indicators = [...this.indicators, ...indicatorsByPage];
+                    this.loadedMetadata.emit({
+                      type: "indicator",
+                      data: this.indicators
+                    });
+                    this.completedPercent =
+                      100 *
+                      (this.indicators.length / this.totalAvailableIndicators);
+                    if (this.completedPercent === 100) {
+                      this.loading = false;
+                      this.error = false;
+                    }
+                  });
                 }
               });
             }
           });
-        } else {
-          this.indicatorsStore.dispatch(new indicators.loadIndicatorsAction());
-          this.indicatorsStore.dispatch(
-            new indicators.LoadIndicatorGroupsAction()
-          );
-          this.indicatorsList$ = this.indicatorsStore.select(
-            pipe(getListOfIndicators)
-          );
-          this.allIndicators$ = this.indicatorsStore.select(
-            pipe(getAllIndicators)
-          );
-          if (this.indicatorsList$) {
-            this.indicatorsList$.subscribe(indicatorList => {
-              if (indicatorList) {
-                this.totalAvailableIndicators = indicatorList["pager"]["total"];
-                this.allIndicators$.subscribe(indicatorsLoaded => {
-                  if (indicatorsLoaded) {
-                    this.indicators = [];
-                    _.map(indicatorsLoaded, indicatorsByPage => {
-                      this.indicators = [
-                        ...this.indicators,
-                        ...indicatorsByPage
-                      ];
-                      this.loadedMetadata.emit({
-                        type: "indicator",
-                        data: this.indicators
-                      });
-                      this.completedPercent =
-                        100 *
-                        (this.indicators.length /
-                          this.totalAvailableIndicators);
-                      if (this.completedPercent === 100) {
-                        this.loading = false;
-                        this.error = false;
-                      }
-                    });
-                  }
-                });
-              }
-            });
-          }
-          this.indicatorGroups$ = this.indicatorsStore.pipe(
-            select(getIndicatorGroups)
-          );
         }
-      });
-    }
+        this.indicatorGroups$ = this.indicatorsStore.pipe(
+          select(getIndicatorGroups)
+        );
+      }
+    });
+    this.indicatorGroups$.subscribe(groups => {
+      if (groups) {
+        this.indicatorGroups = groups["indicatorGroups"];
+        this.selectedMetadataGroups.emit(this.indicatorGroups);
+      }
+    });
   }
 
   getActiveMetadataType(type) {

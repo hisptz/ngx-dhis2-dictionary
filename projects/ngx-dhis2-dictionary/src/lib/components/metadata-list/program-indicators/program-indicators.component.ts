@@ -5,7 +5,8 @@ import { Observable, pipe } from "rxjs";
 import * as _ from "lodash";
 import {
   getListOfProgramIndicators,
-  getAllProgramIndicators
+  getAllProgramIndicators,
+  getProgramIndicatorGroups
 } from "../../../store/selectors/indicators.selectors";
 import * as indicators from "../../../store/actions/indicators.actions";
 import { DatePipe } from "@angular/common";
@@ -19,6 +20,7 @@ export class ProgramIndicatorsComponent implements OnInit {
   @Input() metadataIdentifiers: any;
   @Output() selectedMetadataIdentifier = new EventEmitter<string>();
   @Output() loadedMetadata = new EventEmitter<any>();
+  @Output() selectedMetadataGroups = new EventEmitter<any>();
   programIndicatorsList$: Observable<any> = null;
   allProgramIndicators$: Observable<any>;
   error: boolean = false;
@@ -50,6 +52,8 @@ export class ProgramIndicatorsComponent implements OnInit {
     { value: 200, symbol: "200" },
     { value: "all", symbol: "all" }
   ];
+  programIndicatorGroups$: Observable<any>;
+  programIndicatorGroups: any;
   constructor(
     private metadataStore: Store<AppState>,
     private datePipe: DatePipe
@@ -61,6 +65,9 @@ export class ProgramIndicatorsComponent implements OnInit {
       this.loading = false;
       this.error = false;
     }
+    this.metadataStore.dispatch(
+      new indicators.LoadProgramIndicatorGroupsAction()
+    );
   }
 
   ngOnInit() {
@@ -127,80 +134,88 @@ export class ProgramIndicatorsComponent implements OnInit {
     this.programIndicatorsList$ = this.metadataStore.select(
       pipe(getListOfProgramIndicators)
     );
+
+    this.programIndicatorGroups$ = this.metadataStore.select(
+      pipe(getProgramIndicatorGroups)
+    );
+
     this.allProgramIndicators$ = this.metadataStore.select(
       pipe(getAllProgramIndicators)
     );
-    if (this.programIndicatorsList$) {
-      this.programIndicatorsList$.subscribe(list => {
-        if (list) {
-          this.totalAvailableProgramIndicators = list["pager"]["total"];
-          this.allProgramIndicators$.subscribe(indicatorsLoaded => {
-            if (indicatorsLoaded) {
-              this.programIndicators = [];
-              _.map(indicatorsLoaded, indicatorsByPage => {
-                this.programIndicators = [
-                  ...this.programIndicators,
-                  ...indicatorsByPage
-                ];
-                this.loadedMetadata.emit({
-                  type: "programIndicator",
-                  data: this.programIndicators
-                });
-                this.completedPercentage =
-                  100 *
-                  (this.programIndicators.length /
-                    this.totalAvailableProgramIndicators);
-                if (this.completedPercentage === 100) {
-                  this.loading = false;
-                  this.error = false;
+    this.programIndicatorsList$.subscribe(list => {
+      if (list) {
+        this.totalAvailableProgramIndicators = list["pager"]["total"];
+        this.allProgramIndicators$.subscribe(indicatorsLoaded => {
+          if (indicatorsLoaded) {
+            this.programIndicators = [];
+            _.map(indicatorsLoaded, indicatorsByPage => {
+              this.programIndicators = [
+                ...this.programIndicators,
+                ...indicatorsByPage
+              ];
+              this.loadedMetadata.emit({
+                type: "programIndicator",
+                data: this.programIndicators
+              });
+              this.completedPercentage =
+                100 *
+                (this.programIndicators.length /
+                  this.totalAvailableProgramIndicators);
+              if (this.completedPercentage === 100) {
+                this.loading = false;
+                this.error = false;
+              }
+            });
+          }
+        });
+      } else {
+        this.metadataStore.dispatch(
+          new indicators.loadProgramIndicatorsAction()
+        );
+        this.programIndicatorsList$ = this.metadataStore.select(
+          pipe(getListOfProgramIndicators)
+        );
+        this.allProgramIndicators$ = this.metadataStore.select(
+          pipe(getAllProgramIndicators)
+        );
+        if (this.programIndicatorsList$) {
+          this.programIndicatorsList$.subscribe(list => {
+            if (list) {
+              this.totalAvailableProgramIndicators = list["pager"]["total"];
+              this.allProgramIndicators$.subscribe(indicatorsLoaded => {
+                if (indicatorsLoaded) {
+                  this.programIndicators = [];
+                  _.map(indicatorsLoaded, indicatorsByPage => {
+                    this.programIndicators = [
+                      ...this.programIndicators,
+                      ...indicatorsByPage
+                    ];
+                    this.completedPercentage =
+                      100 *
+                      (this.programIndicators.length /
+                        this.totalAvailableProgramIndicators);
+                    if (this.completedPercentage === 100) {
+                      this.loading = false;
+                      this.error = false;
+                    }
+                  });
                 }
               });
             }
           });
-        } else {
-          this.metadataStore.dispatch(
-            new indicators.loadProgramIndicatorsAction()
-          );
-          this.programIndicatorsList$ = this.metadataStore.select(
-            pipe(getListOfProgramIndicators)
-          );
-          this.allProgramIndicators$ = this.metadataStore.select(
-            pipe(getAllProgramIndicators)
-          );
-          if (this.programIndicatorsList$) {
-            this.programIndicatorsList$.subscribe(list => {
-              if (list) {
-                this.totalAvailableProgramIndicators = list["pager"]["total"];
-                this.allProgramIndicators$.subscribe(indicatorsLoaded => {
-                  if (indicatorsLoaded) {
-                    this.programIndicators = [];
-                    _.map(indicatorsLoaded, indicatorsByPage => {
-                      this.programIndicators = [
-                        ...this.programIndicators,
-                        ...indicatorsByPage
-                      ];
-                      this.completedPercentage =
-                        100 *
-                        (this.programIndicators.length /
-                          this.totalAvailableProgramIndicators);
-                      if (this.completedPercentage === 100) {
-                        this.loading = false;
-                        this.error = false;
-                      }
-                    });
-                  }
-                });
-              }
-            });
-          }
         }
-      });
-    }
+      }
+    });
+    this.programIndicatorGroups$.subscribe(groups => {
+      if (groups) {
+        this.programIndicatorGroups = groups["programIndicatorGroups"];
+        this.selectedMetadataGroups.emit(this.programIndicatorGroups);
+      }
+    });
   }
 
   dwndToCSV(metadataObject$) {
     metadataObject$.subscribe(metadataArr => {
-      console.log("metadataArr ", metadataArr);
       let arr = [];
       arr.push("UID");
       arr.push("Indicator Name");
