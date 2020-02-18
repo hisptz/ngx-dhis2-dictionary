@@ -122,6 +122,7 @@ export class ProgramIndicatorsComponent implements OnInit {
   }
 
   updateIndicatorGroupsForSearch(group, event) {
+    console.log(group, event);
     if (event) {
       this.indicatorGroupsForSearching.push(group);
     } else {
@@ -209,6 +210,10 @@ export class ProgramIndicatorsComponent implements OnInit {
     this.programIndicatorGroups$.subscribe(groups => {
       if (groups) {
         this.programIndicatorGroups = groups["programIndicatorGroups"];
+        console.log(
+          "this.programIndicatorGroups ",
+          this.programIndicatorGroups
+        );
         this.selectedMetadataGroups.emit(this.programIndicatorGroups);
       }
     });
