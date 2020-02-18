@@ -122,13 +122,14 @@ export class ProgramIndicatorsComponent implements OnInit {
   }
 
   updateIndicatorGroupsForSearch(group, event) {
-    console.log(group, event);
     if (event) {
       this.indicatorGroupsForSearching.push(group);
     } else {
       let index = this.indicatorGroupsForSearching.indexOf(group);
       this.indicatorGroupsForSearching.splice(index, 1);
     }
+    this.programIndicatorGroups = this.indicatorGroupsForSearching;
+    this.selectedMetadataGroups.emit(this.programIndicatorGroups);
   }
 
   loadAllProgramIndicators() {
@@ -210,10 +211,6 @@ export class ProgramIndicatorsComponent implements OnInit {
     this.programIndicatorGroups$.subscribe(groups => {
       if (groups) {
         this.programIndicatorGroups = groups["programIndicatorGroups"];
-        console.log(
-          "this.programIndicatorGroups ",
-          this.programIndicatorGroups
-        );
         this.selectedMetadataGroups.emit(this.programIndicatorGroups);
       }
     });
