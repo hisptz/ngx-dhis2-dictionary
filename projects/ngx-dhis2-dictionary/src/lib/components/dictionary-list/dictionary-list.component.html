@@ -79,6 +79,8 @@
     <app-metadata-list
       [metadataIdentifiers]="metadataIdentifiers"
       (selectedMetadataId)="selectedMetadataId($event)"
+      (loadedMetadataInfo)="loadedMetadataInfo($event)"
+      (metadataGroups)="metadataGroups($event)"
     ></app-metadata-list>
   </div>
   <div
@@ -712,7 +714,7 @@
       <div *ngIf="dictionaryItem.progress.loading">
         <app-dictionary-progress></app-dictionary-progress>
       </div>
-
+      
       <div *ngIf="dictionaryItem.data" class="exports">
         <button
           class="export-btn"

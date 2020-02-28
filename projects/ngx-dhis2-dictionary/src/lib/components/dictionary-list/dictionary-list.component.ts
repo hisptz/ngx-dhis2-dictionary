@@ -38,6 +38,8 @@ export class DictionaryListComponent implements OnInit {
   @Input() metadataIdentifiers: Array<string>;
   @Output() dictionaryItemId = new EventEmitter<any>();
   @Input() selectedItem: string;
+  @Output() metadataInfo = new EventEmitter<any>();
+  @Output() metadataGroupsInfo = new EventEmitter<any>();
   dictionaryList$: Observable<MetadataDictionary[]>;
   indicatorGroups$: Observable<IndicatorGroupsState>;
   activeItem: number;
@@ -92,6 +94,14 @@ export class DictionaryListComponent implements OnInit {
       this.loadAllIndicators();
     } else {
     }
+  }
+
+  loadedMetadataInfo(metadata) {
+    this.metadataInfo.emit(metadata);
+  }
+
+  metadataGroups(groups) {
+    this.metadataGroupsInfo.emit(groups);
   }
 
   selectedMetadataId(identifier) {

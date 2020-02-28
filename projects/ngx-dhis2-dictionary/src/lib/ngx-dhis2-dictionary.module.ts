@@ -32,7 +32,8 @@ import {
   allIndicatorsRedcuer,
   indicatorGroupsReducer,
   indicatorsListReducer,
-  programIndicatorsListReducer
+  programIndicatorsListReducer,
+  programIndicatorGroupsReducer
 } from "./store/reducers/indicators.reducers";
 @NgModule({
   imports: [
@@ -48,6 +49,10 @@ import {
     ),
     StoreModule.forFeature("allIndicators", allIndicatorsRedcuer),
     StoreModule.forFeature("indicatorGroups", indicatorGroupsReducer),
+    StoreModule.forFeature(
+      "programIndicatorGroups",
+      programIndicatorGroupsReducer
+    ),
     EffectsModule.forFeature([DictionaryEffects]),
     EffectsModule.forFeature([IndicatorsEffects])
   ],
