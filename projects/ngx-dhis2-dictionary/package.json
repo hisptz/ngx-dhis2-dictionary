@@ -1,13 +1,13 @@
 {
   "name": "@iapps/ngx-dhis2-dictionary",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0 || ^7.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0  || ^7.0.0",
     "@ngrx/effects": "^6.0.1 || ^7.3.0",
     "@ngrx/entity": "^6.0.1 || ^7.3.0",
     "@ngrx/store": "^6.0.1 || ^7.3.0",
-    "@hisptz/ngx-dhis2-http-client": "^1.0.2",
+    "@iapps/ngx-dhis2-http-client": "^2.0.7",
     "ngx-pagination": "^3.2.1",
     "fuse.js": "^3.4.6"
   },

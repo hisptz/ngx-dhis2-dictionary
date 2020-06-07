@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { mergeMap, map, tap, catchError } from 'rxjs/operators';
 import { Observable, from, forkJoin, of } from 'rxjs';
 
-import { NgxDhis2HttpClientService } from '@hisptz/ngx-dhis2-http-client';
+import { NgxDhis2HttpClientService } from '@iapps/ngx-dhis2-http-client';
 import { DictionaryState } from '../reducers/dictionary.reducer';
 
 import {
@@ -68,7 +68,7 @@ export class DictionaryEffects {
       from(identifiers)
         .pipe(
           mergeMap((identifier: any) => {
-                return this.httpClient.get(`identifiableObjects/${identifier}.json`, true).pipe(catchError((err) => of(identifier)))
+                return this.httpClient.get(`identifiableObjects/${identifier}.json`).pipe(catchError((err) => of(identifier)))
             }
           )
         )
@@ -228,7 +228,7 @@ export class DictionaryEffects {
       dataElements: []
     }
     let dataSetDescription = ''
-    this.httpClient.get(`${dataSetUrl}`, true).subscribe((dataSet: any) => {
+    this.httpClient.get(`${dataSetUrl}`).subscribe((dataSet: any) => {
       metadataInfoLoaded = {...metadataInfoLoaded, metadata: dataSet};
       this.store.dispatch(
         new UpdateDictionaryMetadataAction(dataSetId, {
@@ -249,7 +249,7 @@ export class DictionaryEffects {
           dataElementsArr.push(element.dataElement.id);
         });
         forkJoin(
-           this.httpClient.get('dataElements.json?fields=id,name,code,zeroIsSignificant,user[id,name],dataSetElements[dataSet[id,name]],categoryCombo[id,name,dataDimensionType,categories[id,name]],shortName,valueType,aggregationType,dataElementGroups[id,name]&filter=id:in:[' + dataElementsArr.join(',') + ']', true)
+           this.httpClient.get('dataElements.json?fields=id,name,code,zeroIsSignificant,user[id,name],dataSetElements[dataSet[id,name]],categoryCombo[id,name,dataDimensionType,categories[id,name]],shortName,valueType,aggregationType,dataElementGroups[id,name]&filter=id:in:[' + dataElementsArr.join(',') + ']')
          ).subscribe((dataElements) => {
            metadataInfoLoaded = {...metadataInfoLoaded, dataElements: dataElements[0]['dataElements']};
            this.store.dispatch(
@@ -302,7 +302,7 @@ export class DictionaryEffects {
       dataElements: []
     }
     this.httpClient
-      .get(`${dataElementGroupUrl}`, true)
+      .get(`${dataElementGroupUrl}`)
       .subscribe((dataElementGroup: any) => {
         metadataInfoLoaded = {...metadataInfoLoaded, metadata: dataElementGroup};
         let dataElementDescription = ''
@@ -326,7 +326,7 @@ export class DictionaryEffects {
           dataElementsArr.push(element.id);
         });
         forkJoin(
-           this.httpClient.get('dataElements.json?fields=id,name,code,zeroIsSignificant,user[id,name],dataSetElements[dataSet[id,name]],categoryCombo[id,name,dataDimensionType,categories[id,name]],shortName,valueType,aggregationType,dataElementGroups[id,name]&filter=id:in:[' + dataElementsArr.join(',') + ']', true)
+           this.httpClient.get('dataElements.json?fields=id,name,code,zeroIsSignificant,user[id,name],dataSetElements[dataSet[id,name]],categoryCombo[id,name,dataDimensionType,categories[id,name]],shortName,valueType,aggregationType,dataElementGroups[id,name]&filter=id:in:[' + dataElementsArr.join(',') + ']')
          ).subscribe((dataElements) => {
            metadataInfoLoaded = {...metadataInfoLoaded, dataElements: dataElements[0]['dataElements']};
            this.store.dispatch(
@@ -352,7 +352,7 @@ export class DictionaryEffects {
       legendSetsInformation: {}
     }
     this.httpClient
-      .get(`${dataElementUrl}`, true)
+      .get(`${dataElementUrl}`)
       .subscribe((dataElement: any) => {
         metadataInfoLoaded = {...metadataInfoLoaded, metadata: dataElement};
         let dataElementDescription = ''
@@ -377,7 +377,7 @@ export class DictionaryEffects {
           dataElementGroupsArr.push(group.id);
         })
          forkJoin(
-           this.httpClient.get('dataElementGroups.json?paging=false&fields=id,name,dataElements[id,name]&filter=id:in:[' + dataElementGroupsArr.join(',') +']', true)
+           this.httpClient.get('dataElementGroups.json?paging=false&fields=id,name,dataElements[id,name]&filter=id:in:[' + dataElementGroupsArr.join(',') +']')
          ).subscribe((dataElementGroups) => {
            
           metadataInfoLoaded = {...metadataInfoLoaded, dataElementGroups: dataElementGroups[0]['dataElementGroups']};
@@ -439,7 +439,7 @@ export class DictionaryEffects {
       dataElements: []
     };
     metadataInfoLoaded.type = "indicator";
-    this.httpClient.get(`${indicatorUrl}`, true).subscribe((indicator: any) => {
+    this.httpClient.get(`${indicatorUrl}`).subscribe((indicator: any) => {
       metadataInfoLoaded.metadata = indicator;
 
       this.store.dispatch(
@@ -460,15 +460,13 @@ export class DictionaryEffects {
       forkJoin(
         this.httpClient.get(
           'expressions/description?expression=' +
-            encodeURIComponent(indicator.numerator),
-          true
+            encodeURIComponent(indicator.numerator)
         ),
         this.httpClient.get(
           'dataSets.json?fields=periodType,id,name,timelyDays,formType,created,expiryDays&' +
             'filter=dataSetElements.dataElement.id:in:[' +
             this.getAvailableDataElements(indicator.numerator) +
-            ']&paging=false',
-          true
+            ']&paging=false'
         )
       ).subscribe((numeratorResults: any[]) => {
         if (numeratorResults[0]) {
@@ -497,15 +495,13 @@ export class DictionaryEffects {
         forkJoin(
           this.httpClient.get(
             'expressions/description?expression=' +
-              encodeURIComponent(indicator.denominator),
-            true
+              encodeURIComponent(indicator.denominator)
           ),
           this.httpClient.get(
             'dataSets.json?fields=periodType,id,name,timelyDays,formType,created,expiryDays&' +
               'filter=dataSetElements.dataElement.id:in:[' +
               this.getAvailableDataElements(indicator.denominator) +
-              ']&paging=false',
-            true
+              ']&paging=false'
           )
         ).subscribe((denominatorResults: any[]) => {
           if (denominatorResults[0]) {
@@ -559,7 +555,7 @@ export class DictionaryEffects {
              */
 
              forkJoin(
-               this.httpClient.get('dataElements.json?filter=id:in:[' + this.getAvailableDataElements(indicator.numerator + ' + ' + indicator.denominator) +']&paging=false&fields=id,name,zeroIsSignificant,aggregationType,domainType,valueType,categoryCombo[id,name,categoryOptionCombos[id,name,categoryOptions[id,name,categories[id,name]]]],dataSetElements[dataSet[id,name,periodType]],dataElementGroups[id,name,dataElements~size]',true)
+               this.httpClient.get('dataElements.json?filter=id:in:[' + this.getAvailableDataElements(indicator.numerator + ' + ' + indicator.denominator) +']&paging=false&fields=id,name,zeroIsSignificant,aggregationType,domainType,valueType,categoryCombo[id,name,categoryOptionCombos[id,name,categoryOptions[id,name,categories[id,name]]]],dataSetElements[dataSet[id,name,periodType]],dataElementGroups[id,name,dataElements~size]')
              ).subscribe((dataElements) => {
               metadataInfoLoaded = {...metadataInfoLoaded, dataElements:dataElements[0].dataElements};
               
@@ -593,7 +589,7 @@ export class DictionaryEffects {
       legendSetsInformation: [],
       trackedEntityAttributes: []
     }
-    this.httpClient.get(`${programIndicatorUrl}`, true).subscribe((programIndicator: any) => {
+    this.httpClient.get(`${programIndicatorUrl}`).subscribe((programIndicator: any) => {
         let indicatorDescription = ''; let filterDescription = '';
         // get expression and filter then describe it
         let programIndicatorDescriptionExpression = programIndicator.expression;
@@ -708,8 +704,8 @@ export class DictionaryEffects {
           })
         })
         forkJoin(
-          this.httpClient.get('programStages.json?filter=id:in:[' + programStages.join(',') + ']&fields=id,name,user,created,description,formType,programStageDataElements~size', true),
-          this.httpClient.get('dataElements.json?filter=id:in:[' + allDataElements.join(',') +']&paging=false&fields=id,name,valueType,aggregationType,domainType',true)
+          this.httpClient.get('programStages.json?filter=id:in:[' + programStages.join(',') + ']&fields=id,name,user,created,description,formType,programStageDataElements~size'),
+          this.httpClient.get('dataElements.json?filter=id:in:[' + allDataElements.join(',') +']&paging=false&fields=id,name,valueType,aggregationType,domainType')
         ).subscribe((results: any) => {
           // metadataInfoLoaded = {...metadataInfoLoaded, programStages: results[0]['programStages']};
           results[0]['programStages'].forEach((stage) => {

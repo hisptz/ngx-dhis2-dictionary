@@ -70,10 +70,12 @@ button:focus {
 #searching-input {
   outline: none !important;
   border: none;
-  width: 10%;
+  width: 20%;
   margin-right: 4px;
+  margin-bottom: 5px;
+  margin-top: 5px;
   height: 30px;
-  padding: 0.005rem 0.55rem;
+  padding: 0.05rem 0.55rem;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;

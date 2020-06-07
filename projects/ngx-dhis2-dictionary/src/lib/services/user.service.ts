@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { NgxDhis2HttpClientService } from '@hisptz/ngx-dhis2-http-client';
-import { Observable } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { NgxDhis2HttpClientService } from "@iapps/ngx-dhis2-http-client";
+import { Observable } from "rxjs";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class UserService {
   userGroups;
   user;
@@ -23,7 +23,7 @@ export class UserService {
         observable.next(this.userGroups);
         observable.complete();
       } else {
-        this.httpClient.get('userGroups').subscribe(
+        this.httpClient.get("userGroups").subscribe(
           (results: any) => {
             this.userGroups = results.userGroups;
             observable.next(this.userGroups);

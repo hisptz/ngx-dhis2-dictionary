@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Effect, Actions, ofType } from "@ngrx/effects";
 import { Observable, of } from "rxjs";
 import * as indicators from "../actions/indicators.actions";
-import { NgxDhis2HttpClientService } from "@hisptz/ngx-dhis2-http-client";
+import { NgxDhis2HttpClientService } from "@iapps/ngx-dhis2-http-client";
 import { switchMap, map, catchError, tap } from "rxjs/operators";
 import { Store } from "@ngrx/store";
 import { IndicatorsService } from "../../services/indicators.service";
